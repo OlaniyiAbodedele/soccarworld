@@ -1,6 +1,10 @@
+import Navbar from "../components/Navigation/Navbar";
+
 export default function Home() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
+      <Navbar />
+
       <div className="max-w-4xl text-center">
         <p className="mb-5 text-sm font-semibold uppercase tracking-[0.35em] text-[#9CE500]">
           SoccaR Engineering
