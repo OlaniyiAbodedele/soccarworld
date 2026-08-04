@@ -1,56 +1,66 @@
-import Container from "../Common/Container";
-
+import Image from "next/image";
 const navigationItems = [
-  { label: "Home", href: "#home" },
-  { label: "Why SoccaR", href: "#why-soccar" },
+  { label: "Vision", href: "#vision" },
   { label: "Communities", href: "#communities" },
-  { label: "Ecosystem", href: "#ecosystem" },
-  { label: "Platform", href: "#platform" },
+  { label: "Technology", href: "#technology" },
+  { label: "About", href: "#about" },
 ];
 
 export default function Navbar() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.06] bg-black/70 backdrop-blur-xl">
-      <Container className="flex h-20 items-center justify-between">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.06] bg-black/50 backdrop-blur-md">
+      <div
+        className="grid h-24 w-full grid-cols-[1fr_auto_1fr] items-center"
+        style={{
+          paddingLeft: "clamp(72px, 6vw, 120px)",
+          paddingRight: "clamp(72px, 6vw, 120px)",
+        }}
+      >
         <a
-          href="#home"
-          aria-label="SoccaR home"
-          className="text-xl font-bold tracking-[0.18em] text-white"
-        >
-          SoccaR
+  href="#home"
+  aria-label="SoccaR home"
+  className="justify-self-start"
+>
+  <Image
+  src="/images/logo/soccar-gold.webp"
+  alt="SoccaR"
+  width={190}
+  height={55}
+  priority
+  className="h-auto w-[170px] lg:w-[185px]"
+  />
         </a>
 
         <nav
           aria-label="Primary navigation"
-          className="hidden items-center gap-8 lg:flex"
+          className="hidden items-center gap-16 lg:flex"
         >
           {navigationItems.map((item) => (
             <a
               key={item.label}
               href={item.href}
-              className="text-xs font-semibold uppercase tracking-[0.16em] text-white/60 transition duration-300 hover:text-[#9CE500]"
+              className="whitespace-nowrap text-xs font-semibold uppercase tracking-[0.2em] text-white/70 transition duration-300 hover:text-[#9CE500]"
             >
               {item.label}
             </a>
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <a
-            href="#founding-community"
-            className="hidden text-xs font-semibold uppercase tracking-[0.14em] text-white/60 transition hover:text-white sm:inline-flex"
-          >
-            Join
-          </a>
-
-          <a
-            href="#founding-community"
-            className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#9CE500] px-5 py-2 text-xs font-semibold tracking-[0.08em] text-black transition duration-300 hover:bg-[#B2FF1A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9CE500]"
-          >
-            Join Waitlist
-          </a>
-        </div>
-      </Container>
+        <a
+          href="#founding-community"
+          className="inline-flex items-center justify-center justify-self-end border border-white/25 bg-black/25 font-semibold uppercase text-white transition duration-300 hover:border-[#9CE500] hover:text-[#9CE500]"
+          style={{
+            minWidth: "190px",
+            minHeight: "62px",
+            paddingLeft: "32px",
+            paddingRight: "32px",
+            fontSize: "0.86rem",
+            letterSpacing: "0.18em",
+          }}
+        >
+          Join Waitlist
+        </a>
+      </div>
     </header>
   );
 }
