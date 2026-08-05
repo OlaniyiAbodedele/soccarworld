@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 
+const PREMIUM_EASE = [0.22, 1, 0.36, 1] as const;
+
 type FooterLink = {
   label: string;
   href: string;
@@ -157,6 +159,80 @@ const socialLinks = [
   },
 ];
 
+function FooterNavigationColumn({
+  column,
+}: {
+  column: FooterColumn;
+}) {
+  return (
+    <div>
+      <h3
+        className="font-semibold uppercase text-[#9CE500]"
+        style={{
+          fontSize: "0.7rem",
+          lineHeight: "1.4",
+          letterSpacing: "0.2em",
+        }}
+      >
+        {column.title}
+      </h3>
+
+      <ul style={{ marginTop: "24px" }}>
+        {column.links.map((link, index) => (
+          <li
+            key={link.label}
+            style={{
+              marginTop: index === 0 ? "0" : "17px",
+            }}
+          >
+            <Link
+              href={link.href}
+              className="inline-flex text-white/74 outline-none transition duration-300 hover:translate-x-[3px] hover:text-[#9CE500] focus-visible:translate-x-[3px] focus-visible:text-[#9CE500]"
+              style={{
+                fontSize: "clamp(0.72rem, 0.78vw, 0.81rem)",
+                lineHeight: "1.5",
+                letterSpacing: "0.1em",
+                transitionTimingFunction:
+                  "cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
+            >
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function SocialLinks() {
+  return (
+    <div
+      className="grid grid-cols-3"
+      style={{
+        width: "210px",
+        columnGap: "18px",
+        rowGap: "18px",
+      }}
+    >
+      {socialLinks.map((social) => (
+        <Link
+          key={social.label}
+          href={social.href}
+          aria-label={social.label}
+          className="flex h-[54px] w-[54px] items-center justify-center rounded-full border border-[#9CE500]/75 text-white outline-none transition duration-300 hover:-translate-y-1 hover:border-[#9CE500] hover:bg-[#9CE500] hover:text-black hover:shadow-[0_12px_30px_rgba(156,229,0,0.16)] focus-visible:-translate-y-1 focus-visible:border-[#9CE500] focus-visible:bg-[#9CE500] focus-visible:text-black focus-visible:ring-2 focus-visible:ring-[#9CE500]/55 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
+          style={{
+            transitionTimingFunction:
+              "cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        >
+          <span className="h-6 w-6">{social.icon}</span>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
 export default function Footer() {
   const reduceMotion = useReducedMotion();
 
@@ -168,137 +244,93 @@ export default function Footer() {
       viewport={{ once: true, amount: 0.1 }}
       transition={{
         duration: 0.75,
-        ease: [0.22, 1, 0.36, 1],
+        ease: PREMIUM_EASE,
       }}
     >
-      {/* Main footer */}
-      <div
-        className="mx-auto w-full"
-        style={{
-          maxWidth: "1800px",
-          paddingTop: "clamp(72px, 6vw, 106px)",
-          paddingRight: "clamp(32px, 4.5vw, 92px)",
-          paddingBottom: "clamp(58px, 5vw, 84px)",
-          paddingLeft: "clamp(32px, 4.5vw, 92px)",
-        }}
-      >
+      {/* =========================================================
+          MOBILE AND TABLET FOOTER
+      ========================================================== */}
+      <div className="lg:hidden">
         <div
-          className="grid items-start"
+          className="mx-auto w-full"
           style={{
-            gridTemplateColumns:
-              "minmax(230px, 1.35fr) repeat(4, minmax(125px, 0.85fr)) minmax(245px, 1.25fr)",
-            columnGap: "clamp(44px, 4.2vw, 84px)",
+            maxWidth: "760px",
+            paddingTop: "72px",
+            paddingRight: "22px",
+            paddingBottom: "62px",
+            paddingLeft: "22px",
           }}
         >
-          {/* Brand block */}
-          <div
-            className="flex flex-col items-center text-center lg:items-start lg:text-left"
-            style={{
-              maxWidth: "270px",
-            }}
-          >
+          {/* Mobile brand block */}
+          <div className="flex flex-col items-center text-center">
             <Link
               href="#hero"
               aria-label="SoccaR home"
-              className="inline-flex items-center"
-              style={{
-                minHeight: "24px",
-                transform: "translateY(-8px)",
-              }}
+              className="inline-flex rounded-sm outline-none transition duration-300 hover:brightness-110 focus-visible:ring-2 focus-visible:ring-[#9CE500]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
             >
               <Image
                 src="/images/logo/soccar-gold.webp"
                 alt="SoccaR"
                 width={170}
                 height={68}
-                className="h-auto w-[145px] object-contain sm:w-[158px]"
+                className="h-auto w-[148px] object-contain"
               />
             </Link>
 
             <p
-              className="text-white/72"
+              className="text-white/74"
               style={{
-                maxWidth: "250px",
-                marginTop: "12px",
-                fontSize: "clamp(0.72rem, 0.78vw, 0.8rem)",
-                lineHeight: "1.8",
-                letterSpacing: "0.11em",
-                textAlign: "center",
+                maxWidth: "310px",
+                marginTop: "22px",
+                fontSize: "0.78rem",
+                lineHeight: "1.85",
+                letterSpacing: "0.095em",
               }}
             >
               One global home for fans, players,
               <br />
-              clubs and everyone shaping
-              <br />
-              football.
+              clubs and everyone shaping football.
             </p>
 
             <div
               aria-hidden="true"
               style={{
-                width: "180px",
+                width: "150px",
                 height: "1px",
-                marginTop: "24px",
-                marginInline: "auto",
+                marginTop: "26px",
                 background:
-                  "linear-gradient(90deg, transparent 0%, rgba(156,229,0,0.82) 18%, rgba(156,229,0,0.82) 82%, transparent 100%)",
+                  "linear-gradient(90deg, transparent, rgba(156,229,0,0.82), transparent)",
               }}
             />
           </div>
 
-          {/* Navigation columns */}
-          {footerColumns.map((column) => (
-            <div key={column.title}>
-              <h3
-                className="font-semibold uppercase text-[#9CE500]"
-                style={{
-                  fontSize: "0.7rem",
-                  lineHeight: "1.4",
-                  letterSpacing: "0.2em",
-                }}
-              >
-                {column.title}
-              </h3>
-
-              <ul
-                style={{
-                  marginTop: "26px",
-                }}
-              >
-                {column.links.map((link, index) => (
-                  <li
-                    key={link.label}
-                    style={{
-                      marginTop: index === 0 ? "0" : "18px",
-                    }}
-                  >
-                    <Link
-                      href={link.href}
-                      className="text-white/74 transition-colors duration-300 hover:text-[#9CE500] focus-visible:text-[#9CE500] focus-visible:outline-none"
-                      style={{
-                        fontSize: "clamp(0.71rem, 0.78vw, 0.81rem)",
-                        lineHeight: "1.5",
-                        letterSpacing: "0.11em",
-                      }}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-
-          {/* Social block */}
+          {/* Mobile navigation */}
           <div
-            className="justify-self-end border-l border-white/12"
+            className="grid grid-cols-2"
             style={{
-              minWidth: "245px",
-              paddingLeft: "clamp(34px, 3vw, 54px)",
+              marginTop: "64px",
+              columnGap: "32px",
+              rowGap: "54px",
+            }}
+          >
+            {footerColumns.map((column) => (
+              <FooterNavigationColumn
+                key={column.title}
+                column={column}
+              />
+            ))}
+          </div>
+
+          {/* Mobile social section */}
+          <div
+            className="flex flex-col items-center border-t border-white/12 text-center"
+            style={{
+              marginTop: "64px",
+              paddingTop: "48px",
             }}
           >
             <h3
-              className="whitespace-nowrap font-semibold uppercase text-[#9CE500]"
+              className="font-semibold uppercase text-[#9CE500]"
               style={{
                 fontSize: "0.7rem",
                 lineHeight: "1.4",
@@ -308,23 +340,66 @@ export default function Footer() {
               Join the Conversation
             </h3>
 
-            <div
-              className="grid grid-cols-3"
+            <div style={{ marginTop: "30px" }}>
+              <SocialLinks />
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile legal bar */}
+        <div className="border-t border-white/12">
+          <div
+            className="mx-auto flex w-full flex-col items-center text-center"
+            style={{
+              maxWidth: "760px",
+              paddingTop: "28px",
+              paddingRight: "22px",
+              paddingBottom: "32px",
+              paddingLeft: "22px",
+            }}
+          >
+            <p
+              className="text-white/66"
               style={{
-                width: "210px",
-                marginTop: "30px",
-                columnGap: "18px",
-                rowGap: "18px",
+                maxWidth: "340px",
+                fontSize: "0.67rem",
+                lineHeight: "1.75",
+                letterSpacing: "0.1em",
               }}
             >
-              {socialLinks.map((social) => (
+              © 2026 SoccaR. All rights reserved.
+              <br />
+              SoccaR is a registered trademark.
+            </p>
+
+            <div
+              className="flex flex-wrap items-center justify-center"
+              style={{
+                marginTop: "24px",
+                columnGap: "0",
+                rowGap: "14px",
+              }}
+            >
+              {["Privacy", "Terms", "Contact"].map((item, index) => (
                 <Link
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="flex h-[54px] w-[54px] items-center justify-center rounded-full border border-[#9CE500]/80 text-white transition duration-300 hover:-translate-y-1 hover:border-[#9CE500] hover:bg-[#9CE500] hover:text-black focus-visible:bg-[#9CE500] focus-visible:text-black focus-visible:outline-none"
+                  key={item}
+                  href="#"
+                  className="text-white/72 outline-none transition duration-300 hover:text-[#9CE500] focus-visible:text-[#9CE500]"
+                  style={{
+                    paddingLeft: index === 0 ? "0" : "18px",
+                    paddingRight: index === 2 ? "0" : "18px",
+                    borderLeft:
+                      index === 0
+                        ? "none"
+                        : "1px solid rgba(255,255,255,0.22)",
+                    fontSize: "0.68rem",
+                    lineHeight: "1.5",
+                    letterSpacing: "0.11em",
+                    transitionTimingFunction:
+                      "cubic-bezier(0.22, 1, 0.36, 1)",
+                  }}
                 >
-                  <span className="h-6 w-6">{social.icon}</span>
+                  {item}
                 </Link>
               ))}
             </div>
@@ -332,51 +407,165 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom legal bar */}
-      <div className="border-t border-white/12">
+      {/* =========================================================
+          DESKTOP FOOTER
+      ========================================================== */}
+      <div className="hidden lg:block">
         <div
-          className="mx-auto flex w-full flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
+          className="mx-auto w-full"
           style={{
             maxWidth: "1800px",
-            paddingTop: "25px",
+            paddingTop: "clamp(72px, 6vw, 106px)",
             paddingRight: "clamp(32px, 4.5vw, 92px)",
-            paddingBottom: "25px",
+            paddingBottom: "clamp(58px, 5vw, 84px)",
             paddingLeft: "clamp(32px, 4.5vw, 92px)",
           }}
         >
-          <p
-            className="text-white/68"
+          <div
+            className="grid items-start"
             style={{
-              fontSize: "clamp(0.65rem, 0.72vw, 0.75rem)",
-              lineHeight: "1.5",
-              letterSpacing: "0.12em",
+              gridTemplateColumns:
+                "minmax(230px, 1.35fr) repeat(4, minmax(125px, 0.85fr)) minmax(245px, 1.25fr)",
+              columnGap: "clamp(44px, 4.2vw, 84px)",
             }}
           >
-            © 2026 SoccaR. All rights reserved. SoccaR is a registered
-            trademark.
-          </p>
-
-          <div className="flex items-center">
-            {["Privacy", "Terms", "Contact"].map((item, index) => (
+            {/* Desktop brand block */}
+            <div
+              className="flex flex-col items-center text-center xl:items-start xl:text-left"
+              style={{
+                maxWidth: "270px",
+              }}
+            >
               <Link
-                key={item}
-                href="#"
-                className="text-white/72 transition-colors duration-300 hover:text-[#9CE500] focus-visible:text-[#9CE500] focus-visible:outline-none"
+                href="#hero"
+                aria-label="SoccaR home"
+                className="inline-flex rounded-sm outline-none transition duration-300 hover:brightness-110 focus-visible:ring-2 focus-visible:ring-[#9CE500]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
                 style={{
-                  paddingLeft: index === 0 ? "0" : "20px",
-                  paddingRight: index === 2 ? "0" : "20px",
-                  borderLeft:
-                    index === 0
-                      ? "none"
-                      : "1px solid rgba(255,255,255,0.2)",
-                  fontSize: "clamp(0.65rem, 0.72vw, 0.75rem)",
-                  lineHeight: "1.5",
-                  letterSpacing: "0.12em",
+                  minHeight: "24px",
+                  transform: "translateY(-8px)",
                 }}
               >
-                {item}
+                <Image
+                  src="/images/logo/soccar-gold.webp"
+                  alt="SoccaR"
+                  width={170}
+                  height={68}
+                  className="h-auto w-[145px] object-contain xl:w-[158px]"
+                />
               </Link>
+
+              <p
+                className="text-white/72"
+                style={{
+                  maxWidth: "250px",
+                  marginTop: "12px",
+                  fontSize: "clamp(0.72rem, 0.78vw, 0.8rem)",
+                  lineHeight: "1.8",
+                  letterSpacing: "0.11em",
+                  textAlign: "center",
+                }}
+              >
+                One global home for fans, players,
+                <br />
+                clubs and everyone shaping
+                <br />
+                football.
+              </p>
+
+              <div
+                aria-hidden="true"
+                style={{
+                  width: "180px",
+                  height: "1px",
+                  marginTop: "24px",
+                  marginInline: "auto",
+                  background:
+                    "linear-gradient(90deg, transparent 0%, rgba(156,229,0,0.82) 18%, rgba(156,229,0,0.82) 82%, transparent 100%)",
+                }}
+              />
+            </div>
+
+            {footerColumns.map((column) => (
+              <FooterNavigationColumn
+                key={column.title}
+                column={column}
+              />
             ))}
+
+            {/* Desktop social section */}
+            <div
+              className="justify-self-end border-l border-white/12"
+              style={{
+                minWidth: "245px",
+                paddingLeft: "clamp(34px, 3vw, 54px)",
+              }}
+            >
+              <h3
+                className="whitespace-nowrap font-semibold uppercase text-[#9CE500]"
+                style={{
+                  fontSize: "0.7rem",
+                  lineHeight: "1.4",
+                  letterSpacing: "0.2em",
+                }}
+              >
+                Join the Conversation
+              </h3>
+
+              <div style={{ marginTop: "30px" }}>
+                <SocialLinks />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop legal bar */}
+        <div className="border-t border-white/12">
+          <div
+            className="mx-auto flex w-full items-center justify-between"
+            style={{
+              maxWidth: "1800px",
+              paddingTop: "25px",
+              paddingRight: "clamp(32px, 4.5vw, 92px)",
+              paddingBottom: "25px",
+              paddingLeft: "clamp(32px, 4.5vw, 92px)",
+            }}
+          >
+            <p
+              className="text-white/68"
+              style={{
+                fontSize: "clamp(0.65rem, 0.72vw, 0.75rem)",
+                lineHeight: "1.5",
+                letterSpacing: "0.12em",
+              }}
+            >
+              © 2026 SoccaR. All rights reserved. SoccaR is a registered
+              trademark.
+            </p>
+
+            <div className="flex items-center">
+              {["Privacy", "Terms", "Contact"].map((item, index) => (
+                <Link
+                  key={item}
+                  href="#"
+                  className="text-white/72 outline-none transition duration-300 hover:text-[#9CE500] focus-visible:text-[#9CE500]"
+                  style={{
+                    paddingLeft: index === 0 ? "0" : "20px",
+                    paddingRight: index === 2 ? "0" : "20px",
+                    borderLeft:
+                      index === 0
+                        ? "none"
+                        : "1px solid rgba(255,255,255,0.2)",
+                    fontSize: "clamp(0.65rem, 0.72vw, 0.75rem)",
+                    lineHeight: "1.5",
+                    letterSpacing: "0.12em",
+                    transitionTimingFunction:
+                      "cubic-bezier(0.22, 1, 0.36, 1)",
+                  }}
+                >
+                  {item}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

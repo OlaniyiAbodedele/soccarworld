@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 
+const PREMIUM_EASE = [0.22, 1, 0.36, 1] as const;
+
 type PlatformValue = {
   title: string;
   subtitle: string;
@@ -136,18 +138,290 @@ export default function PlatformFeatures() {
       aria-labelledby="platform-features-heading"
       className="relative w-full overflow-hidden bg-black text-white"
       style={{
-        paddingTop: "clamp(32px, 3vw, 56px)",
-        paddingBottom: "clamp(72px, 6vw, 112px)",
+        paddingTop: "clamp(48px, 4vw, 72px)",
+        paddingBottom: "clamp(88px, 7vw, 128px)",
       }}
     >
+      {/* =========================================================
+          MOBILE LAYOUT
+      ========================================================== */}
+      <div className="md:hidden">
+        <div
+          className="mx-auto w-full"
+          style={{
+            paddingLeft: "20px",
+            paddingRight: "20px",
+          }}
+        >
+          <motion.header
+            initial={
+              reduceMotion
+                ? false
+                : {
+                    opacity: 0,
+                    y: 20,
+                  }
+            }
+            whileInView={{
+              opacity: 1,
+              y: 0,
+            }}
+            viewport={{
+              once: true,
+              amount: 0.3,
+            }}
+            transition={{
+              duration: 0.8,
+              ease: PREMIUM_EASE,
+            }}
+          >
+            <p
+              className="font-semibold uppercase text-[#9CE500]"
+              style={{
+                fontSize: "0.66rem",
+                lineHeight: "1.4",
+                letterSpacing: "0.2em",
+              }}
+            >
+              Platform Features
+            </p>
+
+            <motion.div
+              aria-hidden="true"
+              className="origin-left bg-[#9CE500]"
+              style={{
+                width: "54px",
+                height: "1px",
+                marginTop: "18px",
+                opacity: 0.88,
+              }}
+              initial={
+                reduceMotion
+                  ? false
+                  : {
+                      scaleX: 0,
+                    }
+              }
+              whileInView={{
+                scaleX: 1,
+              }}
+              viewport={{
+                once: true,
+              }}
+              transition={{
+                duration: 0.55,
+                delay: 0.1,
+                ease: PREMIUM_EASE,
+              }}
+            />
+
+            <h2
+              id="platform-features-heading"
+              className="font-serif"
+              style={{
+                marginTop: "40px",
+                maxWidth: "350px",
+                fontSize: "clamp(2rem, 10vw, 2.7rem)",
+                lineHeight: "1.08",
+                letterSpacing: "-0.02em",
+              }}
+            >
+              <span className="block text-white">
+                Everything
+                <br />
+                football needs.
+              </span>
+
+              <span
+                className="block text-[#9CE500]"
+                style={{
+                  marginTop: "20px",
+                }}
+              >
+                The operating system
+                <br />
+                for world football.
+              </span>
+            </h2>
+          </motion.header>
+
+          <motion.p
+            className="text-white/82"
+            style={{
+              maxWidth: "350px",
+              marginTop: "38px",
+              fontSize: "0.86rem",
+              lineHeight: "1.82",
+              letterSpacing: "0.005em",
+            }}
+            initial={
+              reduceMotion
+                ? false
+                : {
+                    opacity: 0,
+                    y: 16,
+                  }
+            }
+            whileInView={{
+              opacity: 1,
+              y: 0,
+            }}
+            viewport={{
+              once: true,
+              amount: 0.4,
+            }}
+            transition={{
+              duration: 0.72,
+              delay: 0.1,
+              ease: PREMIUM_EASE,
+            }}
+          >
+            From discovering talent to managing clubs, publishing media and
+            connecting football communities, SoccaR brings every football
+            workflow into one intelligent ecosystem.
+          </motion.p>
+        </div>
+
+        {/* Mobile artwork receives its own full-width composition */}
+        <motion.div
+          className="relative w-full overflow-hidden bg-black"
+          style={{
+            minHeight: "520px",
+            marginTop: "48px",
+          }}
+          initial={
+            reduceMotion
+              ? false
+              : {
+                  opacity: 0,
+                  scale: 1.015,
+                }
+          }
+          whileInView={{
+            opacity: 1,
+            scale: 1,
+          }}
+          viewport={{
+            once: true,
+            amount: 0.12,
+          }}
+          transition={{
+            duration: 1.1,
+            ease: PREMIUM_EASE,
+          }}
+        >
+          <Image
+            src="/images/platform-features/platform-features-visual.png"
+            alt="SoccaR platform connecting football communities, talent and club operations around the world"
+            fill
+            sizes="100vw"
+            className="object-cover"
+            style={{
+              objectPosition: "64% center",
+              filter: "brightness(1.22) saturate(1.16) contrast(1.03)",
+            }}
+          />
+
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0) 48%, rgba(0,0,0,0.4) 100%)",
+            }}
+          />
+        </motion.div>
+
+        <div
+          className="mx-auto grid w-full grid-cols-1"
+          style={{
+            paddingLeft: "20px",
+            paddingRight: "20px",
+            marginTop: "44px",
+            rowGap: "18px",
+          }}
+        >
+          {platformValues.map((value, index) => (
+            <motion.article
+              key={value.title}
+              tabIndex={0}
+              className="group flex items-center gap-5 border-t border-white/18 py-6 outline-none"
+              initial={
+                reduceMotion
+                  ? false
+                  : {
+                      opacity: 0,
+                      y: 16,
+                    }
+              }
+              whileInView={{
+                opacity: 1,
+                y: 0,
+              }}
+              whileHover={
+                reduceMotion
+                  ? undefined
+                  : {
+                      y: -3,
+                    }
+              }
+              whileFocus={
+                reduceMotion
+                  ? undefined
+                  : {
+                      y: -3,
+                    }
+              }
+              viewport={{
+                once: true,
+                amount: 0.45,
+              }}
+              transition={{
+                duration: 0.65,
+                delay: index * 0.08,
+                ease: PREMIUM_EASE,
+              }}
+            >
+              <div className="h-[58px] w-[58px] shrink-0 text-[#9CE500] transition duration-300 group-hover:brightness-125 group-focus-visible:brightness-125">
+                <PlatformValueIcon type={value.icon} />
+              </div>
+
+              <div>
+                <p
+                  className="font-medium text-white"
+                  style={{
+                    fontSize: "0.82rem",
+                    lineHeight: "1.55",
+                  }}
+                >
+                  {value.title}
+                </p>
+
+                <p
+                  className="text-white/72"
+                  style={{
+                    fontSize: "0.8rem",
+                    lineHeight: "1.55",
+                  }}
+                >
+                  {value.subtitle}
+                </p>
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </div>
+
+      {/* =========================================================
+          DESKTOP / TABLET LAYOUT
+      ========================================================== */}
       <div
-        className="relative w-full overflow-hidden bg-black"
+        className="relative hidden w-full overflow-hidden bg-black md:block"
         style={{
           aspectRatio: "3 / 2",
-          minHeight: "760px",
+          minHeight: "780px",
         }}
       >
-        {/* Cinematic platform artwork */}
         <motion.div
           className="absolute inset-0"
           initial={
@@ -155,7 +429,7 @@ export default function PlatformFeatures() {
               ? false
               : {
                   opacity: 0,
-                  scale: 1.01,
+                  scale: 1.012,
                 }
           }
           whileInView={{
@@ -168,14 +442,13 @@ export default function PlatformFeatures() {
           }}
           transition={{
             duration: 1.2,
-            ease: [0.22, 1, 0.36, 1],
+            ease: PREMIUM_EASE,
           }}
         >
           <Image
             src="/images/platform-features/platform-features-visual.png"
             alt="SoccaR platform connecting football communities, talent and club operations around the world"
             fill
-            priority={false}
             sizes="100vw"
             className="object-cover object-top"
             style={{
@@ -184,39 +457,36 @@ export default function PlatformFeatures() {
           />
         </motion.div>
 
-        {/* Lighter left-side readability overlay */}
         <div
           aria-hidden="true"
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(90deg, rgba(0,0,0,0.54) 0%, rgba(0,0,0,0.36) 24%, rgba(0,0,0,0.1) 47%, rgba(0,0,0,0.01) 72%, rgba(0,0,0,0.02) 100%)",
+              "linear-gradient(90deg, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.34) 24%, rgba(0,0,0,0.09) 48%, rgba(0,0,0,0.01) 72%, rgba(0,0,0,0.02) 100%)",
           }}
         />
 
-        {/* Restrained bottom fade */}
         <div
           aria-hidden="true"
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, rgba(0,0,0,0.01) 0%, rgba(0,0,0,0) 54%, rgba(0,0,0,0.04) 77%, rgba(0,0,0,0.22) 100%)",
+              "linear-gradient(180deg, rgba(0,0,0,0.01) 0%, rgba(0,0,0,0) 54%, rgba(0,0,0,0.04) 77%, rgba(0,0,0,0.24) 100%)",
           }}
         />
 
-        {/* Main editorial content */}
         <div
-          className="relative z-20 flex h-full min-h-[760px] flex-col"
+          className="relative z-20 flex h-full min-h-[780px] flex-col"
           style={{
-            paddingTop: "clamp(88px, 8vw, 142px)",
-            paddingRight: "clamp(28px, 5vw, 92px)",
-            paddingBottom: "clamp(30px, 3vw, 46px)",
-            paddingLeft: "clamp(28px, 5.8vw, 112px)",
+            paddingTop: "clamp(94px, 8vw, 148px)",
+            paddingRight: "clamp(32px, 5vw, 96px)",
+            paddingBottom: "clamp(34px, 3vw, 50px)",
+            paddingLeft: "clamp(48px, 7vw, 136px)",
           }}
         >
           <motion.header
             style={{
-              width: "min(620px, 45vw)",
+              width: "min(610px, 43vw)",
             }}
             initial={
               reduceMotion
@@ -236,7 +506,7 @@ export default function PlatformFeatures() {
             }}
             transition={{
               duration: 0.85,
-              ease: [0.22, 1, 0.36, 1],
+              ease: PREMIUM_EASE,
             }}
           >
             <p
@@ -250,23 +520,41 @@ export default function PlatformFeatures() {
               Platform Features
             </p>
 
-            <div
+            <motion.div
               aria-hidden="true"
+              className="origin-left bg-[#9CE500]"
               style={{
-                width: "52px",
-                height: "2px",
+                width: "56px",
+                height: "1px",
                 marginTop: "18px",
-                background: "#9CE500",
+                opacity: 0.9,
+              }}
+              initial={
+                reduceMotion
+                  ? false
+                  : {
+                      scaleX: 0,
+                    }
+              }
+              whileInView={{
+                scaleX: 1,
+              }}
+              viewport={{
+                once: true,
+              }}
+              transition={{
+                duration: 0.55,
+                delay: 0.1,
+                ease: PREMIUM_EASE,
               }}
             />
 
             <h2
-              id="platform-features-heading"
               className="font-serif"
               style={{
                 marginTop: "clamp(68px, 6.8vw, 108px)",
-                fontSize: "clamp(2.1rem, 3.25vw, 4rem)",
-                lineHeight: "1.12",
+                fontSize: "clamp(2.1rem, 3.15vw, 3.9rem)",
+                lineHeight: "1.1",
                 letterSpacing: "-0.025em",
               }}
             >
@@ -277,9 +565,10 @@ export default function PlatformFeatures() {
               </span>
 
               <span
-                className="mt-[0.42em] block text-[#9CE500]"
+                className="block text-[#9CE500]"
                 style={{
-                  maxWidth: "620px",
+                  maxWidth: "610px",
+                  marginTop: "20px",
                 }}
               >
                 The operating system
@@ -290,13 +579,13 @@ export default function PlatformFeatures() {
           </motion.header>
 
           <motion.p
-            className="text-white/90"
+            className="text-white/88"
             style={{
-              width: "min(535px, 43vw)",
+              width: "min(510px, 40vw)",
               marginTop: "clamp(54px, 5vw, 82px)",
               fontSize: "clamp(0.86rem, 1vw, 1rem)",
-              lineHeight: "1.72",
-              letterSpacing: "-0.005em",
+              lineHeight: "1.82",
+              letterSpacing: "-0.002em",
             }}
             initial={
               reduceMotion
@@ -317,7 +606,7 @@ export default function PlatformFeatures() {
             transition={{
               duration: 0.75,
               delay: 0.12,
-              ease: [0.22, 1, 0.36, 1],
+              ease: PREMIUM_EASE,
             }}
           >
             From discovering talent to managing clubs, publishing media and
@@ -325,18 +614,19 @@ export default function PlatformFeatures() {
             workflow into one intelligent ecosystem.
           </motion.p>
 
-          {/* Value pillars */}
           <div
-            className="grid w-full grid-cols-1 gap-7 sm:grid-cols-3 sm:gap-5"
+            className="grid w-full grid-cols-3"
             style={{
-              maxWidth: "690px",
-              marginTop: "clamp(130px, 11vw, 190px)",
+              maxWidth: "760px",
+              marginTop: "clamp(136px, 11vw, 198px)",
+              columnGap: "clamp(34px, 4vw, 68px)",
             }}
           >
             {platformValues.map((value, index) => (
               <motion.article
                 key={value.title}
-                className="relative flex items-center gap-4 border-t border-white/20 pt-5 sm:block sm:border-t-0 sm:pt-0"
+                tabIndex={0}
+                className="group relative outline-none"
                 initial={
                   reduceMotion
                     ? false
@@ -349,6 +639,20 @@ export default function PlatformFeatures() {
                   opacity: 1,
                   y: 0,
                 }}
+                whileHover={
+                  reduceMotion
+                    ? undefined
+                    : {
+                        y: -4,
+                      }
+                }
+                whileFocus={
+                  reduceMotion
+                    ? undefined
+                    : {
+                        y: -4,
+                      }
+                }
                 viewport={{
                   once: true,
                   amount: 0.5,
@@ -356,36 +660,40 @@ export default function PlatformFeatures() {
                 transition={{
                   duration: 0.65,
                   delay: 0.18 + index * 0.09,
-                  ease: [0.22, 1, 0.36, 1],
+                  ease: PREMIUM_EASE,
                 }}
               >
                 {index > 0 && (
                   <div
                     aria-hidden="true"
-                    className="absolute -left-3 top-0 hidden h-full w-px bg-white/20 sm:block"
+                    className="absolute top-0 h-full w-px bg-white/20"
+                    style={{
+                      left: "clamp(-34px, -2vw, -18px)",
+                    }}
                   />
                 )}
 
-                <div className="h-14 w-14 shrink-0 text-[#9CE500] sm:h-[62px] sm:w-[62px]">
+                <div className="h-[64px] w-[64px] text-[#9CE500] transition duration-300 group-hover:brightness-125 group-focus-visible:brightness-125">
                   <PlatformValueIcon type={value.icon} />
                 </div>
 
-                <div className="sm:mt-4">
+                <div style={{ marginTop: "20px" }}>
                   <p
                     className="font-medium text-white"
                     style={{
-                      fontSize: "clamp(0.72rem, 0.78vw, 0.82rem)",
-                      lineHeight: "1.5",
+                      fontSize: "clamp(0.74rem, 0.8vw, 0.84rem)",
+                      lineHeight: "1.55",
                     }}
                   >
                     {value.title}
                   </p>
 
                   <p
-                    className="text-white/85"
+                    className="text-white/78"
                     style={{
+                      marginTop: "2px",
                       fontSize: "clamp(0.72rem, 0.78vw, 0.82rem)",
-                      lineHeight: "1.5",
+                      lineHeight: "1.55",
                     }}
                   >
                     {value.subtitle}

@@ -2,6 +2,8 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 
+const PREMIUM_EASE = [0.22, 1, 0.36, 1] as const;
+
 const problemItems = [
   {
     number: "01",
@@ -39,7 +41,7 @@ const headingVariants = {
     y: 0,
     transition: {
       duration: 0.9,
-      ease: [0.22, 1, 0.36, 1] as const,
+      ease: PREMIUM_EASE,
     },
   },
 };
@@ -50,111 +52,162 @@ export default function Problem() {
   return (
     <section
       id="problem"
+      aria-labelledby="problem-heading"
       className="relative overflow-hidden bg-black text-white"
       style={{
-        paddingTop: "clamp(110px, 10vw, 160px)",
-        paddingBottom: "clamp(120px, 11vw, 180px)",
+        paddingTop: "clamp(124px, 10.5vw, 176px)",
+        paddingBottom: "clamp(136px, 11.5vw, 196px)",
       }}
     >
       <div
         className="mx-auto w-full"
         style={{
-          maxWidth: "none",
           paddingLeft: "clamp(28px, 5vw, 100px)",
           paddingRight: "clamp(28px, 5vw, 100px)",
         }}
       >
+        {/* Editorial headline */}
         <motion.div
           initial={reduceMotion ? false : "hidden"}
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{
+            once: true,
+            amount: 0.3,
+          }}
           variants={headingVariants}
         >
           <h2
+            id="problem-heading"
             className="font-serif text-white"
             style={{
               width: "100%",
-              maxWidth: "none",
               fontSize: "clamp(2.2rem, 3.8vw, 4.15rem)",
               lineHeight: "1.18",
               letterSpacing: "0.01em",
               margin: 0,
+              textWrap: "balance",
             }}
           >
-            <span className="mt-5 block xl:whitespace-nowrap">
+            <span className="block xl:whitespace-nowrap">
               Football is the world&apos;s biggest community.
             </span>
 
-            <span className="mt-3 block xl:whitespace-nowrap">
+            <span
+              className="block xl:whitespace-nowrap"
+              style={{
+                marginTop: "clamp(14px, 1.4vw, 22px)",
+              }}
+            >
               Its digital experience remains fragmented.
             </span>
           </h2>
         </motion.div>
 
+        {/* Section divider */}
         <motion.div
-  aria-hidden="true"
-  className="bg-white/15"
-  style={{
-    height: "1px",
-    width: "100%",
-    marginTop: "clamp(66px, 6vw, 90px)",
-  }}
-          initial={reduceMotion ? false : { scaleX: 0, transformOrigin: "left" }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true, amount: 0.6 }}
+          aria-hidden="true"
+          className="bg-white/20"
+          style={{
+            height: "1px",
+            width: "100%",
+            marginTop: "clamp(78px, 6.5vw, 106px)",
+          }}
+          initial={
+            reduceMotion
+              ? false
+              : {
+                  scaleX: 0,
+                  transformOrigin: "left",
+                }
+          }
+          whileInView={{
+            scaleX: 1,
+          }}
+          viewport={{
+            once: true,
+            amount: 0.6,
+          }}
           transition={{
             duration: 1,
-            ease: [0.22, 1, 0.36, 1],
+            ease: PREMIUM_EASE,
           }}
         />
 
+        {/* Problem categories */}
         <div
-          className="grid grid-cols-1 gap-y-16 sm:grid-cols-2 xl:grid-cols-4"
+          className="grid grid-cols-1 gap-y-20 sm:grid-cols-2 xl:grid-cols-4"
           style={{
-            marginTop: "clamp(72px, 7vw, 95px)",
-            columnGap: "clamp(36px, 5vw, 76px)",
+            marginTop: "clamp(86px, 7.5vw, 114px)",
+            columnGap: "clamp(40px, 5vw, 82px)",
           }}
         >
           {problemItems.map((item, index) => (
             <motion.article
               key={item.number}
-              className="group"
+              className="group relative outline-none"
+              tabIndex={0}
               initial={
                 reduceMotion
                   ? false
                   : {
                       opacity: 0,
-                      y: 26,
+                      y: 28,
                     }
               }
               whileInView={{
                 opacity: 1,
                 y: 0,
               }}
-              viewport={{ once: true, amount: 0.25 }}
+              whileHover={
+                reduceMotion
+                  ? undefined
+                  : {
+                      y: -4,
+                    }
+              }
+              whileFocus={
+                reduceMotion
+                  ? undefined
+                  : {
+                      y: -4,
+                    }
+              }
+              viewport={{
+                once: true,
+                amount: 0.25,
+              }}
               transition={{
                 delay: index * 0.1,
                 duration: 0.72,
-                ease: [0.22, 1, 0.36, 1],
+                ease: PREMIUM_EASE,
+              }}
+              style={{
+                paddingTop: "4px",
+                paddingBottom: "8px",
               }}
             >
               <p
-                className="font-semibold text-[#9CE500]"
+                className="font-semibold text-[#9CE500] transition duration-300 group-hover:brightness-125 group-focus-visible:brightness-125"
                 style={{
                   fontSize: "1.8rem",
                   lineHeight: 1,
                   letterSpacing: "0.08em",
+                  transitionTimingFunction:
+                    "cubic-bezier(0.22, 1, 0.36, 1)",
                 }}
               >
                 {item.number}
               </p>
 
               <h3
-                className="font-semibold text-[#9CE500]"
+                className="font-semibold text-[#9CE500] transition duration-300 group-hover:brightness-125 group-focus-visible:brightness-125"
                 style={{
-                  marginTop: "12px",
+                  marginTop: "14px",
                   fontSize: "0.88rem",
+                  lineHeight: "1.4",
                   letterSpacing: "0.12em",
+                  transitionTimingFunction:
+                    "cubic-bezier(0.22, 1, 0.36, 1)",
                 }}
               >
                 {item.title}
@@ -162,35 +215,58 @@ export default function Problem() {
 
               <motion.div
                 aria-hidden="true"
-                className="bg-[#9CE500]"
+                className="origin-left bg-[#9CE500] transition duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
                 style={{
-                  width: "38px",
+                  width: "52px",
                   height: "1px",
-                  marginTop: "26px",
-                  opacity: 0.65,
+                  marginTop: "30px",
+                  opacity: 0.78,
+                  transitionTimingFunction:
+                    "cubic-bezier(0.22, 1, 0.36, 1)",
                 }}
-                initial={reduceMotion ? false : { scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true }}
+                initial={
+                  reduceMotion
+                    ? false
+                    : {
+                        scaleX: 0,
+                      }
+                }
+                whileInView={{
+                  scaleX: 1,
+                }}
+                viewport={{
+                  once: true,
+                }}
                 transition={{
-                  delay: 0.25 + index * 0.1,
-                  duration: 0.5,
-                  ease: [0.22, 1, 0.36, 1],
+                  delay: 0.24 + index * 0.1,
+                  duration: 0.55,
+                  ease: PREMIUM_EASE,
                 }}
               />
 
               <p
-                className="text-white/58 transition-colors duration-300 group-hover:text-white/75"
+                className="text-white/68 transition duration-300 group-hover:text-white/84 group-focus-visible:text-white/84"
                 style={{
-                  marginTop: "48px",
-                  maxWidth: "290px",
-                  fontSize: "0.96rem",
-                  lineHeight: "1.9",
-                  letterSpacing: "0.035em",
+                  marginTop: "clamp(50px, 4vw, 62px)",
+                  maxWidth: "310px",
+                  fontSize: "clamp(0.94rem, 0.95vw, 0.98rem)",
+                  lineHeight: "1.88",
+                  letterSpacing: "0.025em",
+                  transitionTimingFunction:
+                    "cubic-bezier(0.22, 1, 0.36, 1)",
                 }}
               >
                 {item.description}
               </p>
+
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -inset-x-5 -inset-y-6 -z-10 rounded-[18px] border border-white/0 bg-white/0 opacity-0 shadow-[0_24px_70px_rgba(0,0,0,0)] transition duration-300 group-hover:border-white/[0.06] group-hover:bg-white/[0.015] group-hover:opacity-100 group-hover:shadow-[0_24px_70px_rgba(0,0,0,0.22)] group-focus-visible:border-white/[0.06] group-focus-visible:bg-white/[0.015] group-focus-visible:opacity-100"
+                style={{
+                  transitionTimingFunction:
+                    "cubic-bezier(0.22, 1, 0.36, 1)",
+                }}
+              />
             </motion.article>
           ))}
         </div>

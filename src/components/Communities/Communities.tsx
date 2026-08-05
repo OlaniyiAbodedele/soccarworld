@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 
+const PREMIUM_EASE = [0.22, 1, 0.36, 1] as const;
+
 type Community = {
   title: string;
   image: string;
@@ -57,19 +59,13 @@ export default function Communities() {
   return (
     <section
       id="communities"
+      aria-labelledby="communities-heading"
       className="relative overflow-hidden bg-black text-white"
       style={{
-        paddingTop: "clamp(100px, 8vw, 145px)",
-        paddingBottom: "clamp(110px, 9vw, 165px)",
+        paddingTop: "clamp(116px, 9vw, 158px)",
+        paddingBottom: "clamp(128px, 10vw, 182px)",
       }}
     >
-      {/*
-        Master section container.
-
-        The wider left padding moves the entire composition slightly right
-        on desktop. The heading, cards and button remain aligned because
-        they all sit inside this one container.
-      */}
       <div
         className="w-full"
         style={{
@@ -80,21 +76,31 @@ export default function Communities() {
           paddingRight: "clamp(24px, 3vw, 56px)",
         }}
       >
-        {/* Heading */}
+        {/* Editorial heading */}
         <motion.header
           className="mx-auto flex w-full flex-col items-center text-center"
           style={{
             maxWidth: "1320px",
           }}
-          initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={
+            reduceMotion
+              ? false
+              : {
+                  opacity: 0,
+                  y: 24,
+                }
+          }
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
           viewport={{
             once: true,
             amount: 0.4,
           }}
           transition={{
             duration: 0.85,
-            ease: [0.22, 1, 0.36, 1],
+            ease: PREMIUM_EASE,
           }}
         >
           <p
@@ -109,13 +115,15 @@ export default function Communities() {
           </p>
 
           <h2
+            id="communities-heading"
             className="mx-auto w-full text-center font-serif text-white"
             style={{
               maxWidth: "1040px",
-              marginTop: "24px",
+              marginTop: "28px",
               fontSize: "clamp(2.5rem, 4vw, 4.25rem)",
               lineHeight: "1.13",
               letterSpacing: "0.02em",
+              textWrap: "balance",
             }}
           >
             <span className="block">One Platform.</span>
@@ -123,7 +131,7 @@ export default function Communities() {
             <span
               className="block"
               style={{
-                marginTop: "7px",
+                marginTop: "10px",
               }}
             >
               Every Football Community.
@@ -131,37 +139,41 @@ export default function Communities() {
           </h2>
 
           <p
-            className="mx-auto w-full text-center text-white/55"
+            className="mx-auto w-full text-center text-white/66"
             style={{
-              maxWidth: "760px",
-              marginTop: "26px",
-              fontSize: "clamp(0.8rem, 0.95vw, 0.94rem)",
-              lineHeight: "1.7",
-              letterSpacing: "0.11em",
+              maxWidth: "780px",
+              marginTop: "32px",
+              fontSize: "clamp(0.82rem, 0.95vw, 0.96rem)",
+              lineHeight: "1.72",
+              letterSpacing: "0.09em",
             }}
           >
             Every role. Every level. One place built entirely for the game.
           </p>
         </motion.header>
 
-        {/* Card grid */}
+        {/* Community gallery */}
         <div
           className="mx-auto grid grid-cols-1 justify-items-center sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
           style={{
             width: "100%",
             maxWidth: "1320px",
-            marginTop: "clamp(62px, 5.5vw, 84px)",
-            columnGap: "clamp(18px, 1.6vw, 28px)",
-            rowGap: "clamp(28px, 2.6vw, 42px)",
+            marginTop: "clamp(78px, 6.5vw, 102px)",
+            columnGap: "clamp(20px, 1.8vw, 32px)",
+            rowGap: "clamp(44px, 4vw, 64px)",
           }}
         >
           {communities.map((community, index) => (
             <motion.article
               key={community.title}
-              className="group relative w-full overflow-hidden rounded-[22px]"
+              aria-label={`${community.title} community`}
+              tabIndex={0}
+              className="group relative w-full overflow-hidden rounded-[22px] outline-none"
               style={{
                 maxWidth: "238px",
                 aspectRatio: "2 / 3",
+                border: "1px solid rgba(255,255,255,0)",
+                boxShadow: "0 24px 70px rgba(0,0,0,0)",
               }}
               initial={
                 reduceMotion
@@ -175,23 +187,35 @@ export default function Communities() {
                 opacity: 1,
                 y: 0,
               }}
+              whileHover={
+                reduceMotion
+                  ? undefined
+                  : {
+                      y: -6,
+                      scale: 1.012,
+                      borderColor: "rgba(156,229,0,0.28)",
+                      boxShadow: "0 28px 78px rgba(0,0,0,0.42)",
+                    }
+              }
+              whileFocus={
+                reduceMotion
+                  ? undefined
+                  : {
+                      y: -6,
+                      scale: 1.012,
+                      borderColor: "rgba(156,229,0,0.34)",
+                      boxShadow: "0 28px 78px rgba(0,0,0,0.42)",
+                    }
+              }
               viewport={{
                 once: true,
                 amount: 0.2,
               }}
               transition={{
                 delay: (index % 5) * 0.07,
-                duration: 0.68,
-                ease: [0.22, 1, 0.36, 1],
+                duration: 0.7,
+                ease: PREMIUM_EASE,
               }}
-              whileHover={
-                reduceMotion
-                  ? undefined
-                  : {
-                      y: -8,
-                      scale: 1.018,
-                    }
-              }
             >
               <Image
                 src={community.image}
@@ -203,7 +227,22 @@ export default function Communities() {
                   (max-width: 1280px) 30vw,
                   238px
                 "
-                className="object-contain transition-transform duration-700 group-hover:scale-[1.015]"
+                className="object-contain transition duration-700 group-hover:brightness-[1.04] group-hover:scale-[1.012] group-focus-visible:brightness-[1.04] group-focus-visible:scale-[1.012]"
+                style={{
+                  transitionTimingFunction:
+                    "cubic-bezier(0.22, 1, 0.36, 1)",
+                }}
+              />
+
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 rounded-[22px] opacity-0 transition duration-500 group-hover:opacity-100 group-focus-visible:opacity-100"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(156,229,0,0.025) 0%, rgba(0,0,0,0) 46%, rgba(156,229,0,0.04) 100%)",
+                  transitionTimingFunction:
+                    "cubic-bezier(0.22, 1, 0.36, 1)",
+                }}
               />
             </motion.article>
           ))}
@@ -213,9 +252,16 @@ export default function Communities() {
         <motion.div
           className="flex w-full justify-center"
           style={{
-            marginTop: "clamp(48px, 5vw, 70px)",
+            marginTop: "clamp(64px, 5.5vw, 86px)",
           }}
-          initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+          initial={
+            reduceMotion
+              ? false
+              : {
+                  opacity: 0,
+                  y: 18,
+                }
+          }
           whileInView={{
             opacity: 1,
             y: 0,
@@ -225,12 +271,13 @@ export default function Communities() {
             amount: 0.5,
           }}
           transition={{
-            duration: 0.7,
-            ease: [0.22, 1, 0.36, 1],
+            duration: 0.72,
+            ease: PREMIUM_EASE,
           }}
         >
-          <div
-            className="inline-flex items-center justify-center border border-white/70 bg-black text-center font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:border-[#9CE500] hover:text-[#9CE500]"
+          <motion.div
+            role="status"
+            className="inline-flex items-center justify-center border border-white/65 bg-black text-center font-semibold text-white outline-none"
             style={{
               minWidth: "clamp(280px, 24vw, 340px)",
               minHeight: "58px",
@@ -238,10 +285,26 @@ export default function Communities() {
               padding: "15px 34px",
               fontSize: "0.86rem",
               letterSpacing: "0.16em",
+              boxShadow:
+                "inset 0 1px 0 rgba(255,255,255,0.025), 0 0 0 rgba(156,229,0,0)",
+            }}
+            whileHover={
+              reduceMotion
+                ? undefined
+                : {
+                    y: -2,
+                    borderColor: "rgba(156,229,0,0.95)",
+                    color: "#9CE500",
+                    boxShadow: "0 14px 36px rgba(156,229,0,0.09)",
+                  }
+            }
+            transition={{
+              duration: 0.3,
+              ease: PREMIUM_EASE,
             }}
           >
             More Communities Coming
-          </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
