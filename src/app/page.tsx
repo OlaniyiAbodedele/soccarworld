@@ -2,6 +2,7 @@ import Communities from "../components/Communities/Communities";
 import Hero from "../components/Hero/Hero";
 import Navbar from "../components/Navigation/Navbar";
 import Problem from "../components/Problem/Problem";
+import WhySoccaR from "../components/why-soccar/why-soccar";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <Hero />
       <Problem />
       <Communities />
+      <WhySoccaR />
     </main>
   );
 }
