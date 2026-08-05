@@ -1,4 +1,5 @@
 import Communities from "../components/Communities/Communities";
+import Ecosystem from "../components/Ecosystem/Ecosystem";
 import Hero from "../components/Hero/Hero";
 import Navbar from "../components/Navigation/Navbar";
 import Problem from "../components/Problem/Problem";
@@ -12,6 +13,7 @@ export default function Home() {
       <Problem />
       <Communities />
       <WhySoccaR />
+      <Ecosystem />
     </main>
   );
 }
