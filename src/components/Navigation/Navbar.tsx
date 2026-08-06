@@ -1,10 +1,10 @@
 import Image from "next/image";
 
 const navigationItems = [
-  { label: "Vision", href: "#vision" },
+  { label: "Vision", href: "#hero" },
   { label: "Communities", href: "#communities" },
-  { label: "Technology", href: "#technology" },
-  { label: "About", href: "#about" },
+  { label: "Technology", href: "#ecosystem" },
+  { label: "About", href: "#why-soccar" },
 ];
 
 export default function Navbar() {
@@ -17,19 +17,21 @@ export default function Navbar() {
       }}
     >
       <div
-        className="grid h-20 w-full grid-cols-[1fr_auto] items-center lg:h-24 lg:grid-cols-[1fr_auto_1fr]"
+        className="grid w-full grid-cols-[1fr_auto] items-center lg:grid-cols-[1fr_auto_1fr]"
         style={{
-          paddingLeft: "clamp(24px, 6vw, 120px)",
-          paddingRight: "clamp(24px, 6vw, 120px)",
+          minHeight: "clamp(80px, 7vw, 96px)",
+          paddingLeft: "clamp(32px, 6vw, 120px)",
+          paddingRight: "clamp(32px, 6vw, 120px)",
         }}
       >
         {/* SoccaR logo */}
         <a
-          href="#home"
+          href="#hero"
           aria-label="SoccaR home"
           className="group inline-flex justify-self-start rounded-sm outline-none transition duration-300 focus-visible:ring-2 focus-visible:ring-[#9CE500]/80 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
           style={{
-            transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+            transitionTimingFunction:
+              "cubic-bezier(0.22, 1, 0.36, 1)",
           }}
         >
           <Image
@@ -38,9 +40,12 @@ export default function Navbar() {
             width={190}
             height={55}
             priority
-            className="h-auto w-[142px] opacity-90 transition duration-300 group-hover:opacity-100 sm:w-[154px] lg:w-[185px]"
+            className="h-auto opacity-90 transition duration-300 group-hover:opacity-100"
             style={{
-              transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+              width: "clamp(122px, 31vw, 185px)",
+              maxWidth: "100%",
+              transitionTimingFunction:
+                "cubic-bezier(0.22, 1, 0.36, 1)",
             }}
           />
         </a>
@@ -71,14 +76,14 @@ export default function Navbar() {
         {/* Primary conversion action */}
         <a
           href="#founding-community"
-          className="inline-flex items-center justify-center justify-self-end border border-white/25 bg-black/30 font-semibold uppercase text-white outline-none transition duration-300 hover:-translate-y-px hover:border-[#9CE500] hover:text-[#9CE500] focus-visible:-translate-y-px focus-visible:border-[#9CE500] focus-visible:text-[#9CE500] focus-visible:ring-2 focus-visible:ring-[#9CE500]/60 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
+          className="inline-flex items-center justify-center justify-self-end whitespace-nowrap border border-white/25 bg-black/30 font-semibold uppercase text-white outline-none transition duration-300 hover:-translate-y-px hover:border-[#9CE500] hover:text-[#9CE500] focus-visible:-translate-y-px focus-visible:border-[#9CE500] focus-visible:text-[#9CE500] focus-visible:ring-2 focus-visible:ring-[#9CE500]/60 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
           style={{
-            minWidth: "clamp(142px, 12vw, 190px)",
-            minHeight: "clamp(48px, 4.2vw, 62px)",
-            paddingLeft: "clamp(18px, 2vw, 32px)",
-            paddingRight: "clamp(18px, 2vw, 32px)",
-            fontSize: "clamp(0.68rem, 0.76vw, 0.86rem)",
-            letterSpacing: "0.18em",
+            minWidth: "clamp(128px, 30vw, 190px)",
+            minHeight: "clamp(46px, 4.2vw, 62px)",
+            paddingLeft: "clamp(14px, 2vw, 32px)",
+            paddingRight: "clamp(14px, 2vw, 32px)",
+            fontSize: "clamp(0.62rem, 0.76vw, 0.86rem)",
+            letterSpacing: "0.16em",
             boxShadow:
               "inset 0 1px 0 rgba(255,255,255,0.03), 0 0 0 rgba(156,229,0,0)",
             transitionTimingFunction:

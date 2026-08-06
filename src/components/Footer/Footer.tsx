@@ -210,9 +210,9 @@ function SocialLinks() {
     <div
       className="grid grid-cols-3"
       style={{
-        width: "210px",
-        columnGap: "18px",
-        rowGap: "18px",
+        width: "218px",
+        columnGap: "22px",
+        rowGap: "22px",
       }}
     >
       {socialLinks.map((social) => (
@@ -255,10 +255,10 @@ export default function Footer() {
           className="mx-auto w-full"
           style={{
             maxWidth: "760px",
-            paddingTop: "72px",
-            paddingRight: "22px",
-            paddingBottom: "62px",
-            paddingLeft: "22px",
+            paddingTop: "80px",
+            paddingRight: "32px",
+            paddingBottom: "72px",
+            paddingLeft: "32px",
           }}
         >
           {/* Mobile brand block */}
@@ -271,19 +271,20 @@ export default function Footer() {
               <Image
                 src="/images/logo/soccar-gold.webp"
                 alt="SoccaR"
-                width={170}
-                height={68}
-                className="h-auto w-[148px] object-contain"
+                width={190}
+                height={76}
+                className="h-auto w-[166px] object-contain"
               />
             </Link>
 
             <p
               className="text-white/74"
               style={{
-                maxWidth: "310px",
-                marginTop: "22px",
+                width: "100%",
+                maxWidth: "320px",
+                marginTop: "30px",
                 fontSize: "0.78rem",
-                lineHeight: "1.85",
+                lineHeight: "1.9",
                 letterSpacing: "0.095em",
               }}
             >
@@ -295,38 +296,45 @@ export default function Footer() {
             <div
               aria-hidden="true"
               style={{
-                width: "150px",
+                width: "160px",
                 height: "1px",
-                marginTop: "26px",
+                marginTop: "34px",
                 background:
                   "linear-gradient(90deg, transparent, rgba(156,229,0,0.82), transparent)",
               }}
             />
           </div>
 
-          {/* Mobile navigation */}
+          {/* Mobile navigation alignment rail */}
           <div
-            className="grid grid-cols-2"
+            className="w-full"
             style={{
-              marginTop: "64px",
-              columnGap: "32px",
-              rowGap: "54px",
+              paddingLeft: "50px",
             }}
           >
-            {footerColumns.map((column) => (
-              <FooterNavigationColumn
-                key={column.title}
-                column={column}
-              />
-            ))}
+            <div
+              className="grid grid-cols-2"
+              style={{
+                marginTop: "76px",
+                columnGap: "32px",
+                rowGap: "62px",
+              }}
+            >
+              {footerColumns.map((column) => (
+                <FooterNavigationColumn
+                  key={column.title}
+                  column={column}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Mobile social section */}
           <div
             className="flex flex-col items-center border-t border-white/12 text-center"
             style={{
-              marginTop: "64px",
-              paddingTop: "48px",
+              marginTop: "76px",
+              paddingTop: "58px",
             }}
           >
             <h3
@@ -340,7 +348,7 @@ export default function Footer() {
               Join the Conversation
             </h3>
 
-            <div style={{ marginTop: "30px" }}>
+            <div style={{ marginTop: "34px" }}>
               <SocialLinks />
             </div>
           </div>
@@ -352,18 +360,19 @@ export default function Footer() {
             className="mx-auto flex w-full flex-col items-center text-center"
             style={{
               maxWidth: "760px",
-              paddingTop: "28px",
-              paddingRight: "22px",
-              paddingBottom: "32px",
-              paddingLeft: "22px",
+              paddingTop: "38px",
+              paddingRight: "32px",
+              paddingBottom: "40px",
+              paddingLeft: "32px",
             }}
           >
             <p
               className="text-white/66"
               style={{
+                width: "100%",
                 maxWidth: "340px",
                 fontSize: "0.67rem",
-                lineHeight: "1.75",
+                lineHeight: "1.8",
                 letterSpacing: "0.1em",
               }}
             >
@@ -375,7 +384,7 @@ export default function Footer() {
             <div
               className="flex flex-wrap items-center justify-center"
               style={{
-                marginTop: "24px",
+                marginTop: "28px",
                 columnGap: "0",
                 rowGap: "14px",
               }}
