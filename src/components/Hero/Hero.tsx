@@ -167,7 +167,7 @@ export default function Hero() {
             variants={itemVariants}
             className="font-semibold uppercase text-[#B6FF2B]"
             style={{
-              maxWidth: "390px",
+              maxWidth: "520px",
               marginBottom: "clamp(34px, 8vw, 40px)",
               fontSize: "clamp(0.68rem, 3vw, 0.86rem)",
               lineHeight: "1.45",

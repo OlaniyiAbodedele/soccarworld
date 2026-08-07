@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import type { FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { supabase } from "../../lib/supabase";
 
 const PREMIUM_EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -225,10 +226,19 @@ type SelectFieldProps = {
   placeholder: string;
   options: string[];
   autoComplete?: string;
+  disabled?: boolean;
 };
 
+type SubmissionState = "idle" | "loading" | "success" | "error";
+
 const fieldClassName =
-  "h-[56px] w-full rounded-[8px] border border-[#9CE500]/75 bg-black/40 px-5 text-white outline-none transition duration-300 hover:border-[#9CE500] hover:bg-black/50 focus:border-[#9CE500] focus:bg-black/55 focus:ring-2 focus:ring-[#9CE500]/24";
+  "h-[56px] w-full rounded-[8px] border border-[#9CE500]/75 bg-black/40 text-white outline-none transition duration-300 hover:border-[#9CE500] hover:bg-black/50 focus:border-[#9CE500] focus:bg-black/55 focus:ring-2 focus:ring-[#9CE500]/24 disabled:cursor-not-allowed disabled:opacity-55";
+
+const textInputStyle = {
+  paddingLeft: "24px",
+  paddingRight: "24px",
+  transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+} as const;
 
 function SelectField({
   id,
@@ -237,6 +247,7 @@ function SelectField({
   placeholder,
   options,
   autoComplete,
+  disabled,
 }: SelectFieldProps) {
   return (
     <div>
@@ -260,7 +271,8 @@ function SelectField({
           required
           defaultValue=""
           autoComplete={autoComplete}
-          className="h-[56px] w-full appearance-none rounded-[8px] border border-[#9CE500]/75 bg-black/52 text-white outline-none transition duration-300 hover:border-[#9CE500] hover:bg-black/60 focus:border-[#9CE500] focus:bg-black/65 focus:ring-2 focus:ring-[#9CE500]/24"
+          disabled={disabled}
+          className="h-[56px] w-full appearance-none rounded-[8px] border border-[#9CE500]/75 bg-black/52 text-white outline-none transition duration-300 hover:border-[#9CE500] hover:bg-black/60 focus:border-[#9CE500] focus:bg-black/65 focus:ring-2 focus:ring-[#9CE500]/24 disabled:cursor-not-allowed disabled:opacity-55"
           style={{
             paddingLeft: "22px",
             paddingRight: "64px",
@@ -306,8 +318,97 @@ function SelectField({
 export default function FoundingCommunity() {
   const reduceMotion = useReducedMotion();
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const [submissionState, setSubmissionState] =
+    useState<SubmissionState>("idle");
+
+  const [message, setMessage] = useState("");
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (submissionState === "loading") {
+      return;
+    }
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    const firstName = String(formData.get("firstName") ?? "").trim();
+    const lastName = String(formData.get("lastName") ?? "").trim();
+    const email = String(formData.get("email") ?? "")
+      .trim()
+      .toLowerCase();
+    const country = String(formData.get("country") ?? "").trim();
+    const memberType = String(formData.get("memberType") ?? "").trim();
+
+    setMessage("");
+
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !country ||
+      !memberType
+    ) {
+      setSubmissionState("error");
+      setMessage("Please complete all fields before continuing.");
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(email)) {
+      setSubmissionState("error");
+      setMessage("Please enter a valid email address.");
+      return;
+    }
+
+    setSubmissionState("loading");
+
+    try {
+      const { error } = await supabase
+        .from("waitlist_members")
+        .insert({
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          country,
+          category: memberType,
+          status: "WAITLIST",
+        });
+
+      if (error) {
+        if (error.code === "23505") {
+          setSubmissionState("error");
+          setMessage(
+            "This email address is already part of the SoccaR Founding Community."
+          );
+          return;
+        }
+
+        console.error("SoccaR waitlist error:", error);
+
+        setSubmissionState("error");
+        setMessage(
+          "We could not complete your registration right now. Please try again."
+        );
+        return;
+      }
+
+      setSubmissionState("success");
+      setMessage(
+        `Welcome, ${firstName}. Your place in the SoccaR Founding Community has been reserved.`
+      );
+
+      form.reset();
+    } catch (error) {
+      console.error("Unexpected SoccaR waitlist error:", error);
+
+      setSubmissionState("error");
+      setMessage(
+        "Something unexpected happened. Please check your connection and try again."
+      );
+    }
   }
 
   return (
@@ -328,7 +429,9 @@ export default function FoundingCommunity() {
       >
         <motion.div
           className="absolute inset-0"
-          initial={reduceMotion ? false : { opacity: 0, scale: 1.015 }}
+          initial={
+            reduceMotion ? false : { opacity: 0, scale: 1.015 }
+          }
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, amount: 0.12 }}
           transition={{
@@ -344,7 +447,8 @@ export default function FoundingCommunity() {
             sizes="100vw"
             className="object-cover object-center"
             style={{
-              filter: "brightness(1.1) saturate(1.12) contrast(1.03)",
+              filter:
+                "brightness(1.1) saturate(1.12) contrast(1.03)",
             }}
           />
         </motion.div>
@@ -445,7 +549,8 @@ export default function FoundingCommunity() {
           >
             Join the founding community shaping the future of football.
             <br className="hidden sm:block" />
-            Be among the first to experience SoccaR before its global launch
+            Be among the first to experience SoccaR before its global
+            launch
             <br className="hidden sm:block" />
             and help build the world&apos;s connected football ecosystem.
           </motion.p>
@@ -507,7 +612,8 @@ export default function FoundingCommunity() {
                     letterSpacing: "0.11em",
                   }}
                 >
-                  Be among the first to shape football&apos;s next generation.
+                  Be among the first to shape football&apos;s next
+                  generation.
                 </p>
 
                 <form
@@ -538,11 +644,9 @@ export default function FoundingCommunity() {
                         type="text"
                         autoComplete="given-name"
                         required
+                        disabled={submissionState === "loading"}
                         className={fieldClassName}
-                        style={{
-                          transitionTimingFunction:
-                            "cubic-bezier(0.22, 1, 0.36, 1)",
-                        }}
+                        style={textInputStyle}
                       />
                     </div>
 
@@ -566,11 +670,9 @@ export default function FoundingCommunity() {
                         type="text"
                         autoComplete="family-name"
                         required
+                        disabled={submissionState === "loading"}
                         className={fieldClassName}
-                        style={{
-                          transitionTimingFunction:
-                            "cubic-bezier(0.22, 1, 0.36, 1)",
-                        }}
+                        style={textInputStyle}
                       />
                     </div>
 
@@ -594,11 +696,9 @@ export default function FoundingCommunity() {
                         type="email"
                         autoComplete="email"
                         required
+                        disabled={submissionState === "loading"}
                         className={fieldClassName}
-                        style={{
-                          transitionTimingFunction:
-                            "cubic-bezier(0.22, 1, 0.36, 1)",
-                        }}
+                        style={textInputStyle}
                       />
                     </div>
 
@@ -609,6 +709,7 @@ export default function FoundingCommunity() {
                       placeholder="Select your country"
                       options={countries}
                       autoComplete="country-name"
+                      disabled={submissionState === "loading"}
                     />
 
                     <SelectField
@@ -617,22 +718,25 @@ export default function FoundingCommunity() {
                       label="I am joining as"
                       placeholder="Select a category"
                       options={memberTypes}
+                      disabled={submissionState === "loading"}
                     />
                   </div>
 
                   <motion.button
                     type="submit"
-                    className="flex w-full items-center justify-center rounded-[10px] bg-[#9CE500] px-6 font-semibold text-black outline-none focus-visible:ring-2 focus-visible:ring-[#9CE500] focus-visible:ring-offset-4 focus-visible:ring-offset-black"
+                    disabled={submissionState === "loading"}
+                    className="flex w-full items-center justify-center rounded-[10px] bg-[#9CE500] px-6 font-semibold text-black outline-none focus-visible:ring-2 focus-visible:ring-[#9CE500] focus-visible:ring-offset-4 focus-visible:ring-offset-black disabled:cursor-not-allowed disabled:opacity-65"
                     style={{
                       minHeight: "60px",
                       marginTop: "clamp(30px, 3vw, 40px)",
                       fontSize: "clamp(0.78rem, 1vw, 1rem)",
                       lineHeight: "1.3",
                       letterSpacing: "0.18em",
-                      boxShadow: "0 14px 36px rgba(156,229,0,0.16)",
+                      boxShadow:
+                        "0 14px 36px rgba(156,229,0,0.16)",
                     }}
                     whileHover={
-                      reduceMotion
+                      reduceMotion || submissionState === "loading"
                         ? undefined
                         : {
                             y: -2,
@@ -642,15 +746,55 @@ export default function FoundingCommunity() {
                           }
                     }
                     whileTap={
-                      reduceMotion ? undefined : { scale: 0.995 }
+                      reduceMotion || submissionState === "loading"
+                        ? undefined
+                        : { scale: 0.995 }
                     }
                     transition={{
                       duration: 0.25,
                       ease: PREMIUM_EASE,
                     }}
                   >
-                    Reserve My Founding Membership
+                    {submissionState === "loading" ? (
+                      <span className="flex items-center justify-center gap-3">
+                        <span
+                          aria-hidden="true"
+                          className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black"
+                        />
+                        Reserving Your Membership...
+                      </span>
+                    ) : (
+                      "Reserve My Founding Membership"
+                    )}
                   </motion.button>
+
+                  {message && (
+                    <motion.div
+                      role={
+                        submissionState === "error"
+                          ? "alert"
+                          : "status"
+                      }
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={
+                        submissionState === "success"
+                          ? "border border-[#9CE500]/45 bg-[#9CE500]/[0.08] text-[#C7FF63] shadow-[0_12px_34px_rgba(156,229,0,0.08)]"
+                          : "border border-white/20 bg-white/[0.035] text-white/82"
+                      }
+                      style={{
+                        marginTop: "24px",
+                        borderRadius: "10px",
+                        padding: "16px 18px",
+                        fontSize: "0.76rem",
+                        lineHeight: "1.7",
+                        letterSpacing: "0.06em",
+                        textAlign: "center",
+                      }}
+                    >
+                      {message}
+                    </motion.div>
+                  )}
 
                   <p
                     className="text-center text-white/66"
@@ -661,7 +805,8 @@ export default function FoundingCommunity() {
                       letterSpacing: "0.1em",
                     }}
                   >
-                    Joining the Founding Community is free. Early access only.
+                    Joining the Founding Community is free. Early access
+                    only.
                     <br className="hidden sm:block" />
                     Founding Members receive exclusive launch privileges.
                   </p>
@@ -708,6 +853,7 @@ export default function FoundingCommunity() {
                 >
                   ✓
                 </span>
+
                 {benefit}
               </p>
             ))}
