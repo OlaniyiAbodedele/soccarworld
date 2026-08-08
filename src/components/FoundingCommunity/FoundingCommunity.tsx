@@ -1,11 +1,37 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type FormEvent } from "react";
+import Script from "next/script";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { supabase } from "../../lib/supabase";
 
 const PREMIUM_EASE = [0.22, 1, 0.36, 1] as const;
+
+type TurnstileApi = {
+  render: (
+    container: string | HTMLElement,
+    options: {
+      sitekey: string;
+      theme?: "light" | "dark" | "auto";
+      callback?: (token: string) => void;
+      "expired-callback"?: () => void;
+      "error-callback"?: () => void;
+    }
+  ) => string;
+  reset: (widgetId?: string) => void;
+};
+
+declare global {
+  interface Window {
+    turnstile?: TurnstileApi;
+  }
+}
 
 const memberTypes = [
   "Football Fan",
@@ -231,6 +257,13 @@ type SelectFieldProps = {
 
 type SubmissionState = "idle" | "loading" | "success" | "error";
 
+type JoinWaitlistResponse = {
+  success: boolean;
+  founderNumber?: number;
+  duplicate?: boolean;
+  message?: string;
+};
+
 const fieldClassName =
   "h-[56px] w-full rounded-[8px] border border-[#9CE500]/75 bg-black/40 text-white outline-none transition duration-300 hover:border-[#9CE500] hover:bg-black/50 focus:border-[#9CE500] focus:bg-black/55 focus:ring-2 focus:ring-[#9CE500]/24 disabled:cursor-not-allowed disabled:opacity-55";
 
@@ -322,8 +355,96 @@ export default function FoundingCommunity() {
     useState<SubmissionState>("idle");
 
   const [message, setMessage] = useState("");
+  const [memberCount, setMemberCount] =
+    useState<number | null>(null);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const [turnstileReady, setTurnstileReady] = useState(false);
+  const [turnstileToken, setTurnstileToken] =
+    useState<string | null>(null);
+
+  const turnstileWidgetId = useRef<string | null>(null);
+
+  const turnstileSiteKey =
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+  useEffect(() => {
+    async function loadMemberCount() {
+      const { data, error } = await supabase.rpc(
+        "get_waitlist_count"
+      );
+
+      if (error) {
+        console.error(
+          "Unable to load Founding Member count:",
+          error
+        );
+        return;
+      }
+
+      setMemberCount(Number(data));
+    }
+
+    loadMemberCount();
+  }, []);
+
+  useEffect(() => {
+    if (
+      !turnstileReady ||
+      !turnstileSiteKey ||
+      !window.turnstile ||
+      turnstileWidgetId.current
+    ) {
+      return;
+    }
+
+    turnstileWidgetId.current = window.turnstile.render(
+      "#soccar-turnstile",
+      {
+        sitekey: turnstileSiteKey,
+        theme: "dark",
+
+        callback(token: string) {
+          setTurnstileToken(token);
+
+          if (submissionState === "error") {
+            setSubmissionState("idle");
+            setMessage("");
+          }
+        },
+
+        "expired-callback"() {
+          setTurnstileToken(null);
+        },
+
+        "error-callback"() {
+          setTurnstileToken(null);
+          setSubmissionState("error");
+          setMessage(
+            "Security verification could not be completed. Please refresh the page and try again."
+          );
+        },
+      }
+    );
+  }, [
+    turnstileReady,
+    turnstileSiteKey,
+    submissionState,
+  ]);
+
+  function resetTurnstile() {
+    setTurnstileToken(null);
+
+    if (
+      window.turnstile &&
+      turnstileWidgetId.current
+    ) {
+      window.turnstile.reset(turnstileWidgetId.current);
+    }
+  }
+
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
 
     if (submissionState === "loading") {
@@ -333,13 +454,25 @@ export default function FoundingCommunity() {
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    const firstName = String(formData.get("firstName") ?? "").trim();
-    const lastName = String(formData.get("lastName") ?? "").trim();
+    const firstName = String(
+      formData.get("firstName") ?? ""
+    ).trim();
+
+    const lastName = String(
+      formData.get("lastName") ?? ""
+    ).trim();
+
     const email = String(formData.get("email") ?? "")
       .trim()
       .toLowerCase();
-    const country = String(formData.get("country") ?? "").trim();
-    const memberType = String(formData.get("memberType") ?? "").trim();
+
+    const country = String(
+      formData.get("country") ?? ""
+    ).trim();
+
+    const memberType = String(
+      formData.get("memberType") ?? ""
+    ).trim();
 
     setMessage("");
 
@@ -351,515 +484,775 @@ export default function FoundingCommunity() {
       !memberType
     ) {
       setSubmissionState("error");
-      setMessage("Please complete all fields before continuing.");
+      setMessage(
+        "Please complete all fields before continuing."
+      );
       return;
     }
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailPattern =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailPattern.test(email)) {
       setSubmissionState("error");
-      setMessage("Please enter a valid email address.");
+      setMessage(
+        "Please enter a valid email address."
+      );
+      return;
+    }
+
+    if (!turnstileToken) {
+      setSubmissionState("error");
+      setMessage(
+        "Please complete the security verification before continuing."
+      );
       return;
     }
 
     setSubmissionState("loading");
 
     try {
-      const { error } = await supabase
-        .from("waitlist_members")
-        .insert({
-          first_name: firstName,
-          last_name: lastName,
-          email,
-          country,
-          category: memberType,
-          status: "WAITLIST",
-        });
-
-      if (error) {
-        if (error.code === "23505") {
-          setSubmissionState("error");
-          setMessage(
-            "This email address is already part of the SoccaR Founding Community."
-          );
-          return;
+      const response = await fetch(
+        "/api/join-waitlist",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            country,
+            memberType,
+            turnstileToken,
+          }),
         }
+      );
 
-        console.error("SoccaR waitlist error:", error);
+      const result =
+        (await response.json()) as JoinWaitlistResponse;
 
+      if (!response.ok || !result.success) {
         setSubmissionState("error");
+
         setMessage(
-          "We could not complete your registration right now. Please try again."
+          result.message ||
+            "We could not complete your registration right now. Please try again."
         );
+
+        resetTurnstile();
+
         return;
       }
 
+      if (
+        typeof result.founderNumber !== "number"
+      ) {
+        setSubmissionState("error");
+
+        setMessage(
+          "Your registration was received, but we could not confirm your Founder Number. Please contact SoccaR support."
+        );
+
+        resetTurnstile();
+
+        return;
+      }
+
+      const formattedFounderNumber = String(
+        result.founderNumber
+      ).padStart(6, "0");
+
       setSubmissionState("success");
+
       setMessage(
-        `Welcome, ${firstName}. Your place in the SoccaR Founding Community has been reserved.`
+        `Welcome, ${firstName}. You are Founding Member #${formattedFounderNumber}. Your place in the SoccaR Founding Community has been reserved.`
+      );
+
+      setMemberCount((currentCount) =>
+        currentCount === null
+          ? 1
+          : currentCount + 1
       );
 
       form.reset();
+      resetTurnstile();
     } catch (error) {
-      console.error("Unexpected SoccaR waitlist error:", error);
+      console.error(
+        "SoccaR registration request failed:",
+        error
+      );
 
       setSubmissionState("error");
+
       setMessage(
         "Something unexpected happened. Please check your connection and try again."
       );
+
+      resetTurnstile();
     }
   }
 
   return (
-    <section
-      id="founding-community"
-      aria-labelledby="founding-community-heading"
-      className="relative w-full overflow-hidden bg-black text-white"
-      style={{
-        paddingTop: "clamp(72px, 6vw, 108px)",
-        paddingBottom: "clamp(72px, 6vw, 108px)",
-      }}
-    >
-      <div
-        className="relative w-full overflow-hidden bg-black"
+    <>
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+        strategy="afterInteractive"
+        onLoad={() => setTurnstileReady(true)}
+      />
+
+      <section
+        id="founding-community"
+        aria-labelledby="founding-community-heading"
+        className="relative w-full overflow-hidden bg-black text-white"
         style={{
-          minHeight: "clamp(1180px, 90vw, 1380px)",
+          paddingTop:
+            "clamp(72px, 6vw, 108px)",
+          paddingBottom:
+            "clamp(72px, 6vw, 108px)",
         }}
       >
-        <motion.div
-          className="absolute inset-0"
-          initial={
-            reduceMotion ? false : { opacity: 0, scale: 1.015 }
-          }
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, amount: 0.12 }}
-          transition={{
-            duration: 1.2,
-            ease: PREMIUM_EASE,
+        <div
+          className="relative w-full overflow-hidden bg-black"
+          style={{
+            minHeight:
+              "clamp(1180px, 90vw, 1380px)",
           }}
         >
-          <Image
-            src="/images/founding-community/founding-community-visual.png"
-            alt="A global football community gathered beneath the connected SoccaR world"
-            fill
-            priority={false}
-            sizes="100vw"
-            className="object-cover object-center"
+          <motion.div
+            className="absolute inset-0"
+            initial={
+              reduceMotion
+                ? false
+                : {
+                    opacity: 0,
+                    scale: 1.015,
+                  }
+            }
+            whileInView={{
+              opacity: 1,
+              scale: 1,
+            }}
+            viewport={{
+              once: true,
+              amount: 0.12,
+            }}
+            transition={{
+              duration: 1.2,
+              ease: PREMIUM_EASE,
+            }}
+          >
+            <Image
+              src="/images/founding-community/founding-community-visual.png"
+              alt="A global football community gathered beneath the connected SoccaR world"
+              fill
+              priority={false}
+              sizes="100vw"
+              className="object-cover object-center"
+              style={{
+                filter:
+                  "brightness(1.1) saturate(1.12) contrast(1.03)",
+              }}
+            />
+          </motion.div>
+
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
             style={{
-              filter:
-                "brightness(1.1) saturate(1.12) contrast(1.03)",
+              background:
+                "linear-gradient(180deg, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0.06) 28%, rgba(0,0,0,0.14) 68%, rgba(0,0,0,0.52) 100%)",
             }}
           />
-        </motion.div>
 
-        <div
-          aria-hidden="true"
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0.06) 28%, rgba(0,0,0,0.14) 68%, rgba(0,0,0,0.52) 100%)",
-          }}
-        />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(circle at 50% 38%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.14) 34%, rgba(0,0,0,0.36) 78%, rgba(0,0,0,0.56) 100%)",
+            }}
+          />
 
-        <div
-          aria-hidden="true"
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(circle at 50% 38%, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.14) 34%, rgba(0,0,0,0.36) 78%, rgba(0,0,0,0.56) 100%)",
-          }}
-        />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-[14px] z-10"
+            style={{
+              border:
+                "1px solid rgba(156,229,0,0.68)",
+            }}
+          />
 
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-[14px] z-10"
-          style={{
-            border: "1px solid rgba(156,229,0,0.68)",
-          }}
-        />
-
-        <div
-          className="relative z-20 flex w-full flex-col items-center text-center"
-          style={{
-            minHeight: "clamp(1180px, 90vw, 1380px)",
-            paddingTop: "clamp(72px, 7vw, 118px)",
-            paddingRight: "clamp(20px, 5vw, 88px)",
-            paddingBottom: "clamp(72px, 6vw, 104px)",
-            paddingLeft: "clamp(20px, 5vw, 88px)",
-          }}
-        >
-          <motion.header
-            className="flex w-full flex-col items-center"
-            initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.35 }}
-            transition={{
-              duration: 0.85,
-              ease: PREMIUM_EASE,
+          <div
+            className="relative z-20 flex w-full flex-col items-center text-center"
+            style={{
+              minHeight:
+                "clamp(1180px, 90vw, 1380px)",
+              paddingTop:
+                "clamp(72px, 7vw, 118px)",
+              paddingRight:
+                "clamp(20px, 5vw, 88px)",
+              paddingBottom:
+                "clamp(72px, 6vw, 104px)",
+              paddingLeft:
+                "clamp(20px, 5vw, 88px)",
             }}
           >
-            <p
-              className="font-semibold uppercase text-white/92"
-              style={{
-                fontSize: "clamp(0.62rem, 0.72vw, 0.76rem)",
-                lineHeight: "1.4",
-                letterSpacing: "0.28em",
+            <motion.header
+              className="flex w-full flex-col items-center"
+              initial={
+                reduceMotion
+                  ? false
+                  : {
+                      opacity: 0,
+                      y: 24,
+                    }
+              }
+              whileInView={{
+                opacity: 1,
+                y: 0,
+              }}
+              viewport={{
+                once: true,
+                amount: 0.35,
+              }}
+              transition={{
+                duration: 0.85,
+                ease: PREMIUM_EASE,
               }}
             >
-              Join the Founding Community
-            </p>
+              <p
+                className="font-semibold uppercase text-white/92"
+                style={{
+                  fontSize:
+                    "clamp(0.62rem, 0.72vw, 0.76rem)",
+                  lineHeight: "1.4",
+                  letterSpacing: "0.28em",
+                }}
+              >
+                Join the Founding Community
+              </p>
 
-            <h2
-              id="founding-community-heading"
-              className="font-serif text-white"
+              <h2
+                id="founding-community-heading"
+                className="font-serif text-white"
+                style={{
+                  maxWidth: "1040px",
+                  marginTop:
+                    "clamp(52px, 5.5vw, 86px)",
+                  fontSize:
+                    "clamp(2.45rem, 5vw, 5.4rem)",
+                  lineHeight: "1.05",
+                  letterSpacing: "0.075em",
+                  textWrap: "balance",
+                }}
+              >
+                The future of football
+                <br />
+                begins with you.
+              </h2>
+            </motion.header>
+
+            <motion.p
+              className="text-white/86"
               style={{
-                maxWidth: "1040px",
-                marginTop: "clamp(52px, 5.5vw, 86px)",
-                fontSize: "clamp(2.45rem, 5vw, 5.4rem)",
-                lineHeight: "1.05",
-                letterSpacing: "0.075em",
+                maxWidth: "700px",
+                marginTop:
+                  "clamp(34px, 3.5vw, 54px)",
+                fontSize:
+                  "clamp(0.86rem, 1.05vw, 1.05rem)",
+                lineHeight: "1.72",
+                letterSpacing: "0.14em",
                 textWrap: "balance",
               }}
+              initial={
+                reduceMotion
+                  ? false
+                  : {
+                      opacity: 0,
+                      y: 18,
+                    }
+              }
+              whileInView={{
+                opacity: 1,
+                y: 0,
+              }}
+              viewport={{
+                once: true,
+                amount: 0.4,
+              }}
+              transition={{
+                duration: 0.75,
+                delay: 0.12,
+                ease: PREMIUM_EASE,
+              }}
             >
-              The future of football
-              <br />
-              begins with you.
-            </h2>
-          </motion.header>
+              Join the founding community shaping
+              the future of football.
+              <br className="hidden sm:block" />
+              Be among the first to experience
+              SoccaR before its global launch
+              <br className="hidden sm:block" />
+              and help build the world&apos;s
+              connected football ecosystem.
+            </motion.p>
 
-          <motion.p
-            className="text-white/86"
-            style={{
-              maxWidth: "700px",
-              marginTop: "clamp(34px, 3.5vw, 54px)",
-              fontSize: "clamp(0.86rem, 1.05vw, 1.05rem)",
-              lineHeight: "1.72",
-              letterSpacing: "0.14em",
-              textWrap: "balance",
-            }}
-            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{
-              duration: 0.75,
-              delay: 0.12,
-              ease: PREMIUM_EASE,
-            }}
-          >
-            Join the founding community shaping the future of football.
-            <br className="hidden sm:block" />
-            Be among the first to experience SoccaR before its global
-            launch
-            <br className="hidden sm:block" />
-            and help build the world&apos;s connected football ecosystem.
-          </motion.p>
+            {memberCount !== null && (
+              <motion.div
+                role="status"
+                aria-live="polite"
+                className="flex items-center justify-center"
+                style={{
+                  marginTop: "28px",
+                }}
+                initial={
+                  reduceMotion
+                    ? false
+                    : {
+                        opacity: 0,
+                        y: 10,
+                      }
+                }
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                transition={{
+                  duration: 0.65,
+                  ease: PREMIUM_EASE,
+                }}
+              >
+                <p
+                  className="font-semibold uppercase text-[#9CE500]"
+                  style={{
+                    fontSize:
+                      "clamp(0.72rem, 0.9vw, 0.88rem)",
+                    lineHeight: "1.5",
+                    letterSpacing: "0.16em",
+                  }}
+                >
+                  {memberCount.toLocaleString()}{" "}
+                  Founding{" "}
+                  {memberCount === 1
+                    ? "Member"
+                    : "Members"}{" "}
+                  Joined
+                </p>
+              </motion.div>
+            )}
 
-          <motion.div
-            className="w-full"
-            style={{
-              maxWidth: "860px",
-              marginTop: "clamp(48px, 5vw, 78px)",
-            }}
-            initial={reduceMotion ? false : { opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.18 }}
-            transition={{
-              duration: 0.9,
-              delay: 0.16,
-              ease: PREMIUM_EASE,
-            }}
-          >
-            <div
-              className="relative overflow-hidden rounded-[22px]"
+            <motion.div
+              className="w-full"
               style={{
-                border: "1px solid rgba(255,255,255,0.24)",
-                background:
-                  "linear-gradient(180deg, rgba(3,7,3,0.76) 0%, rgba(0,0,0,0.86) 100%)",
-                boxShadow:
-                  "inset 0 1px 0 rgba(255,255,255,0.075), 0 28px 80px rgba(0,0,0,0.38)",
-                padding:
-                  "clamp(34px, 4.2vw, 62px) clamp(20px, 4.5vw, 68px)",
+                maxWidth: "860px",
+                marginTop:
+                  "clamp(48px, 5vw, 78px)",
+              }}
+              initial={
+                reduceMotion
+                  ? false
+                  : {
+                      opacity: 0,
+                      y: 28,
+                    }
+              }
+              whileInView={{
+                opacity: 1,
+                y: 0,
+              }}
+              viewport={{
+                once: true,
+                amount: 0.18,
+              }}
+              transition={{
+                duration: 0.9,
+                delay: 0.16,
+                ease: PREMIUM_EASE,
               }}
             >
               <div
-                aria-hidden="true"
-                className="absolute inset-x-10 top-0 h-px"
+                className="relative overflow-hidden rounded-[22px]"
                 style={{
+                  border:
+                    "1px solid rgba(255,255,255,0.24)",
                   background:
-                    "linear-gradient(90deg, transparent, rgba(156,229,0,0.82), transparent)",
+                    "linear-gradient(180deg, rgba(3,7,3,0.76) 0%, rgba(0,0,0,0.86) 100%)",
+                  boxShadow:
+                    "inset 0 1px 0 rgba(255,255,255,0.075), 0 28px 80px rgba(0,0,0,0.38)",
+                  padding:
+                    "clamp(34px, 4.2vw, 62px) clamp(20px, 4.5vw, 68px)",
                 }}
-              />
-
-              <div className="relative z-10">
-                <p
-                  className="font-serif text-white"
+              >
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-x-10 top-0 h-px"
                   style={{
-                    fontSize: "clamp(1.05rem, 1.4vw, 1.35rem)",
-                    lineHeight: "1.4",
+                    background:
+                      "linear-gradient(90deg, transparent, rgba(156,229,0,0.82), transparent)",
+                  }}
+                />
+
+                <div className="relative z-10">
+                  <p
+                    className="font-serif text-white"
+                    style={{
+                      fontSize:
+                        "clamp(1.05rem, 1.4vw, 1.35rem)",
+                      lineHeight: "1.4",
+                      letterSpacing: "0.12em",
+                    }}
+                  >
+                    Become a Founding Member
+                  </p>
+
+                  <p
+                    className="text-white/80"
+                    style={{
+                      marginTop:
+                        "clamp(20px, 2vw, 28px)",
+                      fontSize:
+                        "clamp(0.8rem, 0.95vw, 0.96rem)",
+                      lineHeight: "1.68",
+                      letterSpacing: "0.11em",
+                    }}
+                  >
+                    Be among the first to shape
+                    football&apos;s next generation.
+                  </p>
+
+                  <form
+                    onSubmit={handleSubmit}
+                    className="text-left"
+                    style={{
+                      marginTop:
+                        "clamp(34px, 3.5vw, 48px)",
+                    }}
+                  >
+                    <div className="grid grid-cols-1 gap-x-8 gap-y-7 md:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="founding-first-name"
+                          className="block text-white/82"
+                          style={{
+                            marginBottom: "11px",
+                            fontSize: "0.72rem",
+                            lineHeight: "1.4",
+                            letterSpacing: "0.16em",
+                          }}
+                        >
+                          First Name
+                        </label>
+
+                        <input
+                          id="founding-first-name"
+                          name="firstName"
+                          type="text"
+                          autoComplete="given-name"
+                          required
+                          disabled={
+                            submissionState ===
+                            "loading"
+                          }
+                          className={
+                            fieldClassName
+                          }
+                          style={textInputStyle}
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="founding-last-name"
+                          className="block text-white/82"
+                          style={{
+                            marginBottom: "11px",
+                            fontSize: "0.72rem",
+                            lineHeight: "1.4",
+                            letterSpacing: "0.16em",
+                          }}
+                        >
+                          Last Name
+                        </label>
+
+                        <input
+                          id="founding-last-name"
+                          name="lastName"
+                          type="text"
+                          autoComplete="family-name"
+                          required
+                          disabled={
+                            submissionState ===
+                            "loading"
+                          }
+                          className={
+                            fieldClassName
+                          }
+                          style={textInputStyle}
+                        />
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <label
+                          htmlFor="founding-email"
+                          className="block text-white/82"
+                          style={{
+                            marginBottom: "11px",
+                            fontSize: "0.72rem",
+                            lineHeight: "1.4",
+                            letterSpacing: "0.16em",
+                          }}
+                        >
+                          Email
+                        </label>
+
+                        <input
+                          id="founding-email"
+                          name="email"
+                          type="email"
+                          autoComplete="email"
+                          required
+                          disabled={
+                            submissionState ===
+                            "loading"
+                          }
+                          className={
+                            fieldClassName
+                          }
+                          style={textInputStyle}
+                        />
+                      </div>
+
+                      <SelectField
+                        id="founding-country"
+                        name="country"
+                        label="Country"
+                        placeholder="Select your country"
+                        options={countries}
+                        autoComplete="country-name"
+                        disabled={
+                          submissionState ===
+                          "loading"
+                        }
+                      />
+
+                      <SelectField
+                        id="founding-member-type"
+                        name="memberType"
+                        label="I am joining as"
+                        placeholder="Select a category"
+                        options={memberTypes}
+                        disabled={
+                          submissionState ===
+                          "loading"
+                        }
+                      />
+                    </div>
+
+                    <div
+                      className="flex w-full justify-center"
+                      style={{
+                        marginTop:
+                          "clamp(28px, 3vw, 38px)",
+                        minHeight: "65px",
+                      }}
+                    >
+                      {turnstileSiteKey ? (
+                        <div
+                          id="soccar-turnstile"
+                          aria-label="Security verification"
+                        />
+                      ) : (
+                        <p
+                          className="text-center text-white/60"
+                          style={{
+                            fontSize: "0.72rem",
+                            letterSpacing: "0.08em",
+                          }}
+                        >
+                          Security verification is
+                          temporarily unavailable.
+                        </p>
+                      )}
+                    </div>
+
+                    <motion.button
+                      type="submit"
+                      disabled={
+                        submissionState ===
+                        "loading"
+                      }
+                      className="flex w-full items-center justify-center rounded-[10px] bg-[#9CE500] px-6 font-semibold text-black outline-none focus-visible:ring-2 focus-visible:ring-[#9CE500] focus-visible:ring-offset-4 focus-visible:ring-offset-black disabled:cursor-not-allowed disabled:opacity-65"
+                      style={{
+                        minHeight: "60px",
+                        marginTop:
+                          "clamp(22px, 2.5vw, 32px)",
+                        fontSize:
+                          "clamp(0.78rem, 1vw, 1rem)",
+                        lineHeight: "1.3",
+                        letterSpacing: "0.18em",
+                        boxShadow:
+                          "0 14px 36px rgba(156,229,0,0.16)",
+                      }}
+                      whileHover={
+                        reduceMotion ||
+                        submissionState ===
+                          "loading"
+                          ? undefined
+                          : {
+                              y: -2,
+                              scale: 1.004,
+                              boxShadow:
+                                "0 18px 46px rgba(156,229,0,0.26)",
+                            }
+                      }
+                      whileTap={
+                        reduceMotion ||
+                        submissionState ===
+                          "loading"
+                          ? undefined
+                          : {
+                              scale: 0.995,
+                            }
+                      }
+                      transition={{
+                        duration: 0.25,
+                        ease: PREMIUM_EASE,
+                      }}
+                    >
+                      {submissionState ===
+                      "loading" ? (
+                        <span className="flex items-center justify-center gap-3">
+                          <span
+                            aria-hidden="true"
+                            className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black"
+                          />
+                          Reserving Your Membership...
+                        </span>
+                      ) : (
+                        "Reserve My Founding Membership"
+                      )}
+                    </motion.button>
+
+                    {message && (
+                      <motion.div
+                        role={
+                          submissionState === "error"
+                            ? "alert"
+                            : "status"
+                        }
+                        initial={{
+                          opacity: 0,
+                          y: 8,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          y: 0,
+                        }}
+                        className={
+                          submissionState ===
+                          "success"
+                            ? "border border-[#9CE500]/45 bg-[#9CE500]/[0.08] text-[#C7FF63] shadow-[0_12px_34px_rgba(156,229,0,0.08)]"
+                            : "border border-white/20 bg-white/[0.035] text-white/82"
+                        }
+                        style={{
+                          marginTop: "24px",
+                          borderRadius: "10px",
+                          padding: "16px 18px",
+                          fontSize: "0.76rem",
+                          lineHeight: "1.7",
+                          letterSpacing: "0.06em",
+                          textAlign: "center",
+                        }}
+                      >
+                        {message}
+                      </motion.div>
+                    )}
+
+                    <p
+                      className="text-center text-white/66"
+                      style={{
+                        marginTop:
+                          "clamp(22px, 2.5vw, 30px)",
+                        fontSize:
+                          "clamp(0.68rem, 0.8vw, 0.78rem)",
+                        lineHeight: "1.6",
+                        letterSpacing: "0.1em",
+                      }}
+                    >
+                      Joining the Founding Community
+                      is free. Early access only.
+                      <br className="hidden sm:block" />
+                      Founding Members receive
+                      exclusive launch privileges.
+                    </p>
+                  </form>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+              style={{
+                maxWidth: "1080px",
+                marginTop:
+                  "clamp(34px, 3.5vw, 50px)",
+                columnGap:
+                  "clamp(18px, 2.2vw, 30px)",
+                rowGap: "16px",
+              }}
+              initial={
+                reduceMotion
+                  ? false
+                  : {
+                      opacity: 0,
+                      y: 14,
+                    }
+              }
+              whileInView={{
+                opacity: 1,
+                y: 0,
+              }}
+              viewport={{
+                once: true,
+                amount: 0.4,
+              }}
+              transition={{
+                duration: 0.7,
+                delay: 0.22,
+                ease: PREMIUM_EASE,
+              }}
+            >
+              {[
+                "Founding Member Status",
+                "Early Product Access",
+                "Direct Product Updates",
+                "Priority Community Invitations",
+              ].map((benefit) => (
+                <p
+                  key={benefit}
+                  className="flex items-center justify-center text-white/88 sm:justify-start"
+                  style={{
+                    fontSize:
+                      "clamp(0.64rem, 0.76vw, 0.74rem)",
+                    lineHeight: "1.5",
                     letterSpacing: "0.12em",
                   }}
                 >
-                  Become a Founding Member
-                </p>
-
-                <p
-                  className="text-white/80"
-                  style={{
-                    marginTop: "clamp(20px, 2vw, 28px)",
-                    fontSize: "clamp(0.8rem, 0.95vw, 0.96rem)",
-                    lineHeight: "1.68",
-                    letterSpacing: "0.11em",
-                  }}
-                >
-                  Be among the first to shape football&apos;s next
-                  generation.
-                </p>
-
-                <form
-                  onSubmit={handleSubmit}
-                  className="text-left"
-                  style={{
-                    marginTop: "clamp(34px, 3.5vw, 48px)",
-                  }}
-                >
-                  <div className="grid grid-cols-1 gap-x-8 gap-y-7 md:grid-cols-2">
-                    <div>
-                      <label
-                        htmlFor="founding-first-name"
-                        className="block text-white/82"
-                        style={{
-                          marginBottom: "11px",
-                          fontSize: "0.72rem",
-                          lineHeight: "1.4",
-                          letterSpacing: "0.16em",
-                        }}
-                      >
-                        First Name
-                      </label>
-
-                      <input
-                        id="founding-first-name"
-                        name="firstName"
-                        type="text"
-                        autoComplete="given-name"
-                        required
-                        disabled={submissionState === "loading"}
-                        className={fieldClassName}
-                        style={textInputStyle}
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="founding-last-name"
-                        className="block text-white/82"
-                        style={{
-                          marginBottom: "11px",
-                          fontSize: "0.72rem",
-                          lineHeight: "1.4",
-                          letterSpacing: "0.16em",
-                        }}
-                      >
-                        Last Name
-                      </label>
-
-                      <input
-                        id="founding-last-name"
-                        name="lastName"
-                        type="text"
-                        autoComplete="family-name"
-                        required
-                        disabled={submissionState === "loading"}
-                        className={fieldClassName}
-                        style={textInputStyle}
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label
-                        htmlFor="founding-email"
-                        className="block text-white/82"
-                        style={{
-                          marginBottom: "11px",
-                          fontSize: "0.72rem",
-                          lineHeight: "1.4",
-                          letterSpacing: "0.16em",
-                        }}
-                      >
-                        Email
-                      </label>
-
-                      <input
-                        id="founding-email"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        required
-                        disabled={submissionState === "loading"}
-                        className={fieldClassName}
-                        style={textInputStyle}
-                      />
-                    </div>
-
-                    <SelectField
-                      id="founding-country"
-                      name="country"
-                      label="Country"
-                      placeholder="Select your country"
-                      options={countries}
-                      autoComplete="country-name"
-                      disabled={submissionState === "loading"}
-                    />
-
-                    <SelectField
-                      id="founding-member-type"
-                      name="memberType"
-                      label="I am joining as"
-                      placeholder="Select a category"
-                      options={memberTypes}
-                      disabled={submissionState === "loading"}
-                    />
-                  </div>
-
-                  <motion.button
-                    type="submit"
-                    disabled={submissionState === "loading"}
-                    className="flex w-full items-center justify-center rounded-[10px] bg-[#9CE500] px-6 font-semibold text-black outline-none focus-visible:ring-2 focus-visible:ring-[#9CE500] focus-visible:ring-offset-4 focus-visible:ring-offset-black disabled:cursor-not-allowed disabled:opacity-65"
-                    style={{
-                      minHeight: "60px",
-                      marginTop: "clamp(30px, 3vw, 40px)",
-                      fontSize: "clamp(0.78rem, 1vw, 1rem)",
-                      lineHeight: "1.3",
-                      letterSpacing: "0.18em",
-                      boxShadow:
-                        "0 14px 36px rgba(156,229,0,0.16)",
-                    }}
-                    whileHover={
-                      reduceMotion || submissionState === "loading"
-                        ? undefined
-                        : {
-                            y: -2,
-                            scale: 1.004,
-                            boxShadow:
-                              "0 18px 46px rgba(156,229,0,0.26)",
-                          }
-                    }
-                    whileTap={
-                      reduceMotion || submissionState === "loading"
-                        ? undefined
-                        : { scale: 0.995 }
-                    }
-                    transition={{
-                      duration: 0.25,
-                      ease: PREMIUM_EASE,
-                    }}
+                  <span
+                    aria-hidden="true"
+                    className="mr-2 font-semibold text-[#9CE500]"
                   >
-                    {submissionState === "loading" ? (
-                      <span className="flex items-center justify-center gap-3">
-                        <span
-                          aria-hidden="true"
-                          className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black"
-                        />
-                        Reserving Your Membership...
-                      </span>
-                    ) : (
-                      "Reserve My Founding Membership"
-                    )}
-                  </motion.button>
+                    ✓
+                  </span>
 
-                  {message && (
-                    <motion.div
-                      role={
-                        submissionState === "error"
-                          ? "alert"
-                          : "status"
-                      }
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={
-                        submissionState === "success"
-                          ? "border border-[#9CE500]/45 bg-[#9CE500]/[0.08] text-[#C7FF63] shadow-[0_12px_34px_rgba(156,229,0,0.08)]"
-                          : "border border-white/20 bg-white/[0.035] text-white/82"
-                      }
-                      style={{
-                        marginTop: "24px",
-                        borderRadius: "10px",
-                        padding: "16px 18px",
-                        fontSize: "0.76rem",
-                        lineHeight: "1.7",
-                        letterSpacing: "0.06em",
-                        textAlign: "center",
-                      }}
-                    >
-                      {message}
-                    </motion.div>
-                  )}
-
-                  <p
-                    className="text-center text-white/66"
-                    style={{
-                      marginTop: "clamp(22px, 2.5vw, 30px)",
-                      fontSize: "clamp(0.68rem, 0.8vw, 0.78rem)",
-                      lineHeight: "1.6",
-                      letterSpacing: "0.1em",
-                    }}
-                  >
-                    Joining the Founding Community is free. Early access
-                    only.
-                    <br className="hidden sm:block" />
-                    Founding Members receive exclusive launch privileges.
-                  </p>
-                </form>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-            style={{
-              maxWidth: "1080px",
-              marginTop: "clamp(34px, 3.5vw, 50px)",
-              columnGap: "clamp(18px, 2.2vw, 30px)",
-              rowGap: "16px",
-            }}
-            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.22,
-              ease: PREMIUM_EASE,
-            }}
-          >
-            {[
-              "Founding Member Status",
-              "Early Product Access",
-              "Direct Product Updates",
-              "Priority Community Invitations",
-            ].map((benefit) => (
-              <p
-                key={benefit}
-                className="flex items-center justify-center text-white/88 sm:justify-start"
-                style={{
-                  fontSize: "clamp(0.64rem, 0.76vw, 0.74rem)",
-                  lineHeight: "1.5",
-                  letterSpacing: "0.12em",
-                }}
-              >
-                <span
-                  aria-hidden="true"
-                  className="mr-2 font-semibold text-[#9CE500]"
-                >
-                  ✓
-                </span>
-
-                {benefit}
-              </p>
-            ))}
-          </motion.div>
+                  {benefit}
+                </p>
+              ))}
+            </motion.div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
