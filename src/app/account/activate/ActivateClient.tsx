@@ -84,7 +84,7 @@ export default function ActivateClient() {
 
     try {
       const response = await fetch(
-        "/api/account/activate",
+  "/api/founder/verify/activate",
         {
           method: "POST",
           headers: {
