@@ -53,6 +53,8 @@ export async function POST(request: Request) {
       );
     }
 
+    const normalizedEmail = String(email).trim().toLowerCase();
+
     const turnstileFormData = new FormData();
 
     turnstileFormData.append("secret", turnstileSecret);
@@ -85,70 +87,89 @@ export async function POST(request: Request) {
       );
     }
 
-    const supabaseAdmin = createClient(
-      supabaseUrl,
-      supabaseSecretKey,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      }
-    );
+    const supabaseAdmin = createClient(supabaseUrl, supabaseSecretKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
 
-    const { data, error } = await supabaseAdmin.rpc(
-      "join_waitlist",
-      {
-        p_first_name: String(firstName).trim(),
-        p_last_name: String(lastName).trim(),
-        p_email: String(email).trim().toLowerCase(),
-        p_country: String(country).trim(),
-        p_category: String(memberType).trim(),
-      }
-    );
+    const { data: existingReservation, error: existingReservationError } =
+      await supabaseAdmin
+        .from("founder_reservations")
+        .select("id, status, email")
+        .eq("email", normalizedEmail)
+        .maybeSingle();
 
-    if (error) {
-      if (error.code === "23505") {
-        return NextResponse.json(
-          {
-            success: false,
-            duplicate: true,
-            message:
-              "This email address is already part of the SoccaR Founding Community.",
-          },
-          { status: 409 }
-        );
-      }
-
-      console.error("Supabase waitlist error:", error);
+    if (existingReservationError) {
+      console.error(
+        "Founder reservation lookup error:",
+        existingReservationError
+      );
 
       return NextResponse.json(
         {
           success: false,
           message:
-            "We could not complete your registration right now. Please try again.",
+            "We could not check your reservation right now. Please try again.",
         },
         { status: 500 }
       );
     }
 
-    const founderNumber = Number(data);
+    if (existingReservation?.status === "CONVERTED") {
+      return NextResponse.json(
+        {
+          success: false,
+          alreadyFounder: true,
+          message:
+            "This email address already has an active SoccaR Founding Membership.",
+        },
+        { status: 409 }
+      );
+    }
+
+    const { data: reservationId, error: reservationError } =
+      await supabaseAdmin.rpc("create_founder_reservation", {
+        p_first_name: String(firstName).trim(),
+        p_last_name: String(lastName).trim(),
+        p_email: normalizedEmail,
+        p_country: String(country).trim(),
+        p_member_type: String(memberType).trim(),
+        p_referral_token: null,
+      });
+
+    if (reservationError) {
+      console.error("Founder reservation error:", reservationError);
+
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "We could not secure your Founding Membership reservation right now. Please try again.",
+        },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
       {
         success: true,
-        founderNumber,
+        reservationId,
+        status: "PENDING_VERIFICATION",
+        email: normalizedEmail,
+        message:
+          "Your place has been reserved. Verify your email to activate your Founding Membership.",
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Join waitlist route error:", error);
+    console.error("Founder reservation route error:", error);
 
     return NextResponse.json(
       {
         success: false,
-        message:
-          "Something unexpected happened. Please try again.",
+        message: "Something unexpected happened. Please try again.",
       },
       { status: 500 }
     );

@@ -259,8 +259,10 @@ type SubmissionState = "idle" | "loading" | "success" | "error";
 
 type JoinWaitlistResponse = {
   success: boolean;
-  founderNumber?: number;
-  duplicate?: boolean;
+  reservationId?: string;
+  status?: "PENDING_VERIFICATION";
+  email?: string;
+  alreadyFounder?: boolean;
   message?: string;
 };
 
@@ -547,12 +549,13 @@ export default function FoundingCommunity() {
       }
 
       if (
-        typeof result.founderNumber !== "number"
+        result.status !== "PENDING_VERIFICATION" ||
+        !result.reservationId
       ) {
         setSubmissionState("error");
 
         setMessage(
-          "Your registration was received, but we could not confirm your Founder Number. Please contact SoccaR support."
+          "Your reservation was received, but we could not confirm its status. Please try again."
         );
 
         resetTurnstile();
@@ -560,14 +563,11 @@ export default function FoundingCommunity() {
         return;
       }
 
-      const formattedFounderNumber = String(
-        result.founderNumber
-      ).padStart(6, "0");
-
       setSubmissionState("success");
 
       setMessage(
-        `Welcome, ${firstName}. You are Founding Member #${formattedFounderNumber}. Your place in the SoccaR Founding Community has been reserved.`
+        result.message ||
+          "Your place has been reserved. Verify your email to activate your Founding Membership."
       );
 
       setMemberCount((currentCount) =>
