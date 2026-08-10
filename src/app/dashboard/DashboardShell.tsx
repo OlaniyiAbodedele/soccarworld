@@ -5,15 +5,18 @@ import {
   Check,
   ChevronDown,
   CircleUserRound,
+  Gift,
   House,
   LogOut,
   MapPin,
   Megaphone,
   Settings,
   ShieldCheck,
+  TicketCheck,
   UserRound,
   UsersRound,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import styles from "./DashboardShell.module.css";
 
@@ -40,8 +43,11 @@ export default function DashboardShell({
   cityOfResidence,
   username,
 }: DashboardShellProps) {
+  const router = useRouter();
+
   const fullName =
-    `${firstName} ${lastName}`.trim() || "SoccaR Member";
+    `${firstName} ${lastName}`.trim() ||
+    "SoccaR Member";
 
   const initials =
     `${firstName?.charAt(0) ?? ""}${lastName?.charAt(0) ?? ""}`
@@ -68,14 +74,26 @@ export default function DashboardShell({
     (completedFields / profileFields.length) * 100
   );
 
+  function showComingSoon(feature: string) {
+    window.alert(
+      `${feature} is coming soon to the SoccaR Founding Community.`
+    );
+  }
+
   return (
     <div className={styles.dashboard}>
       <aside className={styles.sidebar}>
         <div className={styles.sidebarTop}>
           <div className={styles.brandBlock}>
-            <div className={styles.brand}>SOCCAR</div>
+            <div className={styles.brand}>
+              SOCCAR
+            </div>
 
-            <div className={styles.brandDescriptor}>
+            <div
+              className={
+                styles.brandDescriptor
+              }
+            >
               Founder Community
             </div>
           </div>
@@ -87,14 +105,25 @@ export default function DashboardShell({
             <button
               type="button"
               className={`${styles.navItem} ${styles.navItemActive}`}
+              onClick={() =>
+                router.push("/dashboard")
+              }
             >
-              <House size={19} strokeWidth={1.8} />
+              <House
+                size={19}
+                strokeWidth={1.8}
+              />
               <span>Dashboard</span>
             </button>
 
             <button
               type="button"
               className={styles.navItem}
+              onClick={() =>
+                router.push(
+                  "/dashboard/profile"
+                )
+              }
             >
               <CircleUserRound
                 size={19}
@@ -106,17 +135,27 @@ export default function DashboardShell({
             <button
               type="button"
               className={styles.navItem}
+              onClick={() =>
+                router.push(
+                  "/dashboard/community"
+                )
+              }
             >
               <UsersRound
                 size={19}
                 strokeWidth={1.8}
               />
-              <span>Founder Community</span>
+              <span>
+                Founder Community
+              </span>
             </button>
 
             <button
               type="button"
               className={styles.navItem}
+              onClick={() =>
+                showComingSoon("Updates")
+              }
             >
               <Megaphone
                 size={19}
@@ -124,11 +163,71 @@ export default function DashboardShell({
               />
               <span>Updates</span>
             </button>
+
+            <div
+              className={
+                styles.navigationDivider
+              }
+            />
+
+            <button
+              type="button"
+              className={styles.navItem}
+              onClick={() =>
+                showComingSoon(
+                  "Early Access"
+                )
+              }
+            >
+              <Gift
+                size={19}
+                strokeWidth={1.8}
+              />
+              <span>Early Access</span>
+            </button>
+
+            <button
+              type="button"
+              className={styles.navItem}
+              onClick={() =>
+                showComingSoon(
+                  "Certificates"
+                )
+              }
+            >
+              <TicketCheck
+                size={19}
+                strokeWidth={1.8}
+              />
+              <span>Certificates</span>
+            </button>
+
+            <button
+              type="button"
+              className={styles.navItem}
+              onClick={() =>
+                showComingSoon(
+                  "Account Settings"
+                )
+              }
+            >
+              <Settings
+                size={19}
+                strokeWidth={1.8}
+              />
+              <span>
+                Account Settings
+              </span>
+            </button>
           </nav>
         </div>
 
-        <div className={styles.sidebarBottom}>
-          <div className={styles.founderBadge}>
+        <div
+          className={styles.sidebarBottom}
+        >
+          <div
+            className={styles.founderBadge}
+          >
             <ShieldCheck
               size={18}
               strokeWidth={1.8}
@@ -136,13 +235,17 @@ export default function DashboardShell({
 
             <div>
               <span
-                className={styles.founderBadgeLabel}
+                className={
+                  styles.founderBadgeLabel
+                }
               >
                 Founding Member
               </span>
 
               <span
-                className={styles.founderBadgeNumber}
+                className={
+                  styles.founderBadgeNumber
+                }
               >
                 {founderNumber
                   ? `#${founderNumber}`
@@ -153,7 +256,9 @@ export default function DashboardShell({
 
           <button
             type="button"
-            className={styles.signOutButton}
+            className={
+              styles.signOutButton
+            }
           >
             <LogOut
               size={18}
@@ -166,19 +271,37 @@ export default function DashboardShell({
 
       <div className={styles.workspace}>
         <header className={styles.topbar}>
-          <div className={styles.topbarContext}>
-            <span className={styles.contextEyebrow}>
+          <div
+            className={
+              styles.topbarContext
+            }
+          >
+            <span
+              className={
+                styles.contextEyebrow
+              }
+            >
               Founder Dashboard
             </span>
 
-            <span className={styles.contextDivider} />
+            <span
+              className={
+                styles.contextDivider
+              }
+            />
 
-            <span className={styles.contextStatus}>
+            <span
+              className={
+                styles.contextStatus
+              }
+            >
               Membership Active
             </span>
           </div>
 
-          <div className={styles.accountArea}>
+          <div
+            className={styles.accountArea}
+          >
             <button
               type="button"
               className={styles.iconButton}
@@ -194,6 +317,11 @@ export default function DashboardShell({
               type="button"
               className={styles.iconButton}
               aria-label="Settings"
+              onClick={() =>
+                showComingSoon(
+                  "Account Settings"
+                )
+              }
             >
               <Settings
                 size={19}
@@ -201,27 +329,41 @@ export default function DashboardShell({
               />
             </button>
 
-            <div className={styles.accountDivider} />
+            <div
+              className={
+                styles.accountDivider
+              }
+            />
 
             <button
               type="button"
-              className={styles.accountButton}
+              className={
+                styles.accountButton
+              }
             >
-              <span className={styles.avatar}>
+              <span
+                className={styles.avatar}
+              >
                 {initials}
               </span>
 
               <span
-                className={styles.accountIdentity}
+                className={
+                  styles.accountIdentity
+                }
               >
                 <span
-                  className={styles.accountName}
+                  className={
+                    styles.accountName
+                  }
                 >
                   {fullName}
                 </span>
 
                 <span
-                  className={styles.accountRole}
+                  className={
+                    styles.accountRole
+                  }
                 >
                   Founding Member
                 </span>
@@ -237,24 +379,42 @@ export default function DashboardShell({
         </header>
 
         <main className={styles.content}>
-          <section className={styles.welcomeGrid}>
+          <section
+            className={styles.welcomeGrid}
+          >
             <div className={styles.heroCard}>
-              <div className={styles.heroGlow} />
+              <div
+                className={styles.heroGlow}
+              />
 
-              <div className={styles.heroContent}>
-                <p className={styles.welcomeEyebrow}>
+              <div
+                className={styles.heroContent}
+              >
+                <p
+                  className={
+                    styles.welcomeEyebrow
+                  }
+                >
                   Welcome back,
                 </p>
 
-                <h1 className={styles.welcomeName}>
+                <h1
+                  className={
+                    styles.welcomeName
+                  }
+                >
                   {firstName}.
                 </h1>
 
                 <div
-                  className={styles.founderIdentity}
+                  className={
+                    styles.founderIdentity
+                  }
                 >
                   <span
-                    className={styles.founderLabel}
+                    className={
+                      styles.founderLabel
+                    }
                   >
                     Founding Member
                   </span>
@@ -264,22 +424,36 @@ export default function DashboardShell({
                       styles.heroFounderNumber
                     }
                   >
-                    #{founderNumber ?? "------"}
+                    #
+                    {founderNumber ??
+                      "------"}
                   </span>
                 </div>
 
-                <div className={styles.heroRule} />
+                <div
+                  className={styles.heroRule}
+                />
 
-                <p className={styles.heroStatement}>
-                  You were here at the beginning.
+                <p
+                  className={
+                    styles.heroStatement
+                  }
+                >
+                  You were here at the
+                  beginning.
                   <br />
-                  SoccaR is being built around you.
+                  SoccaR is being built around
+                  you.
                 </p>
 
-                <div className={styles.heroMeta}>
+                <div
+                  className={styles.heroMeta}
+                >
                   {memberType && (
                     <span
-                      className={styles.metaItem}
+                      className={
+                        styles.metaItem
+                      }
                     >
                       <UserRound
                         size={15}
@@ -291,7 +465,9 @@ export default function DashboardShell({
 
                   {countryOfResidence && (
                     <span
-                      className={styles.metaItem}
+                      className={
+                        styles.metaItem
+                      }
                     >
                       <MapPin
                         size={15}
@@ -304,23 +480,39 @@ export default function DashboardShell({
               </div>
             </div>
 
-            <aside className={styles.identityCard}>
-              <div className={styles.identityHeader}>
+            <aside
+              className={
+                styles.identityCard
+              }
+            >
+              <div
+                className={
+                  styles.identityHeader
+                }
+              >
                 <div>
                   <p
-                    className={styles.identityEyebrow}
+                    className={
+                      styles.identityEyebrow
+                    }
                   >
                     Your SoccaR Identity
                   </p>
 
                   <h2
-                    className={styles.identityTitle}
+                    className={
+                      styles.identityTitle
+                    }
                   >
                     Founder profile
                   </h2>
                 </div>
 
-                <div className={styles.activeBadge}>
+                <div
+                  className={
+                    styles.activeBadge
+                  }
+                >
                   <Check
                     size={13}
                     strokeWidth={2.4}
@@ -329,26 +521,48 @@ export default function DashboardShell({
                 </div>
               </div>
 
-              <div className={styles.identityRows}>
-                <div className={styles.identityRow}>
+              <div
+                className={
+                  styles.identityRows
+                }
+              >
+                <div
+                  className={
+                    styles.identityRow
+                  }
+                >
                   <span>Member type</span>
+
                   <strong>
-                    {memberType || "Not provided"}
+                    {memberType ||
+                      "Not provided"}
                   </strong>
                 </div>
 
-                <div className={styles.identityRow}>
+                <div
+                  className={
+                    styles.identityRow
+                  }
+                >
                   <span>Location</span>
+
                   <strong>
                     {countryOfResidence ||
                       "Not provided"}
                   </strong>
                 </div>
 
-                <div className={styles.identityRow}>
+                <div
+                  className={
+                    styles.identityRow
+                  }
+                >
                   <span>Email status</span>
+
                   <strong
-                    className={styles.verified}
+                    className={
+                      styles.verified
+                    }
                   >
                     Verified
                     <Check
@@ -358,23 +572,36 @@ export default function DashboardShell({
                   </strong>
                 </div>
 
-                <div className={styles.identityRow}>
-                  <span>Founder Number</span>
+                <div
+                  className={
+                    styles.identityRow
+                  }
+                >
+                  <span>
+                    Founder Number
+                  </span>
+
                   <strong
                     className={
                       styles.identityFounder
                     }
                   >
-                    #{founderNumber ?? "------"}
+                    #
+                    {founderNumber ??
+                      "------"}
                   </strong>
                 </div>
               </div>
 
               <div
-                className={styles.profileProgress}
+                className={
+                  styles.profileProgress
+                }
               >
                 <div
-                  className={styles.progressHeader}
+                  className={
+                    styles.progressHeader
+                  }
                 >
                   <div>
                     <span
@@ -390,22 +617,29 @@ export default function DashboardShell({
                         styles.progressCopy
                       }
                     >
-                      Complete your SoccaR identity.
+                      Complete your SoccaR
+                      identity.
                     </span>
                   </div>
 
                   <strong
-                    className={styles.progressValue}
+                    className={
+                      styles.progressValue
+                    }
                   >
                     {profileCompletion}%
                   </strong>
                 </div>
 
                 <div
-                  className={styles.progressTrack}
+                  className={
+                    styles.progressTrack
+                  }
                 >
                   <div
-                    className={styles.progressBar}
+                    className={
+                      styles.progressBar
+                    }
                     style={{
                       width: `${profileCompletion}%`,
                     }}
@@ -413,10 +647,13 @@ export default function DashboardShell({
                 </div>
 
                 <p
-                  className={styles.progressHint}
+                  className={
+                    styles.progressHint
+                  }
                 >
-                  Add your city, country of origin and
-                  username to strengthen your Founder
+                  Add your city, country of
+                  origin and username to
+                  strengthen your Founder
                   profile.
                 </p>
 
@@ -425,6 +662,11 @@ export default function DashboardShell({
                   className={
                     styles.completeProfileButton
                   }
+                  onClick={() =>
+                    router.push(
+                      "/dashboard/profile"
+                    )
+                  }
                 >
                   Complete my profile
                 </button>
@@ -432,27 +674,36 @@ export default function DashboardShell({
             </aside>
           </section>
 
-          <section className={styles.nextStage}>
+          <section
+            className={styles.nextStage}
+          >
             <div>
               <p
-                className={styles.nextStageEyebrow}
+                className={
+                  styles.nextStageEyebrow
+                }
               >
                 Founder Dashboard V1
               </p>
 
               <h2
-                className={styles.nextStageTitle}
+                className={
+                  styles.nextStageTitle
+                }
               >
-                Your Founding Community experience
-                starts here.
+                Your Founding Community
+                experience starts here.
               </h2>
 
               <p
-                className={styles.nextStageCopy}
+                className={
+                  styles.nextStageCopy
+                }
               >
-                Community activity, SoccaR updates and
-                Founder privileges will appear here as
-                the platform grows.
+                Community activity, SoccaR
+                updates and Founder privileges
+                will appear here as the platform
+                grows.
               </p>
             </div>
           </section>
