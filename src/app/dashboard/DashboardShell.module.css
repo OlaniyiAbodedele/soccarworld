@@ -794,3 +794,201 @@
     font-size: 22px;
   }
 }
+/* =========================================================
+   SOCCAR — MOBILE FOUNDER NAVIGATION
+   ========================================================= */
+
+.mobileMenuButton,
+.mobileCloseButton,
+.mobileMenuOverlay {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .dashboard {
+    display: block;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .workspace {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .sidebar {
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+
+    width: min(320px, 86vw);
+    height: 100dvh;
+    min-height: 100dvh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 24px 18px 22px;
+
+    border-right: 1px solid rgba(255, 255, 255, 0.09);
+    border-bottom: 0;
+
+    background: #090909;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    transform: translateX(-105%);
+    transition: transform 260ms ease;
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+
+  .sidebarTop {
+    gap: 0;
+  }
+
+  .brandBlock {
+    position: relative;
+    padding: 6px 46px 30px 10px;
+  }
+
+  .mobileCloseButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    width: 38px;
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .navigation {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  .navItem {
+    width: 100%;
+    flex: none;
+    min-height: 50px;
+    padding: 0 15px;
+    font-size: 14px;
+  }
+
+  .navigationDivider {
+    display: block;
+    height: 1px;
+    margin: 12px 10px;
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .sidebarBottom {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 36px;
+  }
+
+  .mobileMenuOverlay {
+    position: fixed;
+    z-index: 90;
+    inset: 0;
+
+    display: block;
+
+    border: 0;
+    padding: 0;
+
+    background: rgba(0, 0, 0, 0.7);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition: opacity 220ms ease;
+  }
+
+  .mobileMenuOverlayVisible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .topbar {
+    min-height: 70px;
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+
+    padding: 0 16px;
+  }
+
+  .mobileMenuButton {
+    width: 40px;
+    height: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.025);
+    color: rgba(255, 255, 255, 0.76);
+  }
+
+  .topbarContext {
+    min-width: 0;
+  }
+
+  .contextDivider,
+  .contextStatus,
+  .iconButton:first-child,
+  .accountDivider,
+  .accountIdentity {
+    display: none;
+  }
+
+  .content {
+    width: 100%;
+    min-width: 0;
+    padding: 20px 16px 36px;
+  }
+
+  .welcomeGrid,
+  .heroCard,
+  .identityCard,
+  .nextStage {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .welcomeGrid {
+    grid-template-columns: 1fr;
+  }
+}
+

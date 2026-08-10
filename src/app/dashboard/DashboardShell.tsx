@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Bell,
   Check,
@@ -10,11 +11,13 @@ import {
   LogOut,
   MapPin,
   Megaphone,
+  Menu,
   Settings,
   ShieldCheck,
   TicketCheck,
   UserRound,
   UsersRound,
+  X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -45,6 +48,9 @@ export default function DashboardShell({
 }: DashboardShellProps) {
   const router = useRouter();
 
+  const [mobileMenuOpen, setMobileMenuOpen] =
+    useState(false);
+
   const fullName =
     `${firstName} ${lastName}`.trim() ||
     "SoccaR Member";
@@ -74,7 +80,14 @@ export default function DashboardShell({
     (completedFields / profileFields.length) * 100
   );
 
+  function navigateTo(path: string) {
+    setMobileMenuOpen(false);
+    router.push(path);
+  }
+
   function showComingSoon(feature: string) {
+    setMobileMenuOpen(false);
+
     window.alert(
       `${feature} is coming soon to the SoccaR Founding Community.`
     );
@@ -82,9 +95,31 @@ export default function DashboardShell({
 
   return (
     <div className={styles.dashboard}>
-      <aside className={styles.sidebar}>
+      <aside
+        className={`${styles.sidebar} ${
+          mobileMenuOpen
+            ? styles.sidebarOpen
+            : ""
+        }`}
+      >
         <div className={styles.sidebarTop}>
           <div className={styles.brandBlock}>
+            <button
+              type="button"
+              className={
+                styles.mobileCloseButton
+              }
+              aria-label="Close navigation"
+              onClick={() =>
+                setMobileMenuOpen(false)
+              }
+            >
+              <X
+                size={20}
+                strokeWidth={1.8}
+              />
+            </button>
+
             <div className={styles.brand}>
               SOCCAR
             </div>
@@ -106,7 +141,7 @@ export default function DashboardShell({
               type="button"
               className={`${styles.navItem} ${styles.navItemActive}`}
               onClick={() =>
-                router.push("/dashboard")
+                navigateTo("/dashboard")
               }
             >
               <House
@@ -120,7 +155,7 @@ export default function DashboardShell({
               type="button"
               className={styles.navItem}
               onClick={() =>
-                router.push(
+                navigateTo(
                   "/dashboard/profile"
                 )
               }
@@ -136,7 +171,7 @@ export default function DashboardShell({
               type="button"
               className={styles.navItem}
               onClick={() =>
-                router.push(
+                navigateTo(
                   "/dashboard/community"
                 )
               }
@@ -269,8 +304,42 @@ export default function DashboardShell({
         </div>
       </aside>
 
+      <button
+        type="button"
+        aria-label="Close navigation"
+        className={`${
+          styles.mobileMenuOverlay
+        } ${
+          mobileMenuOpen
+            ? styles.mobileMenuOverlayVisible
+            : ""
+        }`}
+        onClick={() =>
+          setMobileMenuOpen(false)
+        }
+      />
+
       <div className={styles.workspace}>
         <header className={styles.topbar}>
+          <button
+            type="button"
+            className={
+              styles.mobileMenuButton
+            }
+            aria-label="Open navigation"
+            aria-expanded={mobileMenuOpen}
+            onClick={() =>
+              setMobileMenuOpen(
+                (current) => !current
+              )
+            }
+          >
+            <Menu
+              size={21}
+              strokeWidth={1.8}
+            />
+          </button>
+
           <div
             className={
               styles.topbarContext
@@ -663,7 +732,7 @@ export default function DashboardShell({
                     styles.completeProfileButton
                   }
                   onClick={() =>
-                    router.push(
+                    navigateTo(
                       "/dashboard/profile"
                     )
                   }

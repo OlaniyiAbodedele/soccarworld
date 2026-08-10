@@ -16,12 +16,14 @@ import {
   LogOut,
   MapPin,
   Megaphone,
+  Menu,
   Search,
   Settings,
   ShieldCheck,
   TicketCheck,
   UserRound,
   UsersRound,
+  X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -56,6 +58,9 @@ export default function CommunityClient({
   memberTypesRepresented,
 }: CommunityClientProps) {
   const router = useRouter();
+
+  const [mobileMenuOpen, setMobileMenuOpen] =
+    useState(false);
 
   const [searchInput, setSearchInput] =
     useState("");
@@ -159,6 +164,19 @@ export default function CommunityClient({
     memberTypeFilter,
   ]);
 
+  function navigateTo(path: string) {
+    setMobileMenuOpen(false);
+    router.push(path);
+  }
+
+  function showComingSoon(feature: string) {
+    setMobileMenuOpen(false);
+
+    window.alert(
+      `${feature} is coming soon to the SoccaR Founding Community.`
+    );
+  }
+
   function handleSearch(
     event: FormEvent<HTMLFormElement>
   ) {
@@ -180,9 +198,31 @@ export default function CommunityClient({
 
   return (
     <div className={styles.dashboard}>
-      <aside className={styles.sidebar}>
+      <aside
+        className={`${styles.sidebar} ${
+          mobileMenuOpen
+            ? styles.sidebarOpen
+            : ""
+        }`}
+      >
         <div className={styles.sidebarTop}>
           <div className={styles.brandBlock}>
+            <button
+              type="button"
+              className={
+                styles.mobileCloseButton
+              }
+              aria-label="Close navigation"
+              onClick={() =>
+                setMobileMenuOpen(false)
+              }
+            >
+              <X
+                size={20}
+                strokeWidth={1.8}
+              />
+            </button>
+
             <div className={styles.brand}>
               SOCCAR
             </div>
@@ -204,7 +244,7 @@ export default function CommunityClient({
               type="button"
               className={styles.navItem}
               onClick={() =>
-                router.push("/dashboard")
+                navigateTo("/dashboard")
               }
             >
               <House
@@ -218,7 +258,7 @@ export default function CommunityClient({
               type="button"
               className={styles.navItem}
               onClick={() =>
-                router.push(
+                navigateTo(
                   "/dashboard/profile"
                 )
               }
@@ -233,6 +273,9 @@ export default function CommunityClient({
             <button
               type="button"
               className={`${styles.navItem} ${styles.navItemActive}`}
+              onClick={() =>
+                setMobileMenuOpen(false)
+              }
             >
               <UsersRound
                 size={19}
@@ -246,6 +289,9 @@ export default function CommunityClient({
             <button
               type="button"
               className={styles.navItem}
+              onClick={() =>
+                showComingSoon("Updates")
+              }
             >
               <Megaphone
                 size={19}
@@ -263,6 +309,11 @@ export default function CommunityClient({
             <button
               type="button"
               className={styles.navItem}
+              onClick={() =>
+                showComingSoon(
+                  "Early Access"
+                )
+              }
             >
               <Gift
                 size={19}
@@ -274,6 +325,11 @@ export default function CommunityClient({
             <button
               type="button"
               className={styles.navItem}
+              onClick={() =>
+                showComingSoon(
+                  "Certificates"
+                )
+              }
             >
               <TicketCheck
                 size={19}
@@ -285,12 +341,19 @@ export default function CommunityClient({
             <button
               type="button"
               className={styles.navItem}
+              onClick={() =>
+                showComingSoon(
+                  "Account Settings"
+                )
+              }
             >
               <Settings
                 size={19}
                 strokeWidth={1.8}
               />
-              <span>Account Settings</span>
+              <span>
+                Account Settings
+              </span>
             </button>
           </nav>
         </div>
@@ -342,8 +405,42 @@ export default function CommunityClient({
         </div>
       </aside>
 
+      <button
+        type="button"
+        aria-label="Close navigation"
+        className={`${
+          styles.mobileMenuOverlay
+        } ${
+          mobileMenuOpen
+            ? styles.mobileMenuOverlayVisible
+            : ""
+        }`}
+        onClick={() =>
+          setMobileMenuOpen(false)
+        }
+      />
+
       <div className={styles.workspace}>
         <header className={styles.topbar}>
+          <button
+            type="button"
+            className={
+              styles.mobileMenuButton
+            }
+            aria-label="Open navigation"
+            aria-expanded={mobileMenuOpen}
+            onClick={() =>
+              setMobileMenuOpen(
+                (current) => !current
+              )
+            }
+          >
+            <Menu
+              size={21}
+              strokeWidth={1.8}
+            />
+          </button>
+
           <div
             className={
               styles.topbarContext
@@ -390,6 +487,11 @@ export default function CommunityClient({
               type="button"
               className={styles.iconButton}
               aria-label="Settings"
+              onClick={() =>
+                showComingSoon(
+                  "Account Settings"
+                )
+              }
             >
               <Settings
                 size={19}
