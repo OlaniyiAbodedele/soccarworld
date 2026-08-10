@@ -1,0 +1,386 @@
+.page {
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at 78% 8%,
+      rgba(156, 229, 0, 0.05),
+      transparent 26%
+    ),
+    #050505;
+  color: #ffffff;
+  padding: 52px 24px 80px;
+}
+
+.shell {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.backButton:hover {
+  color: #ffffff;
+}
+
+.masthead {
+  max-width: 720px;
+  margin-top: 42px;
+}
+
+.eyebrow,
+.cardEyebrow,
+.identityEyebrow {
+  color: #9ce500;
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin-top: 14px;
+  color: #ffffff;
+  font-size: clamp(38px, 5vw, 58px);
+  line-height: 1.05;
+  font-weight: 650;
+  letter-spacing: -0.045em;
+}
+
+.description {
+  max-width: 620px;
+  margin-top: 20px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.layout {
+  margin-top: 46px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.75fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.formCard,
+.identityCard {
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 28px;
+  background: #0d0d0d;
+}
+
+.formCard {
+  padding: 34px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.cardTitle {
+  margin-top: 8px;
+  color: #ffffff;
+  font-size: 27px;
+  line-height: 1.2;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+.completionBadge {
+  min-width: 62px;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(156, 229, 0, 0.2);
+  border-radius: 999px;
+  background: rgba(156, 229, 0, 0.07);
+  color: #9ce500;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.form {
+  margin-top: 34px;
+}
+
+.readOnlyGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.readOnlyItem {
+  min-height: 88px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  background: #090909;
+}
+
+.readOnlyItem span {
+  color: rgba(255, 255, 255, 0.34);
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.readOnlyItem strong {
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.fieldGroup {
+  min-width: 0;
+}
+
+.label {
+  display: block;
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 550;
+}
+
+.input {
+  width: 100%;
+  height: 60px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: #080808;
+  color: #ffffff;
+  font-size: 15px;
+  outline: none;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.input:focus {
+  border-color: rgba(156, 229, 0, 0.55);
+  box-shadow: 0 0 0 1px rgba(156, 229, 0, 0.16);
+}
+
+.feedback {
+  margin-top: 24px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.feedbackSuccess {
+  border: 1px solid rgba(156, 229, 0, 0.22);
+  background: rgba(156, 229, 0, 0.07);
+  color: #b8ff36;
+}
+
+.feedbackError {
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  background: rgba(248, 113, 113, 0.08);
+  color: #fecaca;
+}
+
+.saveButton {
+  width: 100%;
+  min-height: 56px;
+  margin-top: 28px;
+  border: 0;
+  border-radius: 999px;
+  background: #9ce500;
+  color: #050505;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow: 0 14px 40px rgba(156, 229, 0, 0.18);
+  transition:
+    background 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.saveButton:hover {
+  background: #a8f500;
+  box-shadow: 0 18px 48px rgba(156, 229, 0, 0.25);
+  transform: translateY(-1px);
+}
+
+.saveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.identityCard {
+  padding: 32px;
+}
+
+.identityIcon {
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(156, 229, 0, 0.22);
+  border-radius: 18px;
+  background: rgba(156, 229, 0, 0.05);
+  color: #9ce500;
+}
+
+.identityEyebrow {
+  margin-top: 26px;
+}
+
+.identityTitle {
+  margin-top: 10px;
+  color: #ffffff;
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+
+.identityCopy {
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.identityMeta {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.identityMeta > div {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  background: #090909;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+}
+
+.identityMeta svg {
+  color: #9ce500;
+}
+
+.statusRow {
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.statusRow span {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+}
+
+.statusRow strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #9ce500;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .identityCard {
+    order: -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 34px 16px 56px;
+  }
+
+  .masthead {
+    margin-top: 32px;
+  }
+
+  .title {
+    font-size: 38px;
+  }
+
+  .layout {
+    margin-top: 34px;
+  }
+
+  .formCard,
+  .identityCard {
+    border-radius: 22px;
+  }
+
+  .formCard,
+  .identityCard {
+    padding: 24px 20px;
+  }
+
+  .readOnlyGrid,
+  .fieldGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fieldGrid {
+    gap: 20px;
+  }
+
+  .cardHeader {
+    align-items: center;
+  }
+}

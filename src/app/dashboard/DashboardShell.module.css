@@ -1,0 +1,796 @@
+.dashboard {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  background: #050505;
+  color: #ffffff;
+}
+
+.sidebar {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: #090909;
+  padding: 30px 18px 22px;
+}
+
+.sidebarTop {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandBlock {
+  padding: 6px 10px 34px;
+}
+
+.brand {
+  color: #9ce500;
+  font-size: 19px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.4em;
+  padding-left: 0.4em;
+}
+
+.brandDescriptor {
+  margin-top: 11px;
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 9px;
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  padding-left: 0.28em;
+}
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.navItem {
+  width: 100%;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 0 15px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.navItemActive {
+  border-color: rgba(156, 229, 0, 0.16);
+  background: rgba(156, 229, 0, 0.08);
+  color: #ffffff;
+}
+
+.navItemActive svg {
+  color: #9ce500;
+}
+
+.sidebarBottom {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.founderBadge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid rgba(156, 229, 0, 0.16);
+  border-radius: 16px;
+  background: rgba(156, 229, 0, 0.05);
+  color: #9ce500;
+}
+
+.founderBadge > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.founderBadgeLabel {
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 9px;
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.founderBadgeNumber {
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.signOutButton {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 13px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    color 180ms ease;
+}
+
+.signOutButton:hover {
+  background: rgba(255, 255, 255, 0.035);
+  color: #ffffff;
+}
+
+.workspace {
+  min-width: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(
+      circle at 72% 0%,
+      rgba(156, 229, 0, 0.04),
+      transparent 30%
+    ),
+    #050505;
+}
+
+.topbar {
+  min-height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 0 34px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(5, 5, 5, 0.9);
+}
+
+.topbarContext {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.contextEyebrow {
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 650;
+}
+
+.contextDivider {
+  width: 1px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.contextStatus {
+  color: #9ce500;
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.accountArea {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.46);
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.iconButton:hover {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+  color: #ffffff;
+}
+
+.accountDivider {
+  width: 1px;
+  height: 32px;
+  margin: 0 8px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.accountButton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 6px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(156, 229, 0, 0.24);
+  border-radius: 999px;
+  background: rgba(156, 229, 0, 0.08);
+  color: #9ce500;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.accountIdentity {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.accountName {
+  max-width: 180px;
+  overflow: hidden;
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accountRole {
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.36);
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.chevron {
+  color: rgba(255, 255, 255, 0.36);
+}
+
+.content {
+  flex: 1;
+  min-height: calc(100vh - 84px);
+  padding: 40px 44px 64px;
+}
+
+.welcomeGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(340px, 0.85fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+.heroCard {
+  position: relative;
+  overflow: hidden;
+  min-height: 470px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 28px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(156, 229, 0, 0.08),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      #101010 0%,
+      #0a0a0a 100%
+    );
+}
+
+.heroGlow {
+  position: absolute;
+  width: 430px;
+  height: 430px;
+  right: -170px;
+  top: -170px;
+  border-radius: 999px;
+  background: rgba(156, 229, 0, 0.12);
+  filter: blur(110px);
+  pointer-events: none;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  min-height: 470px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 58px 58px 54px;
+}
+
+.welcomeEyebrow {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.welcomeName {
+  margin-top: 8px;
+  color: #ffffff;
+  font-size: clamp(48px, 5vw, 72px);
+  line-height: 0.98;
+  font-weight: 650;
+  letter-spacing: -0.055em;
+}
+
+.founderIdentity {
+  margin-top: 34px;
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.founderLabel {
+  padding-bottom: 8px;
+  color: #9ce500;
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.heroFounderNumber {
+  color: #ffffff;
+  font-size: 32px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.heroRule {
+  width: 70px;
+  height: 2px;
+  margin-top: 30px;
+  background: #9ce500;
+}
+
+.heroStatement {
+  margin-top: 26px;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 18px;
+  line-height: 1.65;
+  font-weight: 450;
+}
+
+.heroMeta {
+  margin-top: 34px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 13px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 12px;
+  font-weight: 550;
+}
+
+.metaItem svg {
+  color: #9ce500;
+}
+
+.identityCard {
+  min-height: 470px;
+  display: flex;
+  flex-direction: column;
+  padding: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 28px;
+  background: #0d0d0d;
+}
+
+.identityHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.identityEyebrow {
+  color: #9ce500;
+  font-size: 9px;
+  line-height: 1.4;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.identityTitle {
+  margin-top: 9px;
+  color: #ffffff;
+  font-size: 25px;
+  line-height: 1.2;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+.activeBadge {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid rgba(156, 229, 0, 0.2);
+  border-radius: 999px;
+  background: rgba(156, 229, 0, 0.07);
+  color: #9ce500;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.identityRows {
+  margin-top: 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.identityRow {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.identityRow span {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.identityRow strong {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 650;
+  text-align: right;
+}
+
+.verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #9ce500 !important;
+}
+
+.identityFounder {
+  color: #ffffff !important;
+  font-size: 14px !important;
+  letter-spacing: 0.02em;
+}
+
+.profileProgress {
+  margin-top: auto;
+  padding-top: 28px;
+}
+
+.progressHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.progressHeader > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.progressLabel {
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 650;
+}
+
+.progressCopy {
+  color: rgba(255, 255, 255, 0.36);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.progressValue {
+  color: #9ce500;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 750;
+}
+
+.progressTrack {
+  width: 100%;
+  height: 5px;
+  margin-top: 18px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: inherit;
+  background: #9ce500;
+  transition: width 300ms ease;
+}
+
+.progressHint {
+  margin-top: 16px;
+  color: rgba(255, 255, 255, 0.36);
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.completeProfileButton {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 18px;
+  border: 1px solid rgba(156, 229, 0, 0.2);
+  border-radius: 13px;
+  background: rgba(156, 229, 0, 0.07);
+  color: #9ce500;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease;
+}
+
+.completeProfileButton:hover {
+  border-color: rgba(156, 229, 0, 0.34);
+  background: rgba(156, 229, 0, 0.1);
+}
+
+.nextStage {
+  margin-top: 28px;
+  padding: 34px 38px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(156, 229, 0, 0.035),
+      transparent 45%
+    ),
+    #0a0a0a;
+}
+
+.nextStageEyebrow {
+  color: #9ce500;
+  font-size: 9px;
+  line-height: 1.4;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.nextStageTitle {
+  max-width: 700px;
+  margin-top: 12px;
+  color: #ffffff;
+  font-size: 25px;
+  line-height: 1.3;
+  font-weight: 620;
+  letter-spacing: -0.025em;
+}
+
+.nextStageCopy {
+  max-width: 670px;
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+@media (max-width: 1180px) {
+  .welcomeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .identityCard {
+    min-height: auto;
+  }
+
+  .profileProgress {
+    margin-top: 34px;
+  }
+}
+
+@media (max-width: 1050px) {
+  .dashboard {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .sidebar {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .topbar {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .content {
+    padding: 30px 28px 48px;
+  }
+
+  .accountIdentity {
+    display: none;
+  }
+
+  .accountDivider {
+    margin-right: 2px;
+  }
+
+  .heroContent {
+    padding: 48px 42px;
+  }
+}
+
+@media (max-width: 760px) {
+  .dashboard {
+    display: block;
+  }
+
+  .sidebar {
+    min-height: auto;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 18px 16px;
+  }
+
+  .sidebarTop {
+    gap: 16px;
+  }
+
+  .brandBlock {
+    padding: 0 4px 12px;
+  }
+
+  .navigation {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 3px;
+  }
+
+  .navItem {
+    width: auto;
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0 13px;
+    font-size: 12px;
+  }
+
+  .sidebarBottom {
+    display: none;
+  }
+
+  .topbar {
+    min-height: 70px;
+    padding: 0 16px;
+  }
+
+  .contextDivider,
+  .contextStatus,
+  .iconButton:first-child,
+  .accountDivider {
+    display: none;
+  }
+
+  .content {
+    min-height: calc(100vh - 70px);
+    padding: 20px 16px 36px;
+  }
+
+  .heroCard,
+  .identityCard {
+    border-radius: 22px;
+  }
+
+  .heroCard,
+  .heroContent {
+    min-height: 400px;
+  }
+
+  .heroContent {
+    padding: 38px 26px;
+  }
+
+  .welcomeName {
+    font-size: 46px;
+  }
+
+  .founderIdentity {
+    margin-top: 28px;
+  }
+
+  .heroStatement {
+    font-size: 16px;
+  }
+
+  .identityCard {
+    padding: 26px 22px;
+  }
+
+  .identityHeader {
+    align-items: center;
+  }
+
+  .nextStage {
+    padding: 28px 24px;
+  }
+
+  .nextStageTitle {
+    font-size: 22px;
+  }
+}
