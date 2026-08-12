@@ -48,6 +48,8 @@ type DashboardShellProps = {
   activeSection?: DashboardSection;
   unreadUpdates?: number;
 
+  contentMode?: "default" | "editorial";
+
   children?: ReactNode;
 };
 
@@ -64,6 +66,7 @@ export default function DashboardShell({
 
   activeSection = "dashboard",
   unreadUpdates = 3,
+  contentMode = "default",
 
   children,
 }: DashboardShellProps) {
@@ -974,12 +977,14 @@ export default function DashboardShell({
         </header>
 
         <main
-          className={
-            styles.content
-          }
-        >
-          {dashboardContent}
-        </main>
+  className={`${styles.content} ${
+    contentMode === "editorial"
+      ? styles.contentEditorial
+      : ""
+  }`}
+>
+  {dashboardContent}
+</main>
       </div>
     </div>
   );

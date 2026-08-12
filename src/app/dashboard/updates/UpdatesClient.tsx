@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  useState,
+} from "react";
+
+import Link from "next/link";
+
+import {
   BellRing,
   Box,
   Check,
@@ -13,16 +19,35 @@ import {
   UsersRound,
 } from "lucide-react";
 
+import {
+  useRouter,
+} from "next/navigation";
+
 import styles from "./UpdatesClient.module.css";
 
-type UpdateItem = {
-  id: number;
-  category: string;
+export type FounderUpdate = {
+  id: string;
+  slug: string;
   title: string;
   excerpt: string;
+  body: string;
+
+  category: string;
+
+  rawCategory:
+    | "PLATFORM"
+    | "FOUNDING_COMMUNITY"
+    | "PRODUCT"
+    | "EARLY_ACCESS"
+    | "ANNOUNCEMENT"
+    | string;
+
   date: string;
   time: string;
+
   unread: boolean;
+  featured: boolean;
+
   visual:
     | "access"
     | "community"
@@ -30,60 +55,40 @@ type UpdateItem = {
     | "announcement";
 };
 
-const recentUpdates: UpdateItem[] = [
-  {
-    id: 1,
-    category: "Early Access",
-    title:
-      "Early Access: Platform Preview Incoming",
-    excerpt:
-      "We’re preparing an early preview of the SoccaR platform for our Founders. More details coming soon.",
-    date: "12 Aug 2026",
-    time: "10:45 AM",
-    unread: true,
-    visual: "access",
-  },
-  {
-    id: 2,
-    category: "Founding Community",
-    title:
-      "Founder Spotlight: You Are the First",
-    excerpt:
-      "A message of gratitude to our Founders who are helping shape the future of global football.",
-    date: "10 Aug 2026",
-    time: "04:30 PM",
-    unread: true,
-    visual: "community",
-  },
-  {
-    id: 3,
-    category: "Product Update",
-    title:
-      "Platform Development Progress",
-    excerpt:
-      "A look at what our team has been building and what’s next on our roadmap.",
-    date: "08 Aug 2026",
-    time: "09:15 AM",
-    unread: false,
-    visual: "product",
-  },
-  {
-    id: 4,
-    category: "Announcement",
-    title: "Join the Conversation",
-    excerpt:
-      "We’ve opened new channels for Founders to connect, share ideas and be part of the journey.",
-    date: "05 Aug 2026",
-    time: "11:20 AM",
-    unread: false,
-    visual: "announcement",
-  },
-];
+export type UpdateCategoryCounts = {
+  platform: number;
+  foundingCommunity: number;
+  product: number;
+  earlyAccess: number;
+  announcements: number;
+};
+
+type UpdatesClientProps = {
+  featuredUpdate:
+    | FounderUpdate
+    | null;
+
+  recentUpdates:
+    FounderUpdate[];
+
+  totalCount: number;
+  unreadCount: number;
+  readCount: number;
+
+  categoryCounts:
+    UpdateCategoryCounts;
+};
+
+type ReadResponse = {
+  success: boolean;
+  markedCount?: number;
+  message?: string;
+};
 
 function UpdateVisual({
   type,
 }: {
-  type: UpdateItem["visual"];
+  type: FounderUpdate["visual"];
 }) {
   if (type === "access") {
     return (
@@ -136,11 +141,96 @@ function UpdateVisual({
   );
 }
 
-export default function UpdatesClient() {
+export default function UpdatesClient({
+  featuredUpdate,
+  recentUpdates,
+  totalCount,
+  unreadCount,
+  readCount,
+  categoryCounts,
+}: UpdatesClientProps) {
+  const router =
+    useRouter();
+
+  const [
+    markingAll,
+    setMarkingAll,
+  ] = useState(false);
+
+  const [
+    actionError,
+    setActionError,
+  ] = useState<
+    string | null
+  >(null);
+
+  async function markAllAsRead() {
+    if (
+      unreadCount === 0 ||
+      markingAll
+    ) {
+      return;
+    }
+
+    try {
+      setActionError(null);
+      setMarkingAll(true);
+
+      const response =
+        await fetch(
+          "/api/founder/updates/read",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify({
+              markAll: true,
+            }),
+          }
+        );
+
+      const result =
+        (await response.json()) as ReadResponse;
+
+      if (
+        !response.ok ||
+        !result.success
+      ) {
+        setActionError(
+          result.message ||
+            "We could not mark your Founder Updates as read."
+        );
+
+        return;
+      }
+
+      router.refresh();
+    } catch (error) {
+      console.error(
+        "Mark all Founder Updates as read error:",
+        error
+      );
+
+      setActionError(
+        "Something unexpected happened while updating your Founder read status."
+      );
+    } finally {
+      setMarkingAll(false);
+    }
+  }
+
   return (
-    <div className={styles.updatesPage}>
+    <div
+      className={
+        styles.updatesPage
+      }
+    >
       <section
-        className={styles.pageHeader}
+        className={
+          styles.pageHeader
+        }
       >
         <div
           className={
@@ -173,10 +263,23 @@ export default function UpdatesClient() {
             Important updates,
             product progress and
             opportunities from the
-            SoccaR team, exclusively
-            for our Founding
-            Community.
+            SoccaR team,
+            exclusively for our
+            Founding Community.
           </p>
+
+          {actionError && (
+            <p
+              style={{
+                marginTop: "12px",
+                color: "#ff6259",
+                fontSize: "11px",
+                lineHeight: 1.5,
+              }}
+            >
+              {actionError}
+            </p>
+          )}
         </div>
 
         <button
@@ -184,12 +287,24 @@ export default function UpdatesClient() {
           className={
             styles.markAllButton
           }
+          onClick={
+            markAllAsRead
+          }
+          disabled={
+            unreadCount === 0 ||
+            markingAll
+          }
         >
           <Check
             size={14}
             strokeWidth={2}
           />
-          Mark all as read
+
+          {markingAll
+            ? "Updating…"
+            : unreadCount === 0
+            ? "All read"
+            : "Mark all as read"}
         </button>
       </section>
 
@@ -203,164 +318,164 @@ export default function UpdatesClient() {
             styles.primaryColumn
           }
         >
-          <article
-            className={
-              styles.featuredUpdate
-            }
-          >
-            <div
-              className={
-                styles.featuredGlow
-              }
-            />
-
-            <div
-              className={
-                styles.featuredGrid
-              }
+          {featuredUpdate && (
+            <Link
+              href={`/dashboard/updates/${featuredUpdate.slug}`}
+              className={styles.featuredUpdate}
+              aria-label={`Open ${featuredUpdate.title}`}
             >
               <div
                 className={
-                  styles.featuredContent
+                  styles.featuredGlow
                 }
-              >
-                <div
-                  className={
-                    styles.featuredTop
-                  }
-                >
-                  <span
-                    className={
-                      styles.featuredLabel
-                    }
-                  >
-                    <span
-                      className={
-                        styles.featuredIcon
-                      }
-                    >
-                      ★
-                    </span>
-
-                    Featured Update
-                  </span>
-
-                  <span
-                    className={
-                      styles.newPill
-                    }
-                  >
-                    New
-                  </span>
-                </div>
-
-                <div
-                  className={
-                    styles.featuredCopy
-                  }
-                >
-                  <h2>
-                    Welcome to the
-                    Beginning.
-                  </h2>
-
-                  <p>
-                    Thank you for
-                    being part of the
-                    earliest chapter
-                    in SoccaR. Your
-                    belief in our
-                    mission fuels
-                    everything we are
-                    building.
-                  </p>
-
-                  <div
-                    className={
-                      styles.featuredMeta
-                    }
-                  >
-                    <span
-                      className={
-                        styles.teamAvatar
-                      }
-                    >
-                      ST
-                    </span>
-
-                    <span>
-                      SoccaR Team
-                    </span>
-
-                    <span
-                      className={
-                        styles.metaDot
-                      }
-                    />
-
-                    <span>
-                      12 Aug 2026
-                    </span>
-                  </div>
-                </div>
-              </div>
+              />
 
               <div
                 className={
-                  styles.featuredArtwork
+                  styles.featuredGrid
                 }
-                aria-hidden="true"
               >
                 <div
                   className={
-                    styles.artGrid
-                  }
-                />
-
-                <div
-                  className={
-                    styles.globeOuter
-                  }
-                />
-
-                <div
-                  className={
-                    styles.globeMiddle
-                  }
-                />
-
-                <div
-                  className={
-                    styles.globeCore
+                    styles.featuredContent
                   }
                 >
-                  <span>
-                    S
-                  </span>
+                  <div
+                    className={
+                      styles.featuredTop
+                    }
+                  >
+                    <span
+                      className={
+                        styles.featuredLabel
+                      }
+                    >
+                      <span
+                        className={
+                          styles.featuredIcon
+                        }
+                      >
+                        ★
+                      </span>
+
+                      Featured Update
+                    </span>
+
+                    {featuredUpdate.unread && (
+                      <span
+                        className={
+                          styles.newPill
+                        }
+                      >
+                        New
+                      </span>
+                    )}
+                  </div>
+
+                  <div
+                    className={
+                      styles.featuredCopy
+                    }
+                  >
+                    <h2>
+                      {
+                        featuredUpdate.title
+                      }
+                    </h2>
+
+                    <p>
+                      {
+                        featuredUpdate.excerpt
+                      }
+                    </p>
+
+                    <div
+                      className={
+                        styles.featuredMeta
+                      }
+                    >
+                      <span
+                        className={
+                          styles.teamAvatar
+                        }
+                      >
+                        ST
+                      </span>
+
+                      <span>
+                        SoccaR Team
+                      </span>
+
+                      <span
+                        className={
+                          styles.metaDot
+                        }
+                      />
+
+                      <span>
+                        {
+                          featuredUpdate.date
+                        }
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 <div
                   className={
-                    styles.footballOrb
+                    styles.featuredArtwork
                   }
+                  aria-hidden="true"
                 >
-                  ⚽
+                  <div
+                    className={
+                      styles.artGrid
+                    }
+                  />
+
+                  <div
+                    className={
+                      styles.globeOuter
+                    }
+                  />
+
+                  <div
+                    className={
+                      styles.globeMiddle
+                    }
+                  />
+
+                  <div
+                    className={
+                      styles.globeCore
+                    }
+                  >
+                    <span>S</span>
+                  </div>
+
+                  <div
+                    className={
+                      styles.footballOrb
+                    }
+                  >
+                    ⚽
+                  </div>
+
+                  <div
+                    className={
+                      styles.artLightOne
+                    }
+                  />
+
+                  <div
+                    className={
+                      styles.artLightTwo
+                    }
+                  />
                 </div>
-
-                <div
-                  className={
-                    styles.artLightOne
-                  }
-                />
-
-                <div
-                  className={
-                    styles.artLightTwo
-                  }
-                />
               </div>
-            </div>
-          </article>
+            </Link>
+          )}
 
           <section
             className={
@@ -385,7 +500,13 @@ export default function UpdatesClient() {
                   styles.sectionCount
                 }
               >
-                4 updates
+                {
+                  recentUpdates.length
+                }{" "}
+                {recentUpdates.length ===
+                1
+                  ? "update"
+                  : "updates"}
               </span>
             </div>
 
@@ -396,13 +517,15 @@ export default function UpdatesClient() {
             >
               {recentUpdates.map(
                 (update) => (
-                  <article
+                  <Link
                     key={
                       update.id
                     }
+                    href={`/dashboard/updates/${update.slug}`}
                     className={
                       styles.updateRow
                     }
+                    aria-label={`Open ${update.title}`}
                   >
                     <div
                       className={
@@ -477,8 +600,27 @@ export default function UpdatesClient() {
                         </span>
                       )}
                     </div>
-                  </article>
+                  </Link>
                 )
+              )}
+
+              {recentUpdates.length ===
+                0 && (
+                <div
+                  style={{
+                    padding:
+                      "36px 28px",
+                    color:
+                      "rgba(255,255,255,0.42)",
+                    fontSize:
+                      "12px",
+                    lineHeight: 1.7,
+                  }}
+                >
+                  No recent SoccaR
+                  updates are
+                  available yet.
+                </div>
               )}
             </div>
           </section>
@@ -508,7 +650,7 @@ export default function UpdatesClient() {
               </p>
 
               <span>
-                12 total
+                {totalCount} total
               </span>
             </div>
 
@@ -530,7 +672,7 @@ export default function UpdatesClient() {
                 </span>
 
                 <strong>
-                  12
+                  {totalCount}
                 </strong>
               </div>
 
@@ -549,7 +691,9 @@ export default function UpdatesClient() {
                 </span>
 
                 <strong>
-                  4
+                  {
+                    categoryCounts.platform
+                  }
                 </strong>
               </div>
 
@@ -568,7 +712,9 @@ export default function UpdatesClient() {
                 </span>
 
                 <strong>
-                  4
+                  {
+                    categoryCounts.foundingCommunity
+                  }
                 </strong>
               </div>
 
@@ -587,7 +733,9 @@ export default function UpdatesClient() {
                 </span>
 
                 <strong>
-                  3
+                  {
+                    categoryCounts.product
+                  }
                 </strong>
               </div>
 
@@ -606,7 +754,9 @@ export default function UpdatesClient() {
                 </span>
 
                 <strong>
-                  1
+                  {
+                    categoryCounts.earlyAccess
+                  }
                 </strong>
               </div>
 
@@ -625,7 +775,9 @@ export default function UpdatesClient() {
                 </span>
 
                 <strong>
-                  2
+                  {
+                    categoryCounts.announcements
+                  }
                 </strong>
               </div>
             </div>
@@ -661,7 +813,7 @@ export default function UpdatesClient() {
                 </div>
 
                 <strong>
-                  3
+                  {unreadCount}
                 </strong>
 
                 <div>
@@ -686,14 +838,12 @@ export default function UpdatesClient() {
                 >
                   <CheckCircle2
                     size={17}
-                    strokeWidth={
-                      1.7
-                    }
+                    strokeWidth={1.7}
                   />
                 </div>
 
                 <strong>
-                  9
+                  {readCount}
                 </strong>
 
                 <div>
@@ -719,14 +869,12 @@ export default function UpdatesClient() {
                 >
                   <BellRing
                     size={17}
-                    strokeWidth={
-                      1.7
-                    }
+                    strokeWidth={1.7}
                   />
                 </div>
 
                 <strong>
-                  12
+                  {totalCount}
                 </strong>
 
                 <div>

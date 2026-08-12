@@ -297,11 +297,32 @@
   color: rgba(255, 255, 255, 0.36);
 }
 
+/* =========================================================
+   MAIN CONTENT FRAME
+   ========================================================= */
+
 .content {
   flex: 1;
+  width: 100%;
+  min-width: 0;
   min-height: calc(100vh - 84px);
   padding: 40px 44px 64px;
 }
+
+/*
+ * Used only by long-form editorial pages such as
+ * Founder Update articles.
+ *
+ * This does NOT alter the standard dashboard,
+ * profile, community, or updates overview frame.
+ */
+.contentEditorial {
+  padding: 64px 72px 120px;
+}
+
+/* =========================================================
+   DASHBOARD HOME
+   ========================================================= */
 
 .welcomeGrid {
   display: grid;
@@ -651,6 +672,10 @@
   line-height: 1.7;
 }
 
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
 @media (max-width: 1180px) {
   .welcomeGrid {
     grid-template-columns: 1fr;
@@ -682,6 +707,10 @@
 
   .content {
     padding: 30px 28px 48px;
+  }
+
+  .contentEditorial {
+    padding: 48px 38px 84px;
   }
 
   .accountIdentity {
@@ -752,6 +781,10 @@
     padding: 20px 16px 36px;
   }
 
+  .contentEditorial {
+    padding: 34px 20px 64px;
+  }
+
   .heroCard,
   .identityCard {
     border-radius: 22px;
@@ -794,8 +827,9 @@
     font-size: 22px;
   }
 }
+
 /* =========================================================
-   SOCCAR � MOBILE FOUNDER NAVIGATION
+   SOCCAR — MOBILE FOUNDER NAVIGATION
    ========================================================= */
 
 .mobileMenuButton,
@@ -979,6 +1013,10 @@
     padding: 20px 16px 36px;
   }
 
+  .contentEditorial {
+    padding: 34px 20px 64px;
+  }
+
   .welcomeGrid,
   .heroCard,
   .identityCard,
@@ -991,4 +1029,3 @@
     grid-template-columns: 1fr;
   }
 }
-
