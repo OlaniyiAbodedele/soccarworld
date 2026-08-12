@@ -1,4 +1,7 @@
-import { createHash } from "crypto";
+import {
+  createHash,
+  randomBytes,
+} from "crypto";
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
@@ -10,13 +13,17 @@ function formatFounderNumber(value: number) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const token = String(body?.token ?? "").trim();
+
+    const token = String(
+      body?.token ?? ""
+    ).trim();
 
     if (!token) {
       return NextResponse.json(
         {
           success: false,
-          message: "Verification token is required.",
+          message:
+            "Verification token is required.",
         },
         { status: 400 }
       );
@@ -43,7 +50,8 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Server configuration error.",
+          message:
+            "Server configuration error.",
         },
         { status: 500 }
       );
@@ -65,7 +73,8 @@ export async function POST(request: Request) {
     );
 
     /*
-     * 1. Verify the secure email token
+     * 1. Verify Founding Membership
+     * email token.
      */
     const {
       data: reservationId,
@@ -133,7 +142,7 @@ export async function POST(request: Request) {
     }
 
     /*
-     * 2. Issue the permanent Founder membership
+     * 2. Issue permanent Founder Number.
      */
     const {
       data: founderNumber,
@@ -167,7 +176,125 @@ export async function POST(request: Request) {
     }
 
     /*
-     * 3. Retrieve the verified Founder identity
+     * 3. Retrieve Founder Membership UUID.
+     */
+    const {
+      data: founderMembership,
+      error: founderMembershipError,
+    } = await supabaseAdmin
+      .from("founder_memberships")
+      .select("id, founder_number")
+      .eq("reservation_id", reservationId)
+      .eq("founder_number", founderNumber)
+      .single();
+
+    let memberId: string | null = null;
+    let activationUrl: string | null =
+      null;
+
+    let accountActivationReady =
+      false;
+
+    if (
+      founderMembershipError ||
+      !founderMembership
+    ) {
+      console.error(
+        "Founder Membership retrieval error:",
+        founderMembershipError
+      );
+    } else {
+      /*
+       * 4. Provision permanent SoccaR
+       * member record.
+       */
+      const {
+        data: provisionedMemberId,
+        error: memberProvisionError,
+      } = await supabaseAdmin.rpc(
+        "provision_soccar_member_from_founder",
+        {
+          p_founder_membership_id:
+            founderMembership.id,
+        }
+      );
+
+      if (
+        memberProvisionError ||
+        !provisionedMemberId
+      ) {
+        console.error(
+          "SoccaR member provisioning error:",
+          memberProvisionError
+        );
+      } else {
+        memberId = String(
+          provisionedMemberId
+        );
+
+        /*
+         * 5. Create secure single-use
+         * account activation token.
+         *
+         * Valid for 24 hours.
+         */
+        const activationToken =
+          randomBytes(32).toString(
+            "hex"
+          );
+
+        const activationTokenHash =
+          createHash("sha256")
+            .update(activationToken)
+            .digest("hex");
+
+        const activationExpiresAt =
+          new Date(
+            Date.now() +
+              24 * 60 * 60 * 1000
+          ).toISOString();
+
+        const {
+          error:
+            activationCreationError,
+        } = await supabaseAdmin.rpc(
+          "create_soccar_account_activation",
+          {
+            p_member_id: memberId,
+            p_token_hash:
+              activationTokenHash,
+            p_expires_at:
+              activationExpiresAt,
+          }
+        );
+
+        if (
+          activationCreationError
+        ) {
+          console.error(
+            "SoccaR account activation creation error:",
+            activationCreationError
+          );
+        } else {
+          const requestUrl =
+            new URL(request.url);
+
+          activationUrl =
+            `${requestUrl.origin}` +
+            `/account/activate` +
+            `?token=${encodeURIComponent(
+              activationToken
+            )}`;
+
+          accountActivationReady =
+            true;
+        }
+      }
+    }
+
+    /*
+     * 6. Retrieve verified Founder
+     * identity for welcome email.
      */
     const {
       data: reservation,
@@ -175,7 +302,13 @@ export async function POST(request: Request) {
     } = await supabaseAdmin
       .from("founder_reservations")
       .select(
-        "first_name, last_name, email, country, member_type"
+        `
+          first_name,
+          last_name,
+          email,
+          country,
+          member_type
+        `
       )
       .eq("id", reservationId)
       .single();
@@ -194,7 +327,9 @@ export async function POST(request: Request) {
           success: true,
           reservationId,
           founderNumber,
+          memberId,
           status: "ACTIVE_FOUNDER",
+          accountActivationReady,
           welcomeEmailSent: false,
           message:
             "Your email has been verified and your SoccaR Founding Membership is active.",
@@ -209,11 +344,198 @@ export async function POST(request: Request) {
       );
 
     /*
-     * 4. Send Founder Activation & Welcome email
-     *
-     * Membership activation does NOT depend on
-     * successful email delivery. The Founder Number
-     * has already been permanently issued.
+     * 7. Account activation section
+     * for welcome email.
+     */
+    const activationText =
+      accountActivationReady &&
+      activationUrl
+        ? [
+            "",
+            "ONE FINAL STEP — ACTIVATE YOUR SOCCAR ACCOUNT",
+            "",
+            "Your Founding Membership is already active and your Founder Number is secured.",
+            "",
+            "Use the secure link below to activate your SoccaR account and create your sign-in password:",
+            "",
+            activationUrl,
+            "",
+            "This account activation link expires in 24 hours.",
+          ].join("\n")
+        : [
+            "",
+            "SOCCAR ACCOUNT ACCESS",
+            "",
+            "Your Founding Membership is active and your Founder Number is secured.",
+            "",
+            "We are preparing your SoccaR account activation instructions. Your Founder identity is not affected.",
+          ].join("\n");
+
+    const activationHtml =
+      accountActivationReady &&
+      activationUrl
+        ? `
+<tr>
+  <td style="padding:34px 46px 0;">
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      style="
+        background:#101a08;
+        border:1px solid rgba(156,229,0,0.28);
+        border-radius:16px;
+      "
+    >
+      <tr>
+        <td
+          align="center"
+          style="
+            padding:30px 28px;
+            text-align:center;
+          "
+        >
+          <div
+            style="
+              color:#9CE500;
+              font-size:10px;
+              font-weight:800;
+              letter-spacing:2.3px;
+              text-transform:uppercase;
+            "
+          >
+            One Final Step
+          </div>
+
+          <div
+            style="
+              margin-top:12px;
+              color:#ffffff;
+              font-size:24px;
+              line-height:1.25;
+              font-weight:700;
+            "
+          >
+            Activate your SoccaR account.
+          </div>
+
+          <div
+            style="
+              margin:14px auto 0;
+              max-width:470px;
+              color:#9a9a9a;
+              font-size:14px;
+              line-height:1.7;
+            "
+          >
+            Your Founding Membership is already
+            active. Create your sign-in password
+            to access your Founder Dashboard.
+          </div>
+
+          <div style="margin-top:24px;">
+            <a
+              href="${activationUrl}"
+              style="
+                display:inline-block;
+                background:#9CE500;
+                color:#070707;
+                text-decoration:none;
+                font-size:13px;
+                line-height:1;
+                font-weight:800;
+                letter-spacing:0.5px;
+                padding:18px 28px;
+                border-radius:999px;
+              "
+            >
+              ACTIVATE MY SOCCAR ACCOUNT
+            </a>
+          </div>
+
+          <div
+            style="
+              margin-top:18px;
+              color:#666666;
+              font-size:11px;
+              line-height:1.6;
+            "
+          >
+            This secure activation link expires
+            in 24 hours.
+          </div>
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
+
+<tr>
+  <td
+    style="
+      padding:24px 46px 0;
+      color:#666666;
+      font-size:11px;
+      line-height:1.7;
+      word-break:break-all;
+    "
+  >
+    If the button does not work, copy and paste
+    this secure link into your browser:
+    <br /><br />
+
+    <a
+      href="${activationUrl}"
+      style="
+        color:#9CE500;
+        text-decoration:none;
+      "
+    >
+      ${activationUrl}
+    </a>
+  </td>
+</tr>
+        `
+        : `
+<tr>
+  <td style="padding:34px 46px 0;">
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      style="
+        background:#0b0b0b;
+        border:1px solid #232323;
+        border-radius:16px;
+      "
+    >
+      <tr>
+        <td
+          style="
+            padding:24px;
+            color:#8d8d8d;
+            font-size:13px;
+            line-height:1.7;
+          "
+        >
+          Your Founding Membership is active
+          and your Founder Number is secured.
+          SoccaR account activation instructions
+          are being prepared.
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
+        `;
+
+    /*
+     * 8. Send Founder Welcome +
+     * Account Activation email.
      */
     const resend =
       new Resend(resendApiKey);
@@ -239,7 +561,7 @@ export async function POST(request: Request) {
         "",
         "Your email has been verified and your Founding Membership is now active.",
         "",
-        `YOUR PERMANENT FOUNDER NUMBER`,
+        "YOUR PERMANENT FOUNDER NUMBER",
         founderNumberDisplay,
         "",
         "You were here at the beginning.",
@@ -250,8 +572,7 @@ export async function POST(request: Request) {
         "Place Reserved: Complete",
         "Email Verified: Complete",
         "Founder Identity: Active",
-        "",
-        "As SoccaR grows, your Founder identity will remain part of your member profile and visible Founding Community identity.",
+        activationText,
         "",
         "Welcome to the beginning.",
         "",
@@ -327,7 +648,6 @@ export async function POST(request: Request) {
           "
         >
 
-          <!-- Centred SoccaR Masthead -->
           <tr>
             <td
               align="center"
@@ -366,7 +686,6 @@ export async function POST(request: Request) {
             </td>
           </tr>
 
-          <!-- Main Card -->
           <tr>
             <td
               style="
@@ -395,7 +714,6 @@ export async function POST(request: Request) {
                 border="0"
               >
 
-                <!-- Hero -->
                 <tr>
                   <td
                     align="center"
@@ -469,7 +787,6 @@ export async function POST(request: Request) {
                   </td>
                 </tr>
 
-                <!-- Greeting -->
                 <tr>
                   <td
                     style="
@@ -492,9 +809,9 @@ export async function POST(request: Request) {
                       line-height:1.75;
                     "
                   >
-                    Your email has been verified and
-                    your SoccaR Founding Membership is
-                    now active.
+                    Your email has been verified
+                    and your SoccaR Founding
+                    Membership is now active.
                   </td>
                 </tr>
 
@@ -514,13 +831,8 @@ export async function POST(request: Request) {
                   </td>
                 </tr>
 
-                <!-- Status -->
                 <tr>
-                  <td
-                    style="
-                      padding:38px 46px 0;
-                    "
-                  >
+                  <td style="padding:38px 46px 0;">
                     <table
                       role="presentation"
                       width="100%"
@@ -630,7 +942,8 @@ export async function POST(request: Request) {
                   </td>
                 </tr>
 
-                <!-- Founder Identity Note -->
+                ${activationHtml}
+
                 <tr>
                   <td
                     style="
@@ -664,7 +977,6 @@ export async function POST(request: Request) {
                   </td>
                 </tr>
 
-                <!-- Closing -->
                 <tr>
                   <td
                     align="center"
@@ -690,7 +1002,6 @@ export async function POST(request: Request) {
             </td>
           </tr>
 
-          <!-- Footer -->
           <tr>
             <td
               style="
@@ -715,11 +1026,7 @@ export async function POST(request: Request) {
                 The Global Football Community Platform
               </div>
 
-              <div
-                style="
-                  margin-top:8px;
-                "
-              >
+              <div style="margin-top:8px;">
                 soccarworld.com
               </div>
             </td>
@@ -742,21 +1049,23 @@ export async function POST(request: Request) {
     }
 
     /*
-     * 5. Return successful activation
-     *
-     * Founder activation remains successful even
-     * if the welcome email temporarily fails.
+     * 9. Return successful Founder
+     * activation.
      */
     return NextResponse.json(
       {
         success: true,
         reservationId,
         founderNumber,
+        memberId,
         status: "ACTIVE_FOUNDER",
+        accountActivationReady,
         welcomeEmailSent:
           !welcomeEmailError,
         message:
-          "Your email has been verified and your SoccaR Founding Membership is active.",
+          accountActivationReady
+            ? "Your email has been verified, your SoccaR Founding Membership is active, and your account activation instructions have been sent."
+            : "Your email has been verified and your SoccaR Founding Membership is active.",
       },
       { status: 200 }
     );

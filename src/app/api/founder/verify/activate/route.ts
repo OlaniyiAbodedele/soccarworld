@@ -9,10 +9,16 @@ type ActivationRequest = {
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as ActivationRequest;
+    const body =
+      (await request.json()) as ActivationRequest;
 
-    const token = String(body.token ?? "").trim();
-    const password = String(body.password ?? "");
+    const token = String(
+      body.token ?? ""
+    ).trim();
+
+    const password = String(
+      body.password ?? ""
+    );
 
     if (!token || !password) {
       return NextResponse.json(
@@ -42,7 +48,10 @@ export async function POST(request: Request) {
     const serviceRoleKey =
       process.env.SUPABASE_SECRET_KEY;
 
-    if (!supabaseUrl || !serviceRoleKey) {
+    if (
+      !supabaseUrl ||
+      !serviceRoleKey
+    ) {
       console.error(
         "Missing required Supabase server environment variables."
       );
@@ -50,35 +59,41 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Server configuration error.",
+          message:
+            "Server configuration error.",
         },
         { status: 500 }
       );
     }
 
-    const supabaseAdmin = createClient(
-      supabaseUrl,
-      serviceRoleKey,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      }
-    );
+    const supabaseAdmin =
+      createClient(
+        supabaseUrl,
+        serviceRoleKey,
+        {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false,
+          },
+        }
+      );
 
-    const tokenHash = createHash("sha256")
-      .update(token)
-      .digest("hex");
+    const tokenHash =
+      createHash("sha256")
+        .update(token)
+        .digest("hex");
 
     /*
-     * 1. Find the authorised activation record.
+     * 1. Find the authorised
+     * account activation record.
      */
     const {
       data: activation,
       error: activationError,
     } = await supabaseAdmin
-      .from("soccar_account_activations")
+      .from(
+        "soccar_account_activations"
+      )
       .select(
         `
           id,
@@ -95,7 +110,10 @@ export async function POST(request: Request) {
           )
         `
       )
-      .eq("token_hash", tokenHash)
+      .eq(
+        "token_hash",
+        tokenHash
+      )
       .maybeSingle();
 
     if (activationError) {
@@ -126,7 +144,10 @@ export async function POST(request: Request) {
       );
     }
 
-    if (activation.status !== "ACTIVE") {
+    if (
+      activation.status !==
+      "ACTIVE"
+    ) {
       return NextResponse.json(
         {
           success: false,
@@ -139,15 +160,21 @@ export async function POST(request: Request) {
     }
 
     if (
-      new Date(activation.expires_at).getTime() <=
-      Date.now()
+      new Date(
+        activation.expires_at
+      ).getTime() <= Date.now()
     ) {
       await supabaseAdmin
-        .from("soccar_account_activations")
+        .from(
+          "soccar_account_activations"
+        )
         .update({
           status: "EXPIRED",
         })
-        .eq("id", activation.id);
+        .eq(
+          "id",
+          activation.id
+        );
 
       return NextResponse.json(
         {
@@ -163,9 +190,12 @@ export async function POST(request: Request) {
     const memberRelation =
       activation.soccar_members;
 
-    const member = Array.isArray(memberRelation)
-      ? memberRelation[0]
-      : memberRelation;
+    const member =
+      Array.isArray(
+        memberRelation
+      )
+        ? memberRelation[0]
+        : memberRelation;
 
     if (!member) {
       return NextResponse.json(
@@ -185,7 +215,8 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          code: "ALREADY_ACTIVE",
+          code:
+            "ALREADY_ACTIVE",
           message:
             "This SoccaR account has already been activated.",
         },
@@ -194,25 +225,33 @@ export async function POST(request: Request) {
     }
 
     /*
-     * 2. Create the authorised Supabase Auth user.
+     * 2. Create the authorised
+     * Supabase Auth user.
      *
-     * This Admin API must remain server-only.
+     * Admin API remains server-only.
      */
     const {
       data: authData,
       error: authError,
     } =
-      await supabaseAdmin.auth.admin.createUser({
-        email: member.email,
-        password,
-        email_confirm: true,
-        user_metadata: {
-          first_name: member.first_name,
-          last_name: member.last_name,
-        },
-      });
+      await supabaseAdmin.auth.admin.createUser(
+        {
+          email: member.email,
+          password,
+          email_confirm: true,
+          user_metadata: {
+            first_name:
+              member.first_name,
+            last_name:
+              member.last_name,
+          },
+        }
+      );
 
-    if (authError || !authData.user) {
+    if (
+      authError ||
+      !authData.user
+    ) {
       console.error(
         "Supabase Auth user creation error:",
         authError
@@ -229,28 +268,36 @@ export async function POST(request: Request) {
     }
 
     /*
-     * 3. Link Auth identity to the existing SoccaR member.
+     * 3. Link the Auth identity
+     * to the existing SoccaR member.
      */
     const {
       data: memberId,
       error: completionError,
-    } = await supabaseAdmin.rpc(
-      "complete_soccar_account_activation",
-      {
-        p_token_hash: tokenHash,
-        p_auth_user_id: authData.user.id,
-      }
-    );
+    } =
+      await supabaseAdmin.rpc(
+        "complete_soccar_account_activation",
+        {
+          p_token_hash:
+            tokenHash,
+          p_auth_user_id:
+            authData.user.id,
+        }
+      );
 
-    if (completionError || !memberId) {
+    if (
+      completionError ||
+      !memberId
+    ) {
       console.error(
         "SoccaR account activation completion error:",
         completionError
       );
 
       /*
-       * Roll back the Auth user so we don't leave
-       * an orphaned account if the database link fails.
+       * Roll back the Auth user
+       * so an orphan account is
+       * not left behind.
        */
       await supabaseAdmin.auth.admin.deleteUser(
         authData.user.id
