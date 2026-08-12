@@ -290,8 +290,10 @@ export default function CommunityClient({
               type="button"
               className={styles.navItem}
               onClick={() =>
-                showComingSoon("Updates")
-              }
+  navigateTo(
+    "/dashboard/updates"
+  )
+}
             >
               <Megaphone
                 size={19}

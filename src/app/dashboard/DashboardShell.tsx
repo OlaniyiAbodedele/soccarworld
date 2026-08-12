@@ -53,6 +53,11 @@ type DashboardShellProps = {
   children?: ReactNode;
 };
 
+type SignOutResponse = {
+  success: boolean;
+  message?: string;
+};
+
 export default function DashboardShell({
   firstName,
   lastName,
@@ -76,6 +81,18 @@ export default function DashboardShell({
     mobileMenuOpen,
     setMobileMenuOpen,
   ] = useState(false);
+
+  const [
+    signingOut,
+    setSigningOut,
+  ] = useState(false);
+
+  const [
+    signOutError,
+    setSignOutError,
+  ] = useState<
+    string | null
+  >(null);
 
   const fullName =
     `${firstName} ${lastName}`.trim() ||
@@ -125,6 +142,68 @@ export default function DashboardShell({
     window.alert(
       `${feature} is coming soon to the SoccaR Founding Community.`
     );
+  }
+
+  async function handleSignOut() {
+    if (signingOut) {
+      return;
+    }
+
+    try {
+      setSignOutError(null);
+      setSigningOut(true);
+      setMobileMenuOpen(false);
+
+      const response =
+        await fetch(
+          "/api/auth/sign-out",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+          }
+        );
+
+      const result =
+        (await response.json()) as SignOutResponse;
+
+      if (
+        !response.ok ||
+        !result.success
+      ) {
+        setSignOutError(
+          result.message ||
+            "We could not sign you out right now."
+        );
+
+        return;
+      }
+
+      /*
+       * Replace rather than push so
+       * the current protected page is
+       * not added back into navigation
+       * history as the next destination.
+       */
+      router.replace(
+        "/sign-in"
+      );
+
+      router.refresh();
+    } catch (error) {
+      console.error(
+        "SoccaR Founder sign-out error:",
+        error
+      );
+
+      setSignOutError(
+        "Something unexpected happened while signing you out."
+      );
+    } finally {
+      setSigningOut(false);
+    }
   }
 
   function navClass(
@@ -583,6 +662,7 @@ export default function DashboardShell({
                 size={19}
                 strokeWidth={1.8}
               />
+
               <span>
                 Dashboard
               </span>
@@ -603,6 +683,7 @@ export default function DashboardShell({
                 size={19}
                 strokeWidth={1.8}
               />
+
               <span>
                 Profile
               </span>
@@ -657,7 +738,8 @@ export default function DashboardShell({
                       "auto",
                     minWidth:
                       "22px",
-                    height: "22px",
+                    height:
+                      "22px",
                     display:
                       "inline-flex",
                     alignItems:
@@ -795,18 +877,57 @@ export default function DashboardShell({
             </div>
           </div>
 
+          {signOutError && (
+            <p
+              style={{
+                padding:
+                  "0 15px",
+                color:
+                  "#ff6259",
+                fontSize:
+                  "10px",
+                lineHeight:
+                  1.5,
+              }}
+            >
+              {signOutError}
+            </p>
+          )}
+
           <button
             type="button"
             className={
               styles.signOutButton
             }
+            onClick={
+              handleSignOut
+            }
+            disabled={
+              signingOut
+            }
+            aria-busy={
+              signingOut
+            }
+            style={{
+              opacity:
+                signingOut
+                  ? 0.55
+                  : 1,
+              cursor:
+                signingOut
+                  ? "wait"
+                  : "pointer",
+            }}
           >
             <LogOut
               size={18}
               strokeWidth={1.8}
             />
+
             <span>
-              Sign Out
+              {signingOut
+                ? "Signing Out…"
+                : "Sign Out"}
             </span>
           </button>
         </div>
@@ -977,14 +1098,15 @@ export default function DashboardShell({
         </header>
 
         <main
-  className={`${styles.content} ${
-    contentMode === "editorial"
-      ? styles.contentEditorial
-      : ""
-  }`}
->
-  {dashboardContent}
-</main>
+          className={`${styles.content} ${
+            contentMode ===
+            "editorial"
+              ? styles.contentEditorial
+              : ""
+          }`}
+        >
+          {dashboardContent}
+        </main>
       </div>
     </div>
   );
