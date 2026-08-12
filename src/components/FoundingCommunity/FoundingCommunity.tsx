@@ -8,10 +8,18 @@ import {
   useState,
   type FormEvent,
 } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useReducedMotion,
+} from "framer-motion";
 import { supabase } from "../../lib/supabase";
 
-const PREMIUM_EASE = [0.22, 1, 0.36, 1] as const;
+const PREMIUM_EASE = [
+  0.22,
+  1,
+  0.36,
+  1,
+] as const;
 
 type TurnstileApi = {
   render: (
@@ -255,7 +263,11 @@ type SelectFieldProps = {
   disabled?: boolean;
 };
 
-type SubmissionState = "idle" | "loading" | "success" | "error";
+type SubmissionState =
+  | "idle"
+  | "loading"
+  | "success"
+  | "error";
 
 type JoinWaitlistResponse = {
   success: boolean;
@@ -272,7 +284,8 @@ const fieldClassName =
 const textInputStyle = {
   paddingLeft: "24px",
   paddingRight: "24px",
-  transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+  transitionTimingFunction:
+    "cubic-bezier(0.22, 1, 0.36, 1)",
 } as const;
 
 function SelectField({
@@ -320,7 +333,10 @@ function SelectField({
           </option>
 
           {options.map((option) => (
-            <option key={option} value={option}>
+            <option
+              key={option}
+              value={option}
+            >
               {option}
             </option>
           ))}
@@ -351,28 +367,49 @@ function SelectField({
 }
 
 export default function FoundingCommunity() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion =
+    useReducedMotion();
 
-  const [submissionState, setSubmissionState] =
-    useState<SubmissionState>("idle");
+  const [
+    submissionState,
+    setSubmissionState,
+  ] = useState<SubmissionState>("idle");
 
-  const [message, setMessage] = useState("");
-  const [memberCount, setMemberCount] =
+  const [message, setMessage] =
+    useState("");
+
+  const [
+    memberCount,
+    setMemberCount,
+  ] =
     useState<number | null>(null);
 
-  const [turnstileReady, setTurnstileReady] = useState(false);
-  const [turnstileToken, setTurnstileToken] =
+  const [
+    turnstileReady,
+    setTurnstileReady,
+  ] =
+    useState(false);
+
+  const [
+    turnstileToken,
+    setTurnstileToken,
+  ] =
     useState<string | null>(null);
 
-  const turnstileWidgetId = useRef<string | null>(null);
+  const turnstileWidgetId =
+    useRef<string | null>(null);
 
   const turnstileSiteKey =
-    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    process.env
+      .NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   useEffect(() => {
     async function loadMemberCount() {
-      const { data, error } = await supabase.rpc(
-        "get_waitlist_count"
+      const {
+        data,
+        error,
+      } = await supabase.rpc(
+        "get_founding_member_count"
       );
 
       if (error) {
@@ -383,7 +420,9 @@ export default function FoundingCommunity() {
         return;
       }
 
-      setMemberCount(Number(data));
+      setMemberCount(
+        Number(data ?? 0)
+      );
     }
 
     loadMemberCount();
@@ -399,34 +438,43 @@ export default function FoundingCommunity() {
       return;
     }
 
-    turnstileWidgetId.current = window.turnstile.render(
-      "#soccar-turnstile",
-      {
-        sitekey: turnstileSiteKey,
-        theme: "dark",
+    turnstileWidgetId.current =
+      window.turnstile.render(
+        "#soccar-turnstile",
+        {
+          sitekey:
+            turnstileSiteKey,
+          theme: "dark",
 
-        callback(token: string) {
-          setTurnstileToken(token);
+          callback(token: string) {
+            setTurnstileToken(token);
 
-          if (submissionState === "error") {
-            setSubmissionState("idle");
-            setMessage("");
-          }
-        },
+            if (
+              submissionState ===
+              "error"
+            ) {
+              setSubmissionState(
+                "idle"
+              );
+              setMessage("");
+            }
+          },
 
-        "expired-callback"() {
-          setTurnstileToken(null);
-        },
+          "expired-callback"() {
+            setTurnstileToken(null);
+          },
 
-        "error-callback"() {
-          setTurnstileToken(null);
-          setSubmissionState("error");
-          setMessage(
-            "Security verification could not be completed. Please refresh the page and try again."
-          );
-        },
-      }
-    );
+          "error-callback"() {
+            setTurnstileToken(null);
+            setSubmissionState(
+              "error"
+            );
+            setMessage(
+              "Security verification could not be completed. Please refresh the page and try again."
+            );
+          },
+        }
+      );
   }, [
     turnstileReady,
     turnstileSiteKey,
@@ -440,7 +488,9 @@ export default function FoundingCommunity() {
       window.turnstile &&
       turnstileWidgetId.current
     ) {
-      window.turnstile.reset(turnstileWidgetId.current);
+      window.turnstile.reset(
+        turnstileWidgetId.current
+      );
     }
   }
 
@@ -449,32 +499,55 @@ export default function FoundingCommunity() {
   ) {
     event.preventDefault();
 
-    if (submissionState === "loading") {
+    if (
+      submissionState ===
+      "loading"
+    ) {
       return;
     }
 
-    const form = event.currentTarget;
-    const formData = new FormData(form);
+    const form =
+      event.currentTarget;
 
-    const firstName = String(
-      formData.get("firstName") ?? ""
-    ).trim();
+    const formData =
+      new FormData(form);
 
-    const lastName = String(
-      formData.get("lastName") ?? ""
-    ).trim();
+    const firstName =
+      String(
+        formData.get(
+          "firstName"
+        ) ?? ""
+      ).trim();
 
-    const email = String(formData.get("email") ?? "")
-      .trim()
-      .toLowerCase();
+    const lastName =
+      String(
+        formData.get(
+          "lastName"
+        ) ?? ""
+      ).trim();
 
-    const country = String(
-      formData.get("country") ?? ""
-    ).trim();
+    const email =
+      String(
+        formData.get(
+          "email"
+        ) ?? ""
+      )
+        .trim()
+        .toLowerCase();
 
-    const memberType = String(
-      formData.get("memberType") ?? ""
-    ).trim();
+    const country =
+      String(
+        formData.get(
+          "country"
+        ) ?? ""
+      ).trim();
+
+    const memberType =
+      String(
+        formData.get(
+          "memberType"
+        ) ?? ""
+      ).trim();
 
     setMessage("");
 
@@ -485,58 +558,84 @@ export default function FoundingCommunity() {
       !country ||
       !memberType
     ) {
-      setSubmissionState("error");
+      setSubmissionState(
+        "error"
+      );
+
       setMessage(
         "Please complete all fields before continuing."
       );
+
       return;
     }
 
     const emailPattern =
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailPattern.test(email)) {
-      setSubmissionState("error");
+    if (
+      !emailPattern.test(
+        email
+      )
+    ) {
+      setSubmissionState(
+        "error"
+      );
+
       setMessage(
         "Please enter a valid email address."
       );
+
       return;
     }
 
     if (!turnstileToken) {
-      setSubmissionState("error");
+      setSubmissionState(
+        "error"
+      );
+
       setMessage(
         "Please complete the security verification before continuing."
       );
+
       return;
     }
 
-    setSubmissionState("loading");
+    setSubmissionState(
+      "loading"
+    );
 
     try {
-      const response = await fetch(
-        "/api/join-waitlist",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            firstName,
-            lastName,
-            email,
-            country,
-            memberType,
-            turnstileToken,
-          }),
-        }
-      );
+      const response =
+        await fetch(
+          "/api/join-waitlist",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body:
+              JSON.stringify({
+                firstName,
+                lastName,
+                email,
+                country,
+                memberType,
+                turnstileToken,
+              }),
+          }
+        );
 
       const result =
         (await response.json()) as JoinWaitlistResponse;
 
-      if (!response.ok || !result.success) {
-        setSubmissionState("error");
+      if (
+        !response.ok ||
+        !result.success
+      ) {
+        setSubmissionState(
+          "error"
+        );
 
         setMessage(
           result.message ||
@@ -549,10 +648,13 @@ export default function FoundingCommunity() {
       }
 
       if (
-        result.status !== "PENDING_VERIFICATION" ||
+        result.status !==
+          "PENDING_VERIFICATION" ||
         !result.reservationId
       ) {
-        setSubmissionState("error");
+        setSubmissionState(
+          "error"
+        );
 
         setMessage(
           "Your reservation was received, but we could not confirm its status. Please try again."
@@ -563,17 +665,13 @@ export default function FoundingCommunity() {
         return;
       }
 
-      setSubmissionState("success");
+      setSubmissionState(
+        "success"
+      );
 
       setMessage(
         result.message ||
           "Your place has been reserved. Verify your email to activate your Founding Membership."
-      );
-
-      setMemberCount((currentCount) =>
-        currentCount === null
-          ? 1
-          : currentCount + 1
       );
 
       form.reset();
@@ -584,7 +682,9 @@ export default function FoundingCommunity() {
         error
       );
 
-      setSubmissionState("error");
+      setSubmissionState(
+        "error"
+      );
 
       setMessage(
         "Something unexpected happened. Please check your connection and try again."
@@ -599,7 +699,9 @@ export default function FoundingCommunity() {
       <Script
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
         strategy="afterInteractive"
-        onLoad={() => setTurnstileReady(true)}
+        onLoad={() =>
+          setTurnstileReady(true)
+        }
       />
 
       <section
@@ -954,9 +1056,7 @@ export default function FoundingCommunity() {
                             submissionState ===
                             "loading"
                           }
-                          className={
-                            fieldClassName
-                          }
+                          className={fieldClassName}
                           style={textInputStyle}
                         />
                       </div>
@@ -985,9 +1085,7 @@ export default function FoundingCommunity() {
                             submissionState ===
                             "loading"
                           }
-                          className={
-                            fieldClassName
-                          }
+                          className={fieldClassName}
                           style={textInputStyle}
                         />
                       </div>
@@ -1016,9 +1114,7 @@ export default function FoundingCommunity() {
                             submissionState ===
                             "loading"
                           }
-                          className={
-                            fieldClassName
-                          }
+                          className={fieldClassName}
                           style={textInputStyle}
                         />
                       </div>
@@ -1137,7 +1233,8 @@ export default function FoundingCommunity() {
                     {message && (
                       <motion.div
                         role={
-                          submissionState === "error"
+                          submissionState ===
+                          "error"
                             ? "alert"
                             : "status"
                         }

@@ -73,25 +73,45 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Primary conversion action */}
-        <a
-          href="#founding-community"
-          className="inline-flex items-center justify-center justify-self-end whitespace-nowrap border border-white/25 bg-black/30 font-semibold uppercase text-white outline-none transition duration-300 hover:-translate-y-px hover:border-[#9CE500] hover:text-[#9CE500] focus-visible:-translate-y-px focus-visible:border-[#9CE500] focus-visible:text-[#9CE500] focus-visible:ring-2 focus-visible:ring-[#9CE500]/60 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
+        {/* Member access + primary conversion action */}
+        <div
+          className="flex items-center justify-self-end"
           style={{
-            minWidth: "clamp(128px, 30vw, 190px)",
-            minHeight: "clamp(46px, 4.2vw, 62px)",
-            paddingLeft: "clamp(14px, 2vw, 32px)",
-            paddingRight: "clamp(14px, 2vw, 32px)",
-            fontSize: "clamp(0.62rem, 0.76vw, 0.86rem)",
-            letterSpacing: "0.16em",
-            boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,0.03), 0 0 0 rgba(156,229,0,0)",
-            transitionTimingFunction:
-              "cubic-bezier(0.22, 1, 0.36, 1)",
+            gap: "clamp(12px, 1.7vw, 28px)",
           }}
         >
-          Join Waitlist
-        </a>
+          <a
+            href="/sign-in"
+            className="whitespace-nowrap rounded-sm font-semibold uppercase text-white/72 outline-none transition duration-200 hover:-translate-y-px hover:text-[#9CE500] focus-visible:-translate-y-px focus-visible:text-[#9CE500] focus-visible:ring-2 focus-visible:ring-[#9CE500]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
+            style={{
+              fontSize: "clamp(0.6rem, 0.7vw, 0.76rem)",
+              letterSpacing: "0.18em",
+              transitionTimingFunction:
+                "cubic-bezier(0.22, 1, 0.36, 1)",
+            }}
+          >
+            Sign In
+          </a>
+
+          <a
+            href="#founding-community"
+            className="inline-flex items-center justify-center whitespace-nowrap border border-white/25 bg-black/30 font-semibold uppercase text-white outline-none transition duration-300 hover:-translate-y-px hover:border-[#9CE500] hover:text-[#9CE500] focus-visible:-translate-y-px focus-visible:border-[#9CE500] focus-visible:text-[#9CE500] focus-visible:ring-2 focus-visible:ring-[#9CE500]/60 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
+            style={{
+              minWidth: "clamp(118px, 30vw, 190px)",
+              minHeight: "clamp(46px, 4.2vw, 62px)",
+              paddingLeft: "clamp(14px, 2vw, 32px)",
+              paddingRight: "clamp(14px, 2vw, 32px)",
+              fontSize: "clamp(0.62rem, 0.76vw, 0.86rem)",
+              letterSpacing: "0.16em",
+              boxShadow:
+                "inset 0 1px 0 rgba(255,255,255,0.03), 0 0 0 rgba(156,229,0,0)",
+              transitionTimingFunction:
+                "cubic-bezier(0.22, 1, 0.36, 1)",
+            }}
+          >
+            Join Founding Community
+          </a>
+        </div>
       </div>
     </header>
   );
