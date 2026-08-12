@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import {
+  type ReactNode,
+  useState,
+} from "react";
+
 import {
   Bell,
   Check,
@@ -19,9 +23,16 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
+
 import { useRouter } from "next/navigation";
 
 import styles from "./DashboardShell.module.css";
+
+export type DashboardSection =
+  | "dashboard"
+  | "profile"
+  | "community"
+  | "updates";
 
 type DashboardShellProps = {
   firstName: string;
@@ -33,6 +44,11 @@ type DashboardShellProps = {
   countryOfOrigin?: string | null;
   cityOfResidence?: string | null;
   username?: string | null;
+
+  activeSection?: DashboardSection;
+  unreadUpdates?: number;
+
+  children?: ReactNode;
 };
 
 export default function DashboardShell({
@@ -45,11 +61,18 @@ export default function DashboardShell({
   countryOfOrigin,
   cityOfResidence,
   username,
+
+  activeSection = "dashboard",
+  unreadUpdates = 3,
+
+  children,
 }: DashboardShellProps) {
   const router = useRouter();
 
-  const [mobileMenuOpen, setMobileMenuOpen] =
-    useState(false);
+  const [
+    mobileMenuOpen,
+    setMobileMenuOpen,
+  ] = useState(false);
 
   const fullName =
     `${firstName} ${lastName}`.trim() ||
@@ -70,22 +93,30 @@ export default function DashboardShell({
     username,
   ];
 
-  const completedFields = profileFields.filter(
-    (value) =>
-      typeof value === "string" &&
-      value.trim().length > 0
-  ).length;
+  const completedFields =
+    profileFields.filter(
+      (value) =>
+        typeof value === "string" &&
+        value.trim().length > 0
+    ).length;
 
-  const profileCompletion = Math.round(
-    (completedFields / profileFields.length) * 100
-  );
+  const profileCompletion =
+    Math.round(
+      (completedFields /
+        profileFields.length) *
+        100
+    );
 
-  function navigateTo(path: string) {
+  function navigateTo(
+    path: string
+  ) {
     setMobileMenuOpen(false);
     router.push(path);
   }
 
-  function showComingSoon(feature: string) {
+  function showComingSoon(
+    feature: string
+  ) {
     setMobileMenuOpen(false);
 
     window.alert(
@@ -93,8 +124,389 @@ export default function DashboardShell({
     );
   }
 
+  function navClass(
+    section: DashboardSection
+  ) {
+    return `${styles.navItem} ${
+      activeSection === section
+        ? styles.navItemActive
+        : ""
+    }`;
+  }
+
+  const dashboardContent =
+    children ?? (
+      <>
+        <section
+          className={
+            styles.welcomeGrid
+          }
+        >
+          <div
+            className={
+              styles.heroCard
+            }
+          >
+            <div
+              className={
+                styles.heroGlow
+              }
+            />
+
+            <div
+              className={
+                styles.heroContent
+              }
+            >
+              <p
+                className={
+                  styles.welcomeEyebrow
+                }
+              >
+                Welcome back,
+              </p>
+
+              <h1
+                className={
+                  styles.welcomeName
+                }
+              >
+                {firstName}.
+              </h1>
+
+              <div
+                className={
+                  styles.founderIdentity
+                }
+              >
+                <span
+                  className={
+                    styles.founderLabel
+                  }
+                >
+                  Founding Member
+                </span>
+
+                <span
+                  className={
+                    styles.heroFounderNumber
+                  }
+                >
+                  #
+                  {founderNumber ??
+                    "------"}
+                </span>
+              </div>
+
+              <div
+                className={
+                  styles.heroRule
+                }
+              />
+
+              <p
+                className={
+                  styles.heroStatement
+                }
+              >
+                You were here at the
+                beginning.
+                <br />
+                SoccaR is being built
+                around you.
+              </p>
+
+              <div
+                className={
+                  styles.heroMeta
+                }
+              >
+                {memberType && (
+                  <span
+                    className={
+                      styles.metaItem
+                    }
+                  >
+                    <UserRound
+                      size={15}
+                      strokeWidth={
+                        1.8
+                      }
+                    />
+
+                    {memberType}
+                  </span>
+                )}
+
+                {countryOfResidence && (
+                  <span
+                    className={
+                      styles.metaItem
+                    }
+                  >
+                    <MapPin
+                      size={15}
+                      strokeWidth={
+                        1.8
+                      }
+                    />
+
+                    {
+                      countryOfResidence
+                    }
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <aside
+            className={
+              styles.identityCard
+            }
+          >
+            <div
+              className={
+                styles.identityHeader
+              }
+            >
+              <div>
+                <p
+                  className={
+                    styles.identityEyebrow
+                  }
+                >
+                  Your SoccaR Identity
+                </p>
+
+                <h2
+                  className={
+                    styles.identityTitle
+                  }
+                >
+                  Founder profile
+                </h2>
+              </div>
+
+              <div
+                className={
+                  styles.activeBadge
+                }
+              >
+                <Check
+                  size={13}
+                  strokeWidth={2.4}
+                />
+                Active
+              </div>
+            </div>
+
+            <div
+              className={
+                styles.identityRows
+              }
+            >
+              <div
+                className={
+                  styles.identityRow
+                }
+              >
+                <span>
+                  Member type
+                </span>
+
+                <strong>
+                  {memberType ||
+                    "Not provided"}
+                </strong>
+              </div>
+
+              <div
+                className={
+                  styles.identityRow
+                }
+              >
+                <span>
+                  Location
+                </span>
+
+                <strong>
+                  {countryOfResidence ||
+                    "Not provided"}
+                </strong>
+              </div>
+
+              <div
+                className={
+                  styles.identityRow
+                }
+              >
+                <span>
+                  Email status
+                </span>
+
+                <strong
+                  className={
+                    styles.verified
+                  }
+                >
+                  Verified
+
+                  <Check
+                    size={13}
+                    strokeWidth={2.4}
+                  />
+                </strong>
+              </div>
+
+              <div
+                className={
+                  styles.identityRow
+                }
+              >
+                <span>
+                  Founder Number
+                </span>
+
+                <strong
+                  className={
+                    styles.identityFounder
+                  }
+                >
+                  #
+                  {founderNumber ??
+                    "------"}
+                </strong>
+              </div>
+            </div>
+
+            <div
+              className={
+                styles.profileProgress
+              }
+            >
+              <div
+                className={
+                  styles.progressHeader
+                }
+              >
+                <div>
+                  <span
+                    className={
+                      styles.progressLabel
+                    }
+                  >
+                    Founder profile
+                  </span>
+
+                  <span
+                    className={
+                      styles.progressCopy
+                    }
+                  >
+                    Complete your
+                    SoccaR identity.
+                  </span>
+                </div>
+
+                <strong
+                  className={
+                    styles.progressValue
+                  }
+                >
+                  {profileCompletion}%
+                </strong>
+              </div>
+
+              <div
+                className={
+                  styles.progressTrack
+                }
+              >
+                <div
+                  className={
+                    styles.progressBar
+                  }
+                  style={{
+                    width: `${profileCompletion}%`,
+                  }}
+                />
+              </div>
+
+              <p
+                className={
+                  styles.progressHint
+                }
+              >
+                Add your city,
+                country of origin
+                and username to
+                strengthen your
+                Founder profile.
+              </p>
+
+              <button
+                type="button"
+                className={
+                  styles.completeProfileButton
+                }
+                onClick={() =>
+                  navigateTo(
+                    "/dashboard/profile"
+                  )
+                }
+              >
+                Complete my profile
+              </button>
+            </div>
+          </aside>
+        </section>
+
+        <section
+          className={
+            styles.nextStage
+          }
+        >
+          <div>
+            <p
+              className={
+                styles.nextStageEyebrow
+              }
+            >
+              Founder Dashboard V1
+            </p>
+
+            <h2
+              className={
+                styles.nextStageTitle
+              }
+            >
+              Your Founding Community
+              experience starts here.
+            </h2>
+
+            <p
+              className={
+                styles.nextStageCopy
+              }
+            >
+              Community activity,
+              SoccaR updates and
+              Founder privileges
+              will appear here as
+              the platform grows.
+            </p>
+          </div>
+        </section>
+      </>
+    );
+
   return (
-    <div className={styles.dashboard}>
+    <div
+      className={
+        styles.dashboard
+      }
+    >
       <aside
         className={`${styles.sidebar} ${
           mobileMenuOpen
@@ -102,8 +514,16 @@ export default function DashboardShell({
             : ""
         }`}
       >
-        <div className={styles.sidebarTop}>
-          <div className={styles.brandBlock}>
+        <div
+          className={
+            styles.sidebarTop
+          }
+        >
+          <div
+            className={
+              styles.brandBlock
+            }
+          >
             <button
               type="button"
               className={
@@ -111,7 +531,9 @@ export default function DashboardShell({
               }
               aria-label="Close navigation"
               onClick={() =>
-                setMobileMenuOpen(false)
+                setMobileMenuOpen(
+                  false
+                )
               }
             >
               <X
@@ -120,7 +542,11 @@ export default function DashboardShell({
               />
             </button>
 
-            <div className={styles.brand}>
+            <div
+              className={
+                styles.brand
+              }
+            >
               SOCCAR
             </div>
 
@@ -134,26 +560,36 @@ export default function DashboardShell({
           </div>
 
           <nav
-            className={styles.navigation}
+            className={
+              styles.navigation
+            }
             aria-label="Founder dashboard navigation"
           >
             <button
               type="button"
-              className={`${styles.navItem} ${styles.navItemActive}`}
+              className={navClass(
+                "dashboard"
+              )}
               onClick={() =>
-                navigateTo("/dashboard")
+                navigateTo(
+                  "/dashboard"
+                )
               }
             >
               <House
                 size={19}
                 strokeWidth={1.8}
               />
-              <span>Dashboard</span>
+              <span>
+                Dashboard
+              </span>
             </button>
 
             <button
               type="button"
-              className={styles.navItem}
+              className={navClass(
+                "profile"
+              )}
               onClick={() =>
                 navigateTo(
                   "/dashboard/profile"
@@ -164,12 +600,16 @@ export default function DashboardShell({
                 size={19}
                 strokeWidth={1.8}
               />
-              <span>Profile</span>
+              <span>
+                Profile
+              </span>
             </button>
 
             <button
               type="button"
-              className={styles.navItem}
+              className={navClass(
+                "community"
+              )}
               onClick={() =>
                 navigateTo(
                   "/dashboard/community"
@@ -180,6 +620,7 @@ export default function DashboardShell({
                 size={19}
                 strokeWidth={1.8}
               />
+
               <span>
                 Founder Community
               </span>
@@ -187,16 +628,61 @@ export default function DashboardShell({
 
             <button
               type="button"
-              className={styles.navItem}
+              className={navClass(
+                "updates"
+              )}
               onClick={() =>
-                showComingSoon("Updates")
+                navigateTo(
+                  "/dashboard/updates"
+                )
               }
             >
               <Megaphone
                 size={19}
                 strokeWidth={1.8}
               />
-              <span>Updates</span>
+
+              <span>
+                Updates
+              </span>
+
+              {unreadUpdates >
+                0 && (
+                <span
+                  style={{
+                    marginLeft:
+                      "auto",
+                    minWidth:
+                      "22px",
+                    height: "22px",
+                    display:
+                      "inline-flex",
+                    alignItems:
+                      "center",
+                    justifyContent:
+                      "center",
+                    padding:
+                      "0 6px",
+                    borderRadius:
+                      "999px",
+                    background:
+                      "#FF3B30",
+                    color:
+                      "#FFFFFF",
+                    fontSize:
+                      "10px",
+                    lineHeight: 1,
+                    fontWeight:
+                      800,
+                    boxShadow:
+                      "0 0 0 3px rgba(255,59,48,0.08)",
+                  }}
+                >
+                  {
+                    unreadUpdates
+                  }
+                </span>
+              )}
             </button>
 
             <div
@@ -207,7 +693,9 @@ export default function DashboardShell({
 
             <button
               type="button"
-              className={styles.navItem}
+              className={
+                styles.navItem
+              }
               onClick={() =>
                 showComingSoon(
                   "Early Access"
@@ -218,12 +706,17 @@ export default function DashboardShell({
                 size={19}
                 strokeWidth={1.8}
               />
-              <span>Early Access</span>
+
+              <span>
+                Early Access
+              </span>
             </button>
 
             <button
               type="button"
-              className={styles.navItem}
+              className={
+                styles.navItem
+              }
               onClick={() =>
                 showComingSoon(
                   "Certificates"
@@ -234,12 +727,17 @@ export default function DashboardShell({
                 size={19}
                 strokeWidth={1.8}
               />
-              <span>Certificates</span>
+
+              <span>
+                Certificates
+              </span>
             </button>
 
             <button
               type="button"
-              className={styles.navItem}
+              className={
+                styles.navItem
+              }
               onClick={() =>
                 showComingSoon(
                   "Account Settings"
@@ -250,6 +748,7 @@ export default function DashboardShell({
                 size={19}
                 strokeWidth={1.8}
               />
+
               <span>
                 Account Settings
               </span>
@@ -258,10 +757,14 @@ export default function DashboardShell({
         </div>
 
         <div
-          className={styles.sidebarBottom}
+          className={
+            styles.sidebarBottom
+          }
         >
           <div
-            className={styles.founderBadge}
+            className={
+              styles.founderBadge
+            }
           >
             <ShieldCheck
               size={18}
@@ -299,7 +802,9 @@ export default function DashboardShell({
               size={18}
               strokeWidth={1.8}
             />
-            <span>Sign Out</span>
+            <span>
+              Sign Out
+            </span>
           </button>
         </div>
       </aside>
@@ -319,18 +824,29 @@ export default function DashboardShell({
         }
       />
 
-      <div className={styles.workspace}>
-        <header className={styles.topbar}>
+      <div
+        className={
+          styles.workspace
+        }
+      >
+        <header
+          className={
+            styles.topbar
+          }
+        >
           <button
             type="button"
             className={
               styles.mobileMenuButton
             }
             aria-label="Open navigation"
-            aria-expanded={mobileMenuOpen}
+            aria-expanded={
+              mobileMenuOpen
+            }
             onClick={() =>
               setMobileMenuOpen(
-                (current) => !current
+                (current) =>
+                  !current
               )
             }
           >
@@ -369,11 +885,15 @@ export default function DashboardShell({
           </div>
 
           <div
-            className={styles.accountArea}
+            className={
+              styles.accountArea
+            }
           >
             <button
               type="button"
-              className={styles.iconButton}
+              className={
+                styles.iconButton
+              }
               aria-label="Notifications"
             >
               <Bell
@@ -384,7 +904,9 @@ export default function DashboardShell({
 
             <button
               type="button"
-              className={styles.iconButton}
+              className={
+                styles.iconButton
+              }
               aria-label="Settings"
               onClick={() =>
                 showComingSoon(
@@ -411,7 +933,9 @@ export default function DashboardShell({
               }
             >
               <span
-                className={styles.avatar}
+                className={
+                  styles.avatar
+                }
               >
                 {initials}
               </span>
@@ -441,341 +965,20 @@ export default function DashboardShell({
               <ChevronDown
                 size={16}
                 strokeWidth={1.8}
-                className={styles.chevron}
+                className={
+                  styles.chevron
+                }
               />
             </button>
           </div>
         </header>
 
-        <main className={styles.content}>
-          <section
-            className={styles.welcomeGrid}
-          >
-            <div className={styles.heroCard}>
-              <div
-                className={styles.heroGlow}
-              />
-
-              <div
-                className={styles.heroContent}
-              >
-                <p
-                  className={
-                    styles.welcomeEyebrow
-                  }
-                >
-                  Welcome back,
-                </p>
-
-                <h1
-                  className={
-                    styles.welcomeName
-                  }
-                >
-                  {firstName}.
-                </h1>
-
-                <div
-                  className={
-                    styles.founderIdentity
-                  }
-                >
-                  <span
-                    className={
-                      styles.founderLabel
-                    }
-                  >
-                    Founding Member
-                  </span>
-
-                  <span
-                    className={
-                      styles.heroFounderNumber
-                    }
-                  >
-                    #
-                    {founderNumber ??
-                      "------"}
-                  </span>
-                </div>
-
-                <div
-                  className={styles.heroRule}
-                />
-
-                <p
-                  className={
-                    styles.heroStatement
-                  }
-                >
-                  You were here at the
-                  beginning.
-                  <br />
-                  SoccaR is being built around
-                  you.
-                </p>
-
-                <div
-                  className={styles.heroMeta}
-                >
-                  {memberType && (
-                    <span
-                      className={
-                        styles.metaItem
-                      }
-                    >
-                      <UserRound
-                        size={15}
-                        strokeWidth={1.8}
-                      />
-                      {memberType}
-                    </span>
-                  )}
-
-                  {countryOfResidence && (
-                    <span
-                      className={
-                        styles.metaItem
-                      }
-                    >
-                      <MapPin
-                        size={15}
-                        strokeWidth={1.8}
-                      />
-                      {countryOfResidence}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <aside
-              className={
-                styles.identityCard
-              }
-            >
-              <div
-                className={
-                  styles.identityHeader
-                }
-              >
-                <div>
-                  <p
-                    className={
-                      styles.identityEyebrow
-                    }
-                  >
-                    Your SoccaR Identity
-                  </p>
-
-                  <h2
-                    className={
-                      styles.identityTitle
-                    }
-                  >
-                    Founder profile
-                  </h2>
-                </div>
-
-                <div
-                  className={
-                    styles.activeBadge
-                  }
-                >
-                  <Check
-                    size={13}
-                    strokeWidth={2.4}
-                  />
-                  Active
-                </div>
-              </div>
-
-              <div
-                className={
-                  styles.identityRows
-                }
-              >
-                <div
-                  className={
-                    styles.identityRow
-                  }
-                >
-                  <span>Member type</span>
-
-                  <strong>
-                    {memberType ||
-                      "Not provided"}
-                  </strong>
-                </div>
-
-                <div
-                  className={
-                    styles.identityRow
-                  }
-                >
-                  <span>Location</span>
-
-                  <strong>
-                    {countryOfResidence ||
-                      "Not provided"}
-                  </strong>
-                </div>
-
-                <div
-                  className={
-                    styles.identityRow
-                  }
-                >
-                  <span>Email status</span>
-
-                  <strong
-                    className={
-                      styles.verified
-                    }
-                  >
-                    Verified
-                    <Check
-                      size={13}
-                      strokeWidth={2.4}
-                    />
-                  </strong>
-                </div>
-
-                <div
-                  className={
-                    styles.identityRow
-                  }
-                >
-                  <span>
-                    Founder Number
-                  </span>
-
-                  <strong
-                    className={
-                      styles.identityFounder
-                    }
-                  >
-                    #
-                    {founderNumber ??
-                      "------"}
-                  </strong>
-                </div>
-              </div>
-
-              <div
-                className={
-                  styles.profileProgress
-                }
-              >
-                <div
-                  className={
-                    styles.progressHeader
-                  }
-                >
-                  <div>
-                    <span
-                      className={
-                        styles.progressLabel
-                      }
-                    >
-                      Founder profile
-                    </span>
-
-                    <span
-                      className={
-                        styles.progressCopy
-                      }
-                    >
-                      Complete your SoccaR
-                      identity.
-                    </span>
-                  </div>
-
-                  <strong
-                    className={
-                      styles.progressValue
-                    }
-                  >
-                    {profileCompletion}%
-                  </strong>
-                </div>
-
-                <div
-                  className={
-                    styles.progressTrack
-                  }
-                >
-                  <div
-                    className={
-                      styles.progressBar
-                    }
-                    style={{
-                      width: `${profileCompletion}%`,
-                    }}
-                  />
-                </div>
-
-                <p
-                  className={
-                    styles.progressHint
-                  }
-                >
-                  Add your city, country of
-                  origin and username to
-                  strengthen your Founder
-                  profile.
-                </p>
-
-                <button
-                  type="button"
-                  className={
-                    styles.completeProfileButton
-                  }
-                  onClick={() =>
-                    navigateTo(
-                      "/dashboard/profile"
-                    )
-                  }
-                >
-                  Complete my profile
-                </button>
-              </div>
-            </aside>
-          </section>
-
-          <section
-            className={styles.nextStage}
-          >
-            <div>
-              <p
-                className={
-                  styles.nextStageEyebrow
-                }
-              >
-                Founder Dashboard V1
-              </p>
-
-              <h2
-                className={
-                  styles.nextStageTitle
-                }
-              >
-                Your Founding Community
-                experience starts here.
-              </h2>
-
-              <p
-                className={
-                  styles.nextStageCopy
-                }
-              >
-                Community activity, SoccaR
-                updates and Founder privileges
-                will appear here as the platform
-                grows.
-              </p>
-            </div>
-          </section>
+        <main
+          className={
+            styles.content
+          }
+        >
+          {dashboardContent}
         </main>
       </div>
     </div>

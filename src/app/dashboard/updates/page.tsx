@@ -1,10 +1,12 @@
-import DashboardShell from "./DashboardShell";
+import DashboardShell from "../DashboardShell";
 
 import {
   getFounderDashboardData,
-} from "./getFounderDashboardData";
+} from "../getFounderDashboardData";
 
-export default async function DashboardPage() {
+import UpdatesClient from "./UpdatesClient";
+
+export default async function UpdatesPage() {
   const founder =
     await getFounderDashboardData();
 
@@ -35,8 +37,10 @@ export default async function DashboardPage() {
       username={
         founder.username
       }
-      activeSection="dashboard"
+      activeSection="updates"
       unreadUpdates={3}
-    />
+    >
+      <UpdatesClient />
+    </DashboardShell>
   );
 }
