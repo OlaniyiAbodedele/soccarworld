@@ -422,7 +422,7 @@ export default function ResetPasswordPage() {
       />
 
       <div
-        className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1280px] flex-col"
+        className="relative z-10 flex min-h-screen w-full flex-col"
         style={{
           padding:
             "clamp(26px, 3vw, 42px) clamp(20px, 5vw, 68px) clamp(30px, 4vw, 56px)",
@@ -486,12 +486,12 @@ export default function ResetPasswordPage() {
 
         {/* Main experience */}
         <section
-          className="flex flex-1 items-center justify-center"
-          style={{
-            padding:
-              "clamp(46px, 6vw, 82px) 0",
-          }}
-        >
+  className="flex flex-1 items-center justify-center"
+  style={{
+    padding:
+      "clamp(28px, 4vw, 52px) 0 clamp(22px, 3vw, 36px)",
+  }}
+>
           <div className="w-full max-w-[720px]">
             <section
               className="overflow-hidden rounded-[30px] border border-white/[0.09]"
@@ -970,7 +970,12 @@ export default function ResetPasswordPage() {
         </section>
 
         {/* Footer */}
-        <footer className="text-center">
+        <footer
+  className="text-center"
+  style={{
+    marginTop: "-6px",
+  }}
+>
           <p
             className="font-semibold uppercase text-white/22"
             style={{
