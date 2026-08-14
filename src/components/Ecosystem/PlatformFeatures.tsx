@@ -1,14 +1,25 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useReducedMotion,
+} from "framer-motion";
 
-const PREMIUM_EASE = [0.22, 1, 0.36, 1] as const;
+const PREMIUM_EASE = [
+  0.22,
+  1,
+  0.36,
+  1,
+] as const;
 
 type PlatformValue = {
   title: string;
   subtitle: string;
-  icon: "platform" | "intelligence" | "scale";
+  icon:
+    | "platform"
+    | "intelligence"
+    | "scale";
 };
 
 const platformValues: PlatformValue[] = [
@@ -130,19 +141,20 @@ function PlatformValueIcon({
 }
 
 export default function PlatformFeatures() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion =
+    useReducedMotion();
 
   return (
     <section
-  id="platform-features"
-  aria-labelledby="platform-features-heading"
-  className="
-    relative w-full overflow-hidden bg-black text-white
-    pt-[48px] pb-[64px]
-    md:pt-[clamp(48px,4vw,72px)]
-    md:pb-[clamp(88px,7vw,128px)]
-  "
->
+      id="platform-features"
+      aria-labelledby="platform-features-heading"
+      className="
+        relative w-full overflow-hidden bg-black text-white
+        pt-[48px] pb-[64px]
+        md:pt-[clamp(48px,4vw,72px)]
+        md:pb-[clamp(88px,7vw,128px)]
+      "
+    >
       {/* =========================================================
           MOBILE LAYOUT
       ========================================================== */}
@@ -160,16 +172,9 @@ export default function PlatformFeatures() {
           }}
         >
           {/* Mobile upper-content alignment rail */}
-<div className="w-full">
+          <div className="w-full">
             <motion.header
-              initial={
-                reduceMotion
-                  ? false
-                  : {
-                      opacity: 0,
-                      y: 20,
-                    }
-              }
+              initial={false}
               whileInView={{
                 opacity: 1,
                 y: 0,
@@ -186,9 +191,12 @@ export default function PlatformFeatures() {
               <p
                 className="font-semibold uppercase text-[#9CE500]"
                 style={{
-                  fontSize: "0.66rem",
-                  lineHeight: "1.4",
-                  letterSpacing: "0.2em",
+                  fontSize:
+                    "0.66rem",
+                  lineHeight:
+                    "1.4",
+                  letterSpacing:
+                    "0.2em",
                 }}
               >
                 Platform Features
@@ -203,13 +211,7 @@ export default function PlatformFeatures() {
                   marginTop: "18px",
                   opacity: 0.88,
                 }}
-                initial={
-                  reduceMotion
-                    ? false
-                    : {
-                        scaleX: 0,
-                      }
-                }
+                initial={false}
                 whileInView={{
                   scaleX: 1,
                 }}
@@ -228,11 +230,16 @@ export default function PlatformFeatures() {
                 className="font-serif"
                 style={{
                   width: "100%",
-                  maxWidth: "390px",
-                  marginTop: "40px",
-                  fontSize: "clamp(2rem, 9vw, 2.65rem)",
-                  lineHeight: "1.08",
-                  letterSpacing: "-0.02em",
+                  maxWidth:
+                    "390px",
+                  marginTop:
+                    "40px",
+                  fontSize:
+                    "clamp(2rem, 9vw, 2.65rem)",
+                  lineHeight:
+                    "1.08",
+                  letterSpacing:
+                    "-0.02em",
                 }}
               >
                 <span className="block text-white">
@@ -244,7 +251,8 @@ export default function PlatformFeatures() {
                 <span
                   className="block text-[#9CE500]"
                   style={{
-                    marginTop: "20px",
+                    marginTop:
+                      "20px",
                   }}
                 >
                   The operating system
@@ -258,20 +266,18 @@ export default function PlatformFeatures() {
               className="text-white/82"
               style={{
                 width: "100%",
-                maxWidth: "370px",
-                marginTop: "38px",
-                fontSize: "0.86rem",
-                lineHeight: "1.82",
-                letterSpacing: "0.005em",
+                maxWidth:
+                  "370px",
+                marginTop:
+                  "38px",
+                fontSize:
+                  "0.86rem",
+                lineHeight:
+                  "1.82",
+                letterSpacing:
+                  "0.005em",
               }}
-              initial={
-                reduceMotion
-                  ? false
-                  : {
-                      opacity: 0,
-                      y: 16,
-                    }
-              }
+              initial={false}
               whileInView={{
                 opacity: 1,
                 y: 0,
@@ -286,9 +292,12 @@ export default function PlatformFeatures() {
                 ease: PREMIUM_EASE,
               }}
             >
-              From discovering talent to managing clubs, publishing media and
-              connecting football communities, SoccaR brings every football
-              workflow into one intelligent ecosystem.
+              From discovering talent to
+              managing clubs, publishing
+              media and connecting football
+              communities, SoccaR brings
+              every football workflow into
+              one intelligent ecosystem.
             </motion.p>
           </div>
 
@@ -299,14 +308,7 @@ export default function PlatformFeatures() {
               minHeight: "520px",
               marginTop: "48px",
             }}
-            initial={
-              reduceMotion
-                ? false
-                : {
-                    opacity: 0,
-                    scale: 1.015,
-                  }
-            }
+            initial={false}
             whileInView={{
               opacity: 1,
               scale: 1,
@@ -327,7 +329,8 @@ export default function PlatformFeatures() {
               sizes="calc(100vw - 64px)"
               className="object-cover"
               style={{
-                objectPosition: "64% center",
+                objectPosition:
+                  "64% center",
                 filter:
                   "brightness(1.22) saturate(1.16) contrast(1.03)",
               }}
@@ -347,84 +350,103 @@ export default function PlatformFeatures() {
           <div
             className="w-full"
             style={{
-              paddingLeft: "50px",
-              marginTop: "44px",
+              paddingLeft:
+                "50px",
+              marginTop:
+                "44px",
             }}
           >
             <div
               className="grid w-full grid-cols-1"
               style={{
-                rowGap: "18px",
+                rowGap:
+                  "18px",
               }}
             >
-              {platformValues.map((value, index) => (
-                <motion.article
-                  key={value.title}
-                  tabIndex={0}
-                  className="group flex items-center gap-5 border-t border-white/18 py-6 outline-none"
-                  initial={
-                    reduceMotion
-                      ? false
-                      : {
-                          opacity: 0,
-                          y: 16,
+              {platformValues.map(
+                (
+                  value,
+                  index
+                ) => (
+                  <motion.article
+                    key={
+                      value.title
+                    }
+                    tabIndex={0}
+                    className="group flex items-center gap-5 border-t border-white/18 py-6 outline-none"
+                    initial={false}
+                    whileInView={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    whileHover={
+                      reduceMotion
+                        ? undefined
+                        : {
+                            y: -3,
+                          }
+                    }
+                    whileFocus={
+                      reduceMotion
+                        ? undefined
+                        : {
+                            y: -3,
+                          }
+                    }
+                    viewport={{
+                      once: true,
+                      amount: 0.45,
+                    }}
+                    transition={{
+                      duration:
+                        0.65,
+                      delay:
+                        index *
+                        0.08,
+                      ease:
+                        PREMIUM_EASE,
+                    }}
+                  >
+                    <div className="h-[58px] w-[58px] shrink-0 text-[#9CE500] transition duration-300 group-hover:brightness-125 group-focus-visible:brightness-125">
+                      <PlatformValueIcon
+                        type={
+                          value.icon
                         }
-                  }
-                  whileInView={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  whileHover={
-                    reduceMotion
-                      ? undefined
-                      : {
-                          y: -3,
-                        }
-                  }
-                  whileFocus={
-                    reduceMotion
-                      ? undefined
-                      : {
-                          y: -3,
-                        }
-                  }
-                  viewport={{
-                    once: true,
-                    amount: 0.45,
-                  }}
-                  transition={{
-                    duration: 0.65,
-                    delay: index * 0.08,
-                    ease: PREMIUM_EASE,
-                  }}
-                >
-                  <div className="h-[58px] w-[58px] shrink-0 text-[#9CE500] transition duration-300 group-hover:brightness-125 group-focus-visible:brightness-125">
-                    <PlatformValueIcon type={value.icon} />
-                  </div>
+                      />
+                    </div>
 
-                  <div>
-                    <p
-                      className="font-medium text-white"
-                      style={{
-                        fontSize: "0.82rem",
-                        lineHeight: "1.55",
-                      }}
-                    >
-                      {value.title}
-                    </p>
+                    <div>
+                      <p
+                        className="font-medium text-white"
+                        style={{
+                          fontSize:
+                            "0.82rem",
+                          lineHeight:
+                            "1.55",
+                        }}
+                      >
+                        {
+                          value.title
+                        }
+                      </p>
 
-                    <p
-                      className="text-white/72"
-                      style={{
-                        fontSize: "0.8rem",
-                        lineHeight: "1.55",
-                      }}
-                    >
-                      {value.subtitle}
-                    </p>
-                  </div>
-                </motion.article>
-              ))}
+                      <p
+                        className="text-white/72"
+                        style={{
+                          fontSize:
+                            "0.8rem",
+                          lineHeight:
+                            "1.55",
+                        }}
+                      >
+                        {
+                          value.subtitle
+                        }
+                      </p>
+                    </div>
+                  </motion.article>
+                )
+              )}
             </div>
           </div>
         </div>
@@ -442,14 +464,7 @@ export default function PlatformFeatures() {
       >
         <motion.div
           className="absolute inset-0"
-          initial={
-            reduceMotion
-              ? false
-              : {
-                  opacity: 0,
-                  scale: 1.012,
-                }
-          }
+          initial={false}
           whileInView={{
             opacity: 1,
             scale: 1,
@@ -470,7 +485,8 @@ export default function PlatformFeatures() {
             sizes="100vw"
             className="object-cover object-top"
             style={{
-              filter: "brightness(1.3) saturate(1.22) contrast(1.04)",
+              filter:
+                "brightness(1.3) saturate(1.22) contrast(1.04)",
             }}
           />
         </motion.div>
@@ -496,24 +512,22 @@ export default function PlatformFeatures() {
         <div
           className="relative z-20 flex h-full min-h-[780px] flex-col"
           style={{
-            paddingTop: "clamp(94px, 8vw, 148px)",
-            paddingRight: "clamp(32px, 5vw, 96px)",
-            paddingBottom: "clamp(34px, 3vw, 50px)",
-            paddingLeft: "clamp(48px, 7vw, 136px)",
+            paddingTop:
+              "clamp(94px, 8vw, 148px)",
+            paddingRight:
+              "clamp(32px, 5vw, 96px)",
+            paddingBottom:
+              "clamp(34px, 3vw, 50px)",
+            paddingLeft:
+              "clamp(48px, 7vw, 136px)",
           }}
         >
           <motion.header
             style={{
-              width: "min(610px, 43vw)",
+              width:
+                "min(610px, 43vw)",
             }}
-            initial={
-              reduceMotion
-                ? false
-                : {
-                    opacity: 0,
-                    x: -24,
-                  }
-            }
+            initial={false}
             whileInView={{
               opacity: 1,
               x: 0,
@@ -530,9 +544,12 @@ export default function PlatformFeatures() {
             <p
               className="font-semibold uppercase text-[#9CE500]"
               style={{
-                fontSize: "clamp(0.68rem, 0.8vw, 0.82rem)",
-                lineHeight: "1.4",
-                letterSpacing: "0.22em",
+                fontSize:
+                  "clamp(0.68rem, 0.8vw, 0.82rem)",
+                lineHeight:
+                  "1.4",
+                letterSpacing:
+                  "0.22em",
               }}
             >
               Platform Features
@@ -547,13 +564,7 @@ export default function PlatformFeatures() {
                 marginTop: "18px",
                 opacity: 0.9,
               }}
-              initial={
-                reduceMotion
-                  ? false
-                  : {
-                      scaleX: 0,
-                    }
-              }
+              initial={false}
               whileInView={{
                 scaleX: 1,
               }}
@@ -570,10 +581,14 @@ export default function PlatformFeatures() {
             <h2
               className="font-serif"
               style={{
-                marginTop: "clamp(68px, 6.8vw, 108px)",
-                fontSize: "clamp(2.1rem, 3.15vw, 3.9rem)",
-                lineHeight: "1.1",
-                letterSpacing: "-0.025em",
+                marginTop:
+                  "clamp(68px, 6.8vw, 108px)",
+                fontSize:
+                  "clamp(2.1rem, 3.15vw, 3.9rem)",
+                lineHeight:
+                  "1.1",
+                letterSpacing:
+                  "-0.025em",
               }}
             >
               <span className="block text-white">
@@ -585,8 +600,10 @@ export default function PlatformFeatures() {
               <span
                 className="block text-[#9CE500]"
                 style={{
-                  maxWidth: "610px",
-                  marginTop: "20px",
+                  maxWidth:
+                    "610px",
+                  marginTop:
+                    "20px",
                 }}
               >
                 The operating system
@@ -599,20 +616,18 @@ export default function PlatformFeatures() {
           <motion.p
             className="text-white/88"
             style={{
-              width: "min(510px, 40vw)",
-              marginTop: "clamp(54px, 5vw, 82px)",
-              fontSize: "clamp(0.86rem, 1vw, 1rem)",
-              lineHeight: "1.82",
-              letterSpacing: "-0.002em",
+              width:
+                "min(510px, 40vw)",
+              marginTop:
+                "clamp(54px, 5vw, 82px)",
+              fontSize:
+                "clamp(0.86rem, 1vw, 1rem)",
+              lineHeight:
+                "1.82",
+              letterSpacing:
+                "-0.002em",
             }}
-            initial={
-              reduceMotion
-                ? false
-                : {
-                    opacity: 0,
-                    y: 18,
-                  }
-            }
+            initial={false}
             whileInView={{
               opacity: 1,
               y: 0,
@@ -627,105 +642,136 @@ export default function PlatformFeatures() {
               ease: PREMIUM_EASE,
             }}
           >
-            From discovering talent to managing clubs, publishing media and
-            connecting football communities, SoccaR brings every football
-            workflow into one intelligent ecosystem.
+            From discovering talent to
+            managing clubs, publishing
+            media and connecting football
+            communities, SoccaR brings
+            every football workflow into
+            one intelligent ecosystem.
           </motion.p>
 
           <div
             className="grid w-full grid-cols-3"
             style={{
               maxWidth: "760px",
-              marginTop: "clamp(136px, 11vw, 198px)",
-              columnGap: "clamp(34px, 4vw, 68px)",
+              marginTop:
+                "clamp(136px, 11vw, 198px)",
+              columnGap:
+                "clamp(34px, 4vw, 68px)",
             }}
           >
-            {platformValues.map((value, index) => (
-              <motion.article
-                key={value.title}
-                tabIndex={0}
-                className="group relative outline-none"
-                initial={
-                  reduceMotion
-                    ? false
-                    : {
-                        opacity: 0,
-                        y: 18,
+            {platformValues.map(
+              (
+                value,
+                index
+              ) => (
+                <motion.article
+                  key={
+                    value.title
+                  }
+                  tabIndex={0}
+                  className="group relative outline-none"
+                  initial={false}
+                  whileInView={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  whileHover={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          y: -4,
+                        }
+                  }
+                  whileFocus={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          y: -4,
+                        }
+                  }
+                  viewport={{
+                    once: true,
+                    amount: 0.5,
+                  }}
+                  transition={{
+                    duration:
+                      0.65,
+                    delay:
+                      0.18 +
+                      index *
+                        0.09,
+                    ease:
+                      PREMIUM_EASE,
+                  }}
+                >
+                  {index > 0 && (
+                    <div
+                      aria-hidden="true"
+                      className="absolute top-0 h-full w-px bg-white/20"
+                      style={{
+                        left:
+                          "clamp(-34px, -2vw, -18px)",
+                      }}
+                    />
+                  )}
+
+                  <div className="h-[64px] w-[64px] text-[#9CE500] transition duration-300 group-hover:brightness-125 group-focus-visible:brightness-125">
+                    <PlatformValueIcon
+                      type={
+                        value.icon
                       }
-                }
-                whileInView={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                whileHover={
-                  reduceMotion
-                    ? undefined
-                    : {
-                        y: -4,
-                      }
-                }
-                whileFocus={
-                  reduceMotion
-                    ? undefined
-                    : {
-                        y: -4,
-                      }
-                }
-                viewport={{
-                  once: true,
-                  amount: 0.5,
-                }}
-                transition={{
-                  duration: 0.65,
-                  delay: 0.18 + index * 0.09,
-                  ease: PREMIUM_EASE,
-                }}
-              >
-                {index > 0 && (
+                    />
+                  </div>
+
                   <div
-                    aria-hidden="true"
-                    className="absolute top-0 h-full w-px bg-white/20"
                     style={{
-                      left: "clamp(-34px, -2vw, -18px)",
-                    }}
-                  />
-                )}
-
-                <div className="h-[64px] w-[64px] text-[#9CE500] transition duration-300 group-hover:brightness-125 group-focus-visible:brightness-125">
-                  <PlatformValueIcon type={value.icon} />
-                </div>
-
-                <div style={{ marginTop: "20px" }}>
-                  <p
-                    className="font-medium text-white"
-                    style={{
-                      fontSize: "clamp(0.74rem, 0.8vw, 0.84rem)",
-                      lineHeight: "1.55",
+                      marginTop:
+                        "20px",
                     }}
                   >
-                    {value.title}
-                  </p>
+                    <p
+                      className="font-medium text-white"
+                      style={{
+                        fontSize:
+                          "clamp(0.74rem, 0.8vw, 0.84rem)",
+                        lineHeight:
+                          "1.55",
+                      }}
+                    >
+                      {
+                        value.title
+                      }
+                    </p>
 
-                  <p
-                    className="text-white/78"
-                    style={{
-                      marginTop: "2px",
-                      fontSize: "clamp(0.72rem, 0.78vw, 0.82rem)",
-                      lineHeight: "1.55",
-                    }}
-                  >
-                    {value.subtitle}
-                  </p>
-                </div>
-              </motion.article>
-            ))}
+                    <p
+                      className="text-white/78"
+                      style={{
+                        marginTop:
+                          "2px",
+                        fontSize:
+                          "clamp(0.72rem, 0.78vw, 0.82rem)",
+                        lineHeight:
+                          "1.55",
+                      }}
+                    >
+                      {
+                        value.subtitle
+                      }
+                    </p>
+                  </div>
+                </motion.article>
+              )
+            )}
           </div>
         </div>
       </div>
-    <div
-  aria-hidden="true"
-  className="h-[56px] md:hidden"
-/>
+
+      {/* Approved mobile section separation */}
+      <div
+        aria-hidden="true"
+        className="h-[56px] md:hidden"
+      />
     </section>
   );
 }

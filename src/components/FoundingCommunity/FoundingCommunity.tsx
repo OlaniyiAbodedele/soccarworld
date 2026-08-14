@@ -381,20 +381,17 @@ export default function FoundingCommunity() {
   const [
     memberCount,
     setMemberCount,
-  ] =
-    useState<number | null>(null);
+  ] = useState<number | null>(null);
 
   const [
     turnstileReady,
     setTurnstileReady,
-  ] =
-    useState(false);
+  ] = useState(false);
 
   const [
     turnstileToken,
     setTurnstileToken,
-  ] =
-    useState<string | null>(null);
+  ] = useState<string | null>(null);
 
   const turnstileWidgetId =
     useRef<string | null>(null);
@@ -449,15 +446,14 @@ export default function FoundingCommunity() {
           callback(token: string) {
             setTurnstileToken(token);
 
-            if (
-              submissionState ===
-              "error"
-            ) {
-              setSubmissionState(
-                "idle"
-              );
-              setMessage("");
-            }
+            setSubmissionState(
+              (current) =>
+                current === "error"
+                  ? "idle"
+                  : current
+            );
+
+            setMessage("");
           },
 
           "expired-callback"() {
@@ -466,9 +462,11 @@ export default function FoundingCommunity() {
 
           "error-callback"() {
             setTurnstileToken(null);
+
             setSubmissionState(
               "error"
             );
+
             setMessage(
               "Security verification could not be completed. Please refresh the page and try again."
             );
@@ -478,7 +476,6 @@ export default function FoundingCommunity() {
   }, [
     turnstileReady,
     turnstileSiteKey,
-    submissionState,
   ]);
 
   function resetTurnstile() {
@@ -705,15 +702,15 @@ export default function FoundingCommunity() {
       />
 
       <section
-  id="founding-community"
-  aria-labelledby="founding-community-heading"
-  className="
-    relative w-full overflow-hidden bg-black text-white
-    pt-[72px] pb-[28px]
-    md:pt-[clamp(72px,6vw,108px)]
-    md:pb-[clamp(72px,6vw,108px)]
-  "
->
+        id="founding-community"
+        aria-labelledby="founding-community-heading"
+        className="
+          relative w-full overflow-hidden bg-black text-white
+          pt-[72px] pb-[28px]
+          md:pt-[clamp(72px,6vw,108px)]
+          md:pb-[clamp(72px,6vw,108px)]
+        "
+      >
         <div
           className="relative w-full overflow-hidden bg-black"
           style={{
@@ -721,29 +718,7 @@ export default function FoundingCommunity() {
               "clamp(1180px, 90vw, 1380px)",
           }}
         >
-          <motion.div
-            className="absolute inset-0"
-            initial={
-              reduceMotion
-                ? false
-                : {
-                    opacity: 0,
-                    scale: 1.015,
-                  }
-            }
-            whileInView={{
-              opacity: 1,
-              scale: 1,
-            }}
-            viewport={{
-              once: true,
-              amount: 0.12,
-            }}
-            transition={{
-              duration: 1.2,
-              ease: PREMIUM_EASE,
-            }}
-          >
+          <div className="absolute inset-0">
             <Image
               src="/images/founding-community/founding-community-visual.png"
               alt="A global football community gathered beneath the connected SoccaR world"
@@ -756,7 +731,7 @@ export default function FoundingCommunity() {
                   "brightness(1.1) saturate(1.12) contrast(1.03)",
               }}
             />
-          </motion.div>
+          </div>
 
           <div
             aria-hidden="true"
@@ -800,29 +775,7 @@ export default function FoundingCommunity() {
                 "clamp(20px, 5vw, 88px)",
             }}
           >
-            <motion.header
-              className="flex w-full flex-col items-center"
-              initial={
-                reduceMotion
-                  ? false
-                  : {
-                      opacity: 0,
-                      y: 24,
-                    }
-              }
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-                amount: 0.35,
-              }}
-              transition={{
-                duration: 0.85,
-                ease: PREMIUM_EASE,
-              }}
-            >
+            <header className="flex w-full flex-col items-center">
               <p
                 className="font-semibold uppercase text-white/92"
                 style={{
@@ -853,9 +806,9 @@ export default function FoundingCommunity() {
                 <br />
                 begins with you.
               </h2>
-            </motion.header>
+            </header>
 
-            <motion.p
+            <p
               className="text-white/86"
               style={{
                 maxWidth: "700px",
@@ -867,27 +820,6 @@ export default function FoundingCommunity() {
                 letterSpacing: "0.14em",
                 textWrap: "balance",
               }}
-              initial={
-                reduceMotion
-                  ? false
-                  : {
-                      opacity: 0,
-                      y: 18,
-                    }
-              }
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-                amount: 0.4,
-              }}
-              transition={{
-                duration: 0.75,
-                delay: 0.12,
-                ease: PREMIUM_EASE,
-              }}
             >
               Join the founding community shaping
               the future of football.
@@ -897,31 +829,15 @@ export default function FoundingCommunity() {
               <br className="hidden sm:block" />
               and help build the world&apos;s
               connected football ecosystem.
-            </motion.p>
+            </p>
 
             {memberCount !== null && (
-              <motion.div
+              <div
                 role="status"
                 aria-live="polite"
                 className="flex items-center justify-center"
                 style={{
                   marginTop: "28px",
-                }}
-                initial={
-                  reduceMotion
-                    ? false
-                    : {
-                        opacity: 0,
-                        y: 10,
-                      }
-                }
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                transition={{
-                  duration: 0.65,
-                  ease: PREMIUM_EASE,
                 }}
               >
                 <p
@@ -940,36 +856,15 @@ export default function FoundingCommunity() {
                     : "Members"}{" "}
                   Joined
                 </p>
-              </motion.div>
+              </div>
             )}
 
-            <motion.div
+            <div
               className="w-full"
               style={{
                 maxWidth: "860px",
                 marginTop:
                   "clamp(48px, 5vw, 78px)",
-              }}
-              initial={
-                reduceMotion
-                  ? false
-                  : {
-                      opacity: 0,
-                      y: 28,
-                    }
-              }
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-                amount: 0.18,
-              }}
-              transition={{
-                duration: 0.9,
-                delay: 0.16,
-                ease: PREMIUM_EASE,
               }}
             >
               <div
@@ -1145,7 +1040,7 @@ export default function FoundingCommunity() {
                     </div>
 
                     <div
-                      className="flex w-full justify-center"
+                      className="relative z-30 flex w-full justify-center"
                       style={{
                         marginTop:
                           "clamp(28px, 3vw, 38px)",
@@ -1222,6 +1117,7 @@ export default function FoundingCommunity() {
                             aria-hidden="true"
                             className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black"
                           />
+
                           Reserving Your Membership...
                         </span>
                       ) : (
@@ -1237,10 +1133,7 @@ export default function FoundingCommunity() {
                             ? "alert"
                             : "status"
                         }
-                        initial={{
-                          opacity: 0,
-                          y: 8,
-                        }}
+                        initial={false}
                         animate={{
                           opacity: 1,
                           y: 0,
@@ -1285,9 +1178,9 @@ export default function FoundingCommunity() {
                   </form>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div
+            <div
               className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
               style={{
                 maxWidth: "1080px",
@@ -1296,27 +1189,6 @@ export default function FoundingCommunity() {
                 columnGap:
                   "clamp(18px, 2.2vw, 30px)",
                 rowGap: "16px",
-              }}
-              initial={
-                reduceMotion
-                  ? false
-                  : {
-                      opacity: 0,
-                      y: 14,
-                    }
-              }
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-                amount: 0.4,
-              }}
-              transition={{
-                duration: 0.7,
-                delay: 0.22,
-                ease: PREMIUM_EASE,
               }}
             >
               {[
@@ -1345,7 +1217,7 @@ export default function FoundingCommunity() {
                   {benefit}
                 </p>
               ))}
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>

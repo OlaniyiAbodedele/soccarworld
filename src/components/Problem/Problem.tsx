@@ -39,23 +39,6 @@ const problemItems = [
   },
 ];
 
-const headingVariants = {
-  hidden: {
-    opacity: 0,
-    y: 28,
-  },
-
-  visible: {
-    opacity: 1,
-    y: 0,
-
-    transition: {
-      duration: 0.9,
-      ease: PREMIUM_EASE,
-    },
-  },
-};
-
 export default function Problem() {
   const reduceMotion =
     useReducedMotion();
@@ -87,45 +70,34 @@ export default function Problem() {
             maxWidth: "520px",
           }}
         >
-          {/*
-           * Mobile editorial rail.
-           *
-           * The previous additional 50px
-           * left padding has been removed.
-           * The outer 32px page padding now
-           * establishes the mobile alignment.
-           */}
           <div className="w-full">
             {/* Editorial headline */}
             <motion.div
-              initial={
-                reduceMotion
-                  ? false
-                  : "hidden"
-              }
-              whileInView="visible"
+              initial={false}
+              whileInView={{
+                opacity: 1,
+                y: 0,
+              }}
               viewport={{
                 once: true,
                 amount: 0.3,
               }}
-              variants={
-                headingVariants
-              }
+              transition={{
+                duration: 0.9,
+                ease: PREMIUM_EASE,
+              }}
             >
               <h2
                 id="problem-heading"
                 className="font-serif text-white"
                 style={{
                   width: "100%",
-                  maxWidth:
-                    "370px",
+                  maxWidth: "370px",
                   margin: 0,
                   fontSize:
                     "clamp(2rem, 8.2vw, 2.5rem)",
-                  lineHeight:
-                    "1.18",
-                  letterSpacing:
-                    "0.01em",
+                  lineHeight: "1.18",
+                  letterSpacing: "0.01em",
                 }}
               >
                 <span className="block">
@@ -137,13 +109,11 @@ export default function Problem() {
                 <span
                   className="block"
                   style={{
-                    marginTop:
-                      "16px",
+                    marginTop: "16px",
                   }}
                 >
-                  Its digital
-                  experience remains
-                  fragmented.
+                  Its digital experience
+                  remains fragmented.
                 </span>
               </h2>
             </motion.div>
@@ -155,23 +125,11 @@ export default function Problem() {
               style={{
                 width: "100%",
                 height: "1px",
-
-                /*
-                 * Reduced from 78px.
-                 */
-                marginTop:
-                  "54px",
-
+                marginTop: "54px",
                 background:
                   "rgba(255,255,255,0.2)",
               }}
-              initial={
-                reduceMotion
-                  ? false
-                  : {
-                      scaleX: 0,
-                    }
-              }
+              initial={false}
               whileInView={{
                 scaleX: 1,
               }}
@@ -189,19 +147,8 @@ export default function Problem() {
             <div
               className="grid grid-cols-1"
               style={{
-                /*
-                 * Reduced from 86px.
-                 */
-                marginTop:
-                  "58px",
-
-                /*
-                 * Reduced from 104px.
-                 * Still deliberately spacious,
-                 * but no longer disconnected.
-                 */
-                rowGap:
-                  "76px",
+                marginTop: "58px",
+                rowGap: "76px",
               }}
             >
               {problemItems.map(
@@ -223,14 +170,7 @@ export default function Problem() {
                       paddingBottom:
                         "8px",
                     }}
-                    initial={
-                      reduceMotion
-                        ? false
-                        : {
-                            opacity: 0,
-                            y: 28,
-                          }
-                    }
+                    initial={false}
                     whileInView={{
                       opacity: 1,
                       y: 0,
@@ -309,13 +249,7 @@ export default function Problem() {
                         opacity:
                           0.78,
                       }}
-                      initial={
-                        reduceMotion
-                          ? false
-                          : {
-                              scaleX: 0,
-                            }
-                      }
+                      initial={false}
                       whileInView={{
                         scaleX: 1,
                       }}
@@ -339,13 +273,8 @@ export default function Problem() {
                         width: "100%",
                         maxWidth:
                           "310px",
-
-                        /*
-                         * Reduced from 50px.
-                         */
                         marginTop:
                           "38px",
-
                         fontSize:
                           "0.9rem",
                         lineHeight:
@@ -367,7 +296,7 @@ export default function Problem() {
       </div>
 
       {/* =========================================================
-          DESKTOP / TABLET — ORIGINAL APPROVED LAYOUT
+          DESKTOP / TABLET
       ========================================================== */}
       <div
         className="mx-auto hidden w-full md:block"
@@ -381,19 +310,19 @@ export default function Problem() {
       >
         {/* Editorial headline */}
         <motion.div
-          initial={
-            reduceMotion
-              ? false
-              : "hidden"
-          }
-          whileInView="visible"
+          initial={false}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
           viewport={{
             once: true,
             amount: 0.3,
           }}
-          variants={
-            headingVariants
-          }
+          transition={{
+            duration: 0.9,
+            ease: PREMIUM_EASE,
+          }}
         >
           <h2
             className="font-serif text-white"
@@ -402,12 +331,9 @@ export default function Problem() {
               margin: 0,
               fontSize:
                 "clamp(2.2rem, 3.8vw, 4.15rem)",
-              lineHeight:
-                "1.18",
-              letterSpacing:
-                "0.01em",
-              textWrap:
-                "balance",
+              lineHeight: "1.18",
+              letterSpacing: "0.01em",
+              textWrap: "balance",
             }}
           >
             <span className="block xl:whitespace-nowrap">
@@ -423,9 +349,8 @@ export default function Problem() {
                   "clamp(14px, 1.4vw, 22px)",
               }}
             >
-              Its digital
-              experience remains
-              fragmented.
+              Its digital experience
+              remains fragmented.
             </span>
           </h2>
         </motion.div>
@@ -440,13 +365,7 @@ export default function Problem() {
             marginTop:
               "clamp(78px, 6.5vw, 106px)",
           }}
-          initial={
-            reduceMotion
-              ? false
-              : {
-                  scaleX: 0,
-                }
-          }
+          initial={false}
           whileInView={{
             scaleX: 1,
           }}
@@ -489,14 +408,7 @@ export default function Problem() {
                   paddingBottom:
                     "8px",
                 }}
-                initial={
-                  reduceMotion
-                    ? false
-                    : {
-                        opacity: 0,
-                        y: 28,
-                      }
-                }
+                initial={false}
                 whileInView={{
                   opacity: 1,
                   y: 0,
@@ -575,13 +487,7 @@ export default function Problem() {
                     opacity:
                       0.78,
                   }}
-                  initial={
-                    reduceMotion
-                      ? false
-                      : {
-                          scaleX: 0,
-                        }
-                  }
+                  initial={false}
                   whileInView={{
                     scaleX: 1,
                   }}

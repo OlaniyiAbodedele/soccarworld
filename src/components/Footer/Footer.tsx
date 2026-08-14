@@ -1,24 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 
-const PREMIUM_EASE = [0.22, 1, 0.36, 1] as const;
+const PREMIUM_EASE = [
+  0.22,
+  1,
+  0.36,
+  1,
+] as const;
 
 export default function Footer() {
-  const reduceMotion = useReducedMotion();
-
   return (
     <motion.footer
       className="relative w-full bg-[#050505] text-white"
-      initial={
-        reduceMotion
-          ? false
-          : {
-              opacity: 0,
-              y: 14,
-            }
-      }
+      initial={false}
       whileInView={{
         opacity: 1,
         y: 0,
@@ -76,7 +72,8 @@ export default function Footer() {
             marginRight: "auto",
             marginLeft: "auto",
             textAlign: "center",
-            fontSize: "clamp(0.74rem, 0.85vw, 0.84rem)",
+            fontSize:
+              "clamp(0.74rem, 0.85vw, 0.84rem)",
             lineHeight: "1.75",
             letterSpacing: "0.09em",
           }}
@@ -100,7 +97,8 @@ export default function Footer() {
           className="mx-auto text-center text-white/50"
           style={{
             width: "100%",
-            fontSize: "clamp(0.61rem, 0.68vw, 0.69rem)",
+            fontSize:
+              "clamp(0.61rem, 0.68vw, 0.69rem)",
             lineHeight: "1.5",
             letterSpacing: "0.1em",
           }}
