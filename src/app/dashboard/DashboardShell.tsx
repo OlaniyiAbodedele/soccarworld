@@ -83,6 +83,11 @@ export default function DashboardShell({
   ] = useState(false);
 
   const [
+  accountMenuOpen,
+  setAccountMenuOpen,
+] = useState(false);
+
+  const [
     signingOut,
     setSigningOut,
   ] = useState(false);
@@ -128,16 +133,19 @@ export default function DashboardShell({
     );
 
   function navigateTo(
-    path: string
-  ) {
-    setMobileMenuOpen(false);
-    router.push(path);
-  }
+  path: string
+) {
+  setMobileMenuOpen(false);
+  setAccountMenuOpen(false);
+  router.push(path);
+}
 
   function showComingSoon(
     feature: string
   ) {
     setMobileMenuOpen(false);
+
+    setAccountMenuOpen(false);
 
     window.alert(
       `${feature} is coming soon to the SoccaR Founding Community.`
@@ -1050,50 +1058,197 @@ export default function DashboardShell({
               }
             />
 
-            <button
-              type="button"
-              className={
-                styles.accountButton
-              }
-            >
-              <span
-                className={
-                  styles.avatar
-                }
-              >
-                {initials}
-              </span>
+            <div
+  style={{
+    position: "relative",
+  }}
+>
+  <button
+    type="button"
+    className={
+      styles.accountButton
+    }
+    aria-haspopup="menu"
+    aria-expanded={
+      accountMenuOpen
+    }
+    onClick={() =>
+      setAccountMenuOpen(
+        (current) =>
+          !current
+      )
+    }
+  >
+    <span
+      className={
+        styles.avatar
+      }
+    >
+      {initials}
+    </span>
 
-              <span
-                className={
-                  styles.accountIdentity
-                }
-              >
-                <span
-                  className={
-                    styles.accountName
-                  }
-                >
-                  {fullName}
-                </span>
+    <span
+      className={
+        styles.accountIdentity
+      }
+    >
+      <span
+        className={
+          styles.accountName
+        }
+      >
+        {fullName}
+      </span>
 
-                <span
-                  className={
-                    styles.accountRole
-                  }
-                >
-                  Founding Member
-                </span>
-              </span>
+      <span
+        className={
+          styles.accountRole
+        }
+      >
+        Founding Member
+      </span>
+    </span>
 
-              <ChevronDown
-                size={16}
-                strokeWidth={1.8}
-                className={
-                  styles.chevron
-                }
-              />
-            </button>
+    <ChevronDown
+      size={16}
+      strokeWidth={1.8}
+      className={
+        styles.chevron
+      }
+      style={{
+        transform:
+          accountMenuOpen
+            ? "rotate(180deg)"
+            : "rotate(0deg)",
+        transition:
+          "transform 180ms ease",
+      }}
+    />
+  </button>
+
+  {accountMenuOpen && (
+    <div
+      role="menu"
+      style={{
+        position:
+          "absolute",
+        top:
+          "calc(100% + 12px)",
+        right: 0,
+        width: "220px",
+        padding: "8px",
+        border:
+          "1px solid rgba(255,255,255,0.10)",
+        borderRadius:
+          "16px",
+        background:
+          "#0D0D0D",
+        boxShadow:
+          "0 24px 60px rgba(0,0,0,0.45)",
+        zIndex: 100,
+      }}
+    >
+      <button
+        type="button"
+        role="menuitem"
+        onClick={() =>
+          navigateTo(
+            "/dashboard/profile"
+          )
+        }
+        style={{
+          width: "100%",
+          minHeight:
+            "46px",
+          display: "flex",
+          alignItems:
+            "center",
+          gap: "11px",
+          padding:
+            "0 13px",
+          border: 0,
+          borderRadius:
+            "11px",
+          background:
+            "transparent",
+          color:
+            "rgba(255,255,255,0.72)",
+          fontSize:
+            "13px",
+          cursor:
+            "pointer",
+          textAlign:
+            "left",
+        }}
+      >
+        <CircleUserRound
+          size={17}
+          strokeWidth={1.8}
+        />
+
+        Profile
+      </button>
+
+      <div
+        style={{
+          height: "1px",
+          margin:
+            "6px 4px",
+          background:
+            "rgba(255,255,255,0.08)",
+        }}
+      />
+
+      <button
+        type="button"
+        role="menuitem"
+        disabled={
+          signingOut
+        }
+        onClick={
+          handleSignOut
+        }
+        style={{
+          width: "100%",
+          minHeight:
+            "46px",
+          display: "flex",
+          alignItems:
+            "center",
+          gap: "11px",
+          padding:
+            "0 13px",
+          border: 0,
+          borderRadius:
+            "11px",
+          background:
+            "transparent",
+          color:
+            signingOut
+              ? "rgba(255,255,255,0.35)"
+              : "#FFFFFF",
+          fontSize:
+            "13px",
+          cursor:
+            signingOut
+              ? "wait"
+              : "pointer",
+          textAlign:
+            "left",
+        }}
+      >
+        <LogOut
+          size={17}
+          strokeWidth={1.8}
+        />
+
+        {signingOut
+          ? "Signing Out…"
+          : "Sign Out"}
+      </button>
+    </div>
+  )}
+</div>
           </div>
         </header>
 
