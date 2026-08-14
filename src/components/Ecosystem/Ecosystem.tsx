@@ -40,11 +40,8 @@ export default function Ecosystem() {
           }}
         >
           {/* Mobile heading alignment rail */}
-          <motion.header
-            className="w-full"
-            style={{
-              paddingLeft: "50px",
-            }}
+<motion.header
+  className="w-full"
             initial={
               reduceMotion
                 ? false
@@ -160,12 +157,7 @@ export default function Ecosystem() {
           </motion.div>
 
           {/* Mobile lower-content alignment rail */}
-          <div
-            className="w-full"
-            style={{
-              paddingLeft: "50px",
-            }}
-          >
+<div className="w-full">
             {/* Mobile supporting copy */}
             <motion.p
               className="w-full text-white/84"

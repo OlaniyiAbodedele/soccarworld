@@ -134,14 +134,15 @@ export default function PlatformFeatures() {
 
   return (
     <section
-      id="platform-features"
-      aria-labelledby="platform-features-heading"
-      className="relative w-full overflow-hidden bg-black text-white"
-      style={{
-        paddingTop: "clamp(48px, 4vw, 72px)",
-        paddingBottom: "clamp(88px, 7vw, 128px)",
-      }}
-    >
+  id="platform-features"
+  aria-labelledby="platform-features-heading"
+  className="
+    relative w-full overflow-hidden bg-black text-white
+    pt-[48px] pb-[64px]
+    md:pt-[clamp(48px,4vw,72px)]
+    md:pb-[clamp(88px,7vw,128px)]
+  "
+>
       {/* =========================================================
           MOBILE LAYOUT
       ========================================================== */}
@@ -159,12 +160,7 @@ export default function PlatformFeatures() {
           }}
         >
           {/* Mobile upper-content alignment rail */}
-          <div
-            className="w-full"
-            style={{
-              paddingLeft: "50px",
-            }}
-          >
+<div className="w-full">
             <motion.header
               initial={
                 reduceMotion
@@ -726,6 +722,10 @@ export default function PlatformFeatures() {
           </div>
         </div>
       </div>
+    <div
+  aria-hidden="true"
+  className="h-[56px] md:hidden"
+/>
     </section>
   );
 }

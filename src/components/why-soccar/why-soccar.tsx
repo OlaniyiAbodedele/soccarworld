@@ -43,13 +43,14 @@ export default function WhySoccaR() {
 
   return (
     <section
-      id="why-soccar"
-      className="relative overflow-hidden bg-black text-white"
-      style={{
-        paddingTop: "clamp(100px, 8vw, 145px)",
-        paddingBottom: "clamp(110px, 9vw, 165px)",
-      }}
-    >
+  id="why-soccar"
+  className="
+    relative overflow-hidden bg-black text-white
+    pt-[74px] pb-[92px]
+    md:pt-[clamp(100px,8vw,145px)]
+    md:pb-[clamp(110px,9vw,165px)]
+  "
+>
       {/* Shared centred 1320px section rail */}
       <div
         className="w-full"
@@ -189,9 +190,9 @@ export default function WhySoccaR() {
           <motion.div
             className="relative w-full overflow-hidden bg-[#050806]"
             style={{
-              marginTop: "clamp(42px, 4.5vw, 66px)",
-              aspectRatio: "16 / 7.2",
-            }}
+  marginTop: "clamp(34px, 4vw, 66px)",
+  aspectRatio: "16 / 7.2",
+}}
             initial={
               reduceMotion
                 ? false
@@ -247,7 +248,7 @@ export default function WhySoccaR() {
             style={{
               width: "100%",
               height: "1px",
-              marginTop: "clamp(64px, 6vw, 92px)",
+              marginTop: "clamp(46px, 5vw, 92px)",
               background: "rgba(255,255,255,0.13)",
             }}
           />
@@ -256,10 +257,10 @@ export default function WhySoccaR() {
           <div
             className="grid w-full grid-cols-1 justify-items-center sm:grid-cols-2 xl:grid-cols-4"
             style={{
-              marginTop: "clamp(58px, 5vw, 82px)",
-              columnGap: "clamp(36px, 3.5vw, 64px)",
-              rowGap: "clamp(86px, 9vw, 124px)",
-            }}
+  marginTop: "clamp(46px, 5vw, 82px)",
+  columnGap: "clamp(36px, 3.5vw, 64px)",
+  rowGap: "clamp(68px, 8vw, 124px)",
+}}
           >
             {reasons.map((reason, index) => (
               <motion.article

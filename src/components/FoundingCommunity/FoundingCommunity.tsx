@@ -705,16 +705,15 @@ export default function FoundingCommunity() {
       />
 
       <section
-        id="founding-community"
-        aria-labelledby="founding-community-heading"
-        className="relative w-full overflow-hidden bg-black text-white"
-        style={{
-          paddingTop:
-            "clamp(72px, 6vw, 108px)",
-          paddingBottom:
-            "clamp(72px, 6vw, 108px)",
-        }}
-      >
+  id="founding-community"
+  aria-labelledby="founding-community-heading"
+  className="
+    relative w-full overflow-hidden bg-black text-white
+    pt-[72px] pb-[28px]
+    md:pt-[clamp(72px,6vw,108px)]
+    md:pb-[clamp(72px,6vw,108px)]
+  "
+>
         <div
           className="relative w-full overflow-hidden bg-black"
           style={{
