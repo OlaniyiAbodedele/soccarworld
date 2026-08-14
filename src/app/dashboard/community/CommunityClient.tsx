@@ -196,6 +196,23 @@ export default function CommunityClient({
     setMemberTypeFilter(event.target.value);
   }
 
+  async function handleSignOut() {
+    try {
+      await fetch("/api/auth/sign-out", {
+        method: "POST",
+      });
+    } catch (error) {
+      console.error(
+        "Founder Community sign-out error:",
+        error
+      );
+    } finally {
+      setMobileMenuOpen(false);
+      router.replace("/sign-in");
+      router.refresh();
+    }
+  }
+
   return (
     <div className={styles.dashboard}>
       <aside
@@ -290,10 +307,10 @@ export default function CommunityClient({
               type="button"
               className={styles.navItem}
               onClick={() =>
-  navigateTo(
-    "/dashboard/updates"
-  )
-}
+                navigateTo(
+                  "/dashboard/updates"
+                )
+              }
             >
               <Megaphone
                 size={19}
@@ -397,6 +414,7 @@ export default function CommunityClient({
             className={
               styles.signOutButton
             }
+            onClick={handleSignOut}
           >
             <LogOut
               size={18}

@@ -25,7 +25,7 @@ type VerifyResponse = {
 };
 
 function formatFounderNumber(value: number) {
-  return String(value).padStart(6, "0");
+  return String(value).padStart(5, "0");
 }
 
 function CheckIcon({

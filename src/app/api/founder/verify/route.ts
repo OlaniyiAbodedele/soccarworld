@@ -7,7 +7,7 @@ import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
 function formatFounderNumber(value: number) {
-  return `#${String(value).padStart(6, "0")}`;
+  return `#${String(value).padStart(5, "0")}`;
 }
 
 export async function POST(request: Request) {
@@ -115,20 +115,77 @@ export async function POST(request: Request) {
       }
 
       if (
-        errorMessage.includes(
-          "Verification link is no longer active"
-        )
-      ) {
-        return NextResponse.json(
-          {
-            success: false,
-            code: "USED_OR_REVOKED",
-            message:
-              "This verification link is no longer active.",
-          },
-          { status: 409 }
-        );
-      }
+  errorMessage.includes(
+    "Verification link is no longer active"
+  )
+) {
+  /*
+   * A duplicate verification request may arrive
+   * immediately after the first request succeeds.
+   *
+   * If the token was already USED and the Founder
+   * Membership exists, return the existing Founder
+   * identity instead of treating the successful
+   * activation as a failure.
+   */
+  const {
+    data: usedVerification,
+    error: usedVerificationError,
+  } = await supabaseAdmin
+    .from("founder_email_verifications")
+    .select("reservation_id, status")
+    .eq("token_hash", tokenHash)
+    .maybeSingle();
+
+  if (
+    !usedVerificationError &&
+    usedVerification?.status === "USED" &&
+    usedVerification.reservation_id
+  ) {
+    const {
+      data: existingFounder,
+      error: existingFounderError,
+    } = await supabaseAdmin
+      .from("founder_memberships")
+      .select("founder_number")
+      .eq(
+        "reservation_id",
+        usedVerification.reservation_id
+      )
+      .eq("status", "ACTIVE")
+      .maybeSingle();
+
+    if (
+      !existingFounderError &&
+      existingFounder?.founder_number
+    ) {
+      return NextResponse.json(
+        {
+          success: true,
+          reservationId:
+            usedVerification.reservation_id,
+          founderNumber:
+            existingFounder.founder_number,
+          status: "ACTIVE_FOUNDER",
+          alreadyVerified: true,
+          message:
+            "Your SoccaR Founding Membership is already active.",
+        },
+        { status: 200 }
+      );
+    }
+  }
+
+  return NextResponse.json(
+    {
+      success: false,
+      code: "USED_OR_REVOKED",
+      message:
+        "This verification link is no longer active.",
+    },
+    { status: 409 }
+  );
+}
 
       return NextResponse.json(
         {
