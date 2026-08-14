@@ -281,12 +281,58 @@ export async function POST(request: Request) {
 
     /*
      * 7. Build verification URL
+     *
+     * IMPORTANT:
+     * Do not use request.url origin here because a Next.js
+     * development server bound to 0.0.0.0 can produce
+     * http://0.0.0.0:3000 in outgoing email links.
+     *
+     * Instead use the actual Host header received from the browser.
      */
-    const requestUrl =
-      new URL(request.url);
+    const forwardedHost =
+      request.headers.get("x-forwarded-host");
+
+    const requestHost =
+      forwardedHost ||
+      request.headers.get("host");
+
+    const forwardedProtocol =
+      request.headers.get("x-forwarded-proto");
+
+    const isLocalDevelopmentHost =
+      requestHost?.startsWith("localhost") ||
+      requestHost?.startsWith("127.") ||
+      requestHost?.startsWith("192.168.") ||
+      requestHost?.startsWith("10.") ||
+      requestHost?.startsWith("172.");
+
+    const protocol =
+      forwardedProtocol ||
+      (isLocalDevelopmentHost
+        ? "http"
+        : "https");
+
+    if (!requestHost) {
+      console.error(
+        "Unable to determine public request host for Founder verification email."
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          reservationCreated: true,
+          message:
+            "Your place has been reserved, but we could not prepare the verification link. Please try again.",
+        },
+        { status: 500 }
+      );
+    }
+
+    const siteOrigin =
+      `${protocol}://${requestHost}`;
 
     const verificationUrl =
-      `${requestUrl.origin}/founder/verify` +
+      `${siteOrigin}/founder/verify` +
       `?token=${encodeURIComponent(
         verificationToken
       )}`;
@@ -407,7 +453,6 @@ export async function POST(request: Request) {
           "
         >
 
-                    <!-- Brand -->
           <tr>
             <td
               align="center"
@@ -448,6 +493,7 @@ export async function POST(request: Request) {
               </div>
             </td>
           </tr>
+
           <tr>
             <td
               style="
@@ -457,8 +503,6 @@ export async function POST(request: Request) {
                 overflow:hidden;
               "
             >
-
-              <!-- Green accent -->
               <div
                 style="
                   height:4px;
@@ -477,7 +521,6 @@ export async function POST(request: Request) {
                 cellpadding="0"
                 border="0"
               >
-
                 <tr>
                   <td
                     style="
@@ -571,18 +614,17 @@ export async function POST(request: Request) {
                   </td>
                 </tr>
 
-                <!-- CTA -->
                 <tr>
-  <td
-    align="center"
-    style="
-      padding:
-        34px
-        46px
-        0;
-      text-align:center;
-    "
-  >
+                  <td
+                    align="center"
+                    style="
+                      padding:
+                        34px
+                        46px
+                        0;
+                      text-align:center;
+                    "
+                  >
                     <a
                       href="${verificationUrl}"
                       style="
@@ -605,7 +647,6 @@ export async function POST(request: Request) {
                   </td>
                 </tr>
 
-                <!-- Status Panel -->
                 <tr>
                   <td
                     style="
@@ -741,7 +782,6 @@ export async function POST(request: Request) {
                   </td>
                 </tr>
 
-                <!-- Security -->
                 <tr>
                   <td
                     style="
@@ -778,7 +818,6 @@ export async function POST(request: Request) {
                   </td>
                 </tr>
 
-                <!-- Fallback Link -->
                 <tr>
                   <td
                     style="
@@ -796,6 +835,7 @@ export async function POST(request: Request) {
                     and paste this secure link into
                     your browser:
                     <br /><br />
+
                     <a
                       href="${verificationUrl}"
                       style="
@@ -808,7 +848,6 @@ export async function POST(request: Request) {
                   </td>
                 </tr>
 
-                <!-- Ignore Note -->
                 <tr>
                   <td
                     style="
@@ -826,12 +865,10 @@ export async function POST(request: Request) {
                     ignore this email.
                   </td>
                 </tr>
-
               </table>
             </td>
           </tr>
 
-          <!-- Footer -->
           <tr>
             <td
               style="
@@ -868,7 +905,6 @@ export async function POST(request: Request) {
               </div>
             </td>
           </tr>
-
         </table>
       </td>
     </tr>
