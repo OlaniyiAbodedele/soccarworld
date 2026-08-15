@@ -38,6 +38,9 @@ export async function POST(request: Request) {
     const resendApiKey =
       process.env.RESEND_API_KEY;
 
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL?.trim();
+
     if (
       !supabaseUrl ||
       !supabaseSecretKey ||
@@ -115,77 +118,74 @@ export async function POST(request: Request) {
       }
 
       if (
-  errorMessage.includes(
-    "Verification link is no longer active"
-  )
-) {
-  /*
-   * A duplicate verification request may arrive
-   * immediately after the first request succeeds.
-   *
-   * If the token was already USED and the Founder
-   * Membership exists, return the existing Founder
-   * identity instead of treating the successful
-   * activation as a failure.
-   */
-  const {
-    data: usedVerification,
-    error: usedVerificationError,
-  } = await supabaseAdmin
-    .from("founder_email_verifications")
-    .select("reservation_id, status")
-    .eq("token_hash", tokenHash)
-    .maybeSingle();
+        errorMessage.includes(
+          "Verification link is no longer active"
+        )
+      ) {
+        const {
+          data: usedVerification,
+          error: usedVerificationError,
+        } = await supabaseAdmin
+          .from(
+            "founder_email_verifications"
+          )
+          .select(
+            "reservation_id, status"
+          )
+          .eq("token_hash", tokenHash)
+          .maybeSingle();
 
-  if (
-    !usedVerificationError &&
-    usedVerification?.status === "USED" &&
-    usedVerification.reservation_id
-  ) {
-    const {
-      data: existingFounder,
-      error: existingFounderError,
-    } = await supabaseAdmin
-      .from("founder_memberships")
-      .select("founder_number")
-      .eq(
-        "reservation_id",
-        usedVerification.reservation_id
-      )
-      .eq("status", "ACTIVE")
-      .maybeSingle();
+        if (
+          !usedVerificationError &&
+          usedVerification?.status ===
+            "USED" &&
+          usedVerification.reservation_id
+        ) {
+          const {
+            data: existingFounder,
+            error: existingFounderError,
+          } = await supabaseAdmin
+            .from("founder_memberships")
+            .select("founder_number")
+            .eq(
+              "reservation_id",
+              usedVerification.reservation_id
+            )
+            .eq("status", "ACTIVE")
+            .maybeSingle();
 
-    if (
-      !existingFounderError &&
-      existingFounder?.founder_number
-    ) {
-      return NextResponse.json(
-        {
-          success: true,
-          reservationId:
-            usedVerification.reservation_id,
-          founderNumber:
-            existingFounder.founder_number,
-          status: "ACTIVE_FOUNDER",
-          alreadyVerified: true,
-          message:
-            "Your SoccaR Founding Membership is already active.",
-        },
-        { status: 200 }
-      );
-    }
-  }
+          if (
+            !existingFounderError &&
+            existingFounder?.founder_number
+          ) {
+            return NextResponse.json(
+              {
+                success: true,
+                reservationId:
+                  usedVerification.reservation_id,
+                founderNumber:
+                  existingFounder.founder_number,
+                status:
+                  "ACTIVE_FOUNDER",
+                alreadyVerified: true,
+                message:
+                  "Your SoccaR Founding Membership is already active.",
+              },
+              { status: 200 }
+            );
+          }
+        }
 
-  return NextResponse.json(
-    {
-      success: false,
-      code: "USED_OR_REVOKED",
-      message:
-        "This verification link is no longer active.",
-    },
-    { status: 409 }
-  );
-}
+        return NextResponse.json(
+          {
+            success: false,
+            code: "USED_OR_REVOKED",
+            message:
+              "This verification link is no longer active.",
+          },
+          { status: 409 }
+        );
+      }
 
       return NextResponse.json(
         {
@@ -246,6 +246,7 @@ export async function POST(request: Request) {
       .single();
 
     let memberId: string | null = null;
+
     let activationUrl: string | null =
       null;
 
@@ -332,12 +333,16 @@ export async function POST(request: Request) {
             "SoccaR account activation creation error:",
             activationCreationError
           );
+        } else if (!appUrl) {
+          console.error(
+            "NEXT_PUBLIC_APP_URL is not configured."
+          );
         } else {
-          const requestUrl =
-            new URL(request.url);
+          const cleanAppUrl =
+            appUrl.replace(/\/$/, "");
 
           activationUrl =
-            `${requestUrl.origin}` +
+            `${cleanAppUrl}` +
             `/account/activate` +
             `?token=${encodeURIComponent(
               activationToken
