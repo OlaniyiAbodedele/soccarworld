@@ -322,10 +322,8 @@ export default function AdminShell({
                 "communications"
               )}
               onClick={() =>
-                showComingSoon(
-                  "Communications"
-                )
-              }
+  navigateTo("/admin/communications")
+}
             >
               <Megaphone
                 size={18}

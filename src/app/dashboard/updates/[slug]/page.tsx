@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import DashboardShell from "../../DashboardShell";
+import CommunicationRenderer from "@/app/admin/communications/CommunicationRenderer";
 
 import {
   getFounderDashboardData,
@@ -232,15 +233,6 @@ export default async function IndividualUpdatePage({
         )
     ).length;
 
-  const paragraphs: string[] =
-    String(update.body)
-      .split(/\n\s*\n/)
-      .map(
-        (paragraph: string) =>
-          paragraph.trim()
-      )
-      .filter(Boolean);
-
   const categoryLabel =
     getCategoryLabel(
       update.category
@@ -380,24 +372,11 @@ export default async function IndividualUpdatePage({
                 styles.body
               }
             >
-              {paragraphs.map(
-                (
-                  paragraph: string,
-                  index: number
-                ) => (
-                  <p
-                    key={`${index}-${paragraph.slice(
-                      0,
-                      20
-                    )}`}
-                    className={
-                      styles.paragraph
-                    }
-                  >
-                    {paragraph}
-                  </p>
-                )
-              )}
+              <CommunicationRenderer
+                content={String(
+                  update.body
+                )}
+              />
             </section>
 
             <footer
