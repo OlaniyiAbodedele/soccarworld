@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { track } from "@vercel/analytics";
 
 const navigationItems = [
   { label: "Vision", href: "#hero" },
@@ -8,6 +11,10 @@ const navigationItems = [
 ];
 
 export default function Navbar() {
+  function handleFounderJoinStarted() {
+    track("founder_join_started");
+  }
+
   return (
     <header
       className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.08] bg-black/55 backdrop-blur-[6px]"
@@ -95,6 +102,7 @@ export default function Navbar() {
 
           <a
             href="#founding-community"
+            onClick={handleFounderJoinStarted}
             className="inline-flex items-center justify-center whitespace-nowrap border border-white/25 bg-black/30 font-semibold uppercase text-white outline-none transition duration-300 hover:-translate-y-px hover:border-[#9CE500] hover:text-[#9CE500] focus-visible:-translate-y-px focus-visible:border-[#9CE500] focus-visible:text-[#9CE500] focus-visible:ring-2 focus-visible:ring-[#9CE500]/60 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
             style={{
               minWidth: "clamp(118px, 30vw, 190px)",
