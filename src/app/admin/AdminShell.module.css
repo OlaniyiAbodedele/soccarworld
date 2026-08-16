@@ -1,0 +1,458 @@
+.adminConsole {
+  min-height: 100vh;
+  background: #050505;
+  color: #ffffff;
+}
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 50;
+  width: 270px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: #090909;
+}
+
+.sidebarTop {
+  padding: 28px 20px 20px;
+}
+
+.brandBlock {
+  position: relative;
+  padding: 2px 12px 24px;
+}
+
+.brand {
+  color: #9ce500;
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: 0.28em;
+}
+
+.brandDescriptor {
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.34);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.mobileCloseButton {
+  display: none;
+}
+
+.environmentBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 8px 26px;
+  padding: 10px 12px;
+  border: 1px solid rgba(156, 229, 0, 0.14);
+  border-radius: 10px;
+  background: rgba(156, 229, 0, 0.03);
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.environmentDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #9ce500;
+  box-shadow: 0 0 12px rgba(156, 229, 0, 0.6);
+}
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.navItem {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.navItemActive {
+  background: rgba(156, 229, 0, 0.08);
+  color: #ffffff;
+}
+
+.navItemActive svg {
+  color: #9ce500;
+}
+
+.navigationDivider {
+  height: 1px;
+  margin: 14px 10px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.sidebarBottom {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.adminBadge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.adminBadge svg {
+  color: #9ce500;
+}
+
+.adminBadgeLabel,
+.adminBadgeRole {
+  display: block;
+}
+
+.adminBadgeLabel {
+  color: rgba(255, 255, 255, 0.34);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.adminBadgeRole {
+  margin-top: 5px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.signOutError {
+  padding: 0 10px;
+  color: #ff6259;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.signOutButton {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.signOutButton:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+}
+
+.workspace {
+  min-height: 100vh;
+  margin-left: 270px;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 34px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(5, 5, 5, 0.92);
+  backdrop-filter: blur(18px);
+}
+
+.topbarLeft,
+.topbarContext,
+.accountArea,
+.accountButton {
+  display: flex;
+  align-items: center;
+}
+
+.topbarContext {
+  gap: 12px;
+}
+
+.contextEyebrow {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.contextDivider,
+.accountDivider {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.contextDivider {
+  height: 15px;
+}
+
+.contextStatus {
+  color: #9ce500;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.mobileMenuButton {
+  display: none;
+}
+
+.accountArea {
+  gap: 14px;
+}
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.48);
+  cursor: pointer;
+}
+
+.iconButton:hover {
+  color: #ffffff;
+}
+
+.accountDivider {
+  height: 28px;
+}
+
+.accountMenuWrapper {
+  position: relative;
+}
+
+.accountButton {
+  gap: 11px;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #9ce500;
+  color: #050505;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.accountIdentity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.accountName {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.accountRole {
+  margin-top: 3px;
+  color: rgba(255, 255, 255, 0.34);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.chevron {
+  color: rgba(255, 255, 255, 0.32);
+  transition: transform 180ms ease;
+}
+
+.accountMenu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 220px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: #0d0d0d;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.accountMenuItem {
+  width: 100%;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.accountMenuItem:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+}
+
+.accountMenuDivider {
+  height: 1px;
+  margin: 6px 4px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.content {
+  width: 100%;
+  padding: 46px 42px 64px;
+}
+
+.mobileMenuOverlay {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 220ms ease;
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+
+  .workspace {
+    margin-left: 0;
+  }
+
+  .mobileCloseButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.56);
+  }
+
+  .mobileMenuButton {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    margin-right: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    background: transparent;
+    color: #ffffff;
+  }
+
+  .mobileMenuOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: block;
+    border: 0;
+    background: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+  }
+
+  .mobileMenuOverlayVisible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .topbar {
+    padding: 0 20px;
+  }
+
+  .topbarLeft {
+    display: flex;
+  }
+
+  .accountIdentity,
+  .chevron {
+    display: none;
+  }
+
+  .content {
+    padding: 30px 20px 48px;
+  }
+}
+
+@media (max-width: 560px) {
+  .sidebar {
+    width: min(86vw, 310px);
+  }
+
+  .contextDivider,
+  .contextStatus {
+    display: none;
+  }
+
+  .topbar {
+    height: 70px;
+  }
+
+  .content {
+    padding: 26px 16px 42px;
+  }
+}
