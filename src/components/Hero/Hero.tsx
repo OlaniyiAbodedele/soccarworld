@@ -268,7 +268,10 @@ export default function Hero() {
           >
             <motion.a
               href="#founding-community"
-              onClick={() => track("founder_join_started")}
+              onClick={() => {
+  console.log("SoccaR test: Hero Founder Join click fired");
+  track("founder_join_started");
+}}
               className="inline-flex w-full items-center justify-center rounded-xl bg-[#9CE500] font-bold uppercase outline-none transition-colors duration-300 hover:bg-[#B2FF1A] focus-visible:ring-2 focus-visible:ring-[#9CE500] focus-visible:ring-offset-4 focus-visible:ring-offset-black sm:w-auto"
               style={{
                 minHeight: "72px",
