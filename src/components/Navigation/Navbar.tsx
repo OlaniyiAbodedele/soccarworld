@@ -12,8 +12,8 @@ const navigationItems = [
 
 export default function Navbar() {
   function handleFounderJoinStarted() {
-  track("founder_join_started");
-}
+    track("founder_join_started");
+  }
 
   return (
     <header
@@ -24,11 +24,11 @@ export default function Navbar() {
       }}
     >
       <div
-        className="grid w-full grid-cols-[1fr_auto] items-center lg:grid-cols-[1fr_auto_1fr]"
+        className="grid w-full grid-cols-[auto_1fr] items-center lg:grid-cols-[1fr_auto_1fr]"
         style={{
           minHeight: "clamp(80px, 7vw, 96px)",
-          paddingLeft: "clamp(32px, 6vw, 120px)",
-          paddingRight: "clamp(32px, 6vw, 120px)",
+          paddingLeft: "clamp(18px, 5vw, 120px)",
+          paddingRight: "clamp(18px, 5vw, 120px)",
         }}
       >
         {/* SoccaR logo */}
@@ -49,7 +49,7 @@ export default function Navbar() {
             priority
             className="h-auto opacity-90 transition duration-300 group-hover:opacity-100"
             style={{
-              width: "clamp(122px, 31vw, 185px)",
+              width: "clamp(106px, 26vw, 185px)",
               maxWidth: "100%",
               transitionTimingFunction:
                 "cubic-bezier(0.22, 1, 0.36, 1)",
@@ -82,17 +82,17 @@ export default function Navbar() {
 
         {/* Member access + primary conversion action */}
         <div
-          className="flex items-center justify-self-end"
+          className="flex min-w-0 items-center justify-self-end"
           style={{
-            gap: "clamp(12px, 1.7vw, 28px)",
+            gap: "clamp(8px, 2.2vw, 28px)",
           }}
         >
           <a
             href="/sign-in"
             className="whitespace-nowrap rounded-sm font-semibold uppercase text-white/72 outline-none transition duration-200 hover:-translate-y-px hover:text-[#9CE500] focus-visible:-translate-y-px focus-visible:text-[#9CE500] focus-visible:ring-2 focus-visible:ring-[#9CE500]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
             style={{
-              fontSize: "clamp(0.6rem, 0.7vw, 0.76rem)",
-              letterSpacing: "0.18em",
+              fontSize: "clamp(0.58rem, 2.4vw, 0.76rem)",
+              letterSpacing: "clamp(0.1em, 0.6vw, 0.18em)",
               transitionTimingFunction:
                 "cubic-bezier(0.22, 1, 0.36, 1)",
             }}
@@ -105,19 +105,20 @@ export default function Navbar() {
             onClick={handleFounderJoinStarted}
             className="inline-flex items-center justify-center whitespace-nowrap border border-white/25 bg-black/30 font-semibold uppercase text-white outline-none transition duration-300 hover:-translate-y-px hover:border-[#9CE500] hover:text-[#9CE500] focus-visible:-translate-y-px focus-visible:border-[#9CE500] focus-visible:text-[#9CE500] focus-visible:ring-2 focus-visible:ring-[#9CE500]/60 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
             style={{
-              minWidth: "clamp(118px, 30vw, 190px)",
-              minHeight: "clamp(46px, 4.2vw, 62px)",
-              paddingLeft: "clamp(14px, 2vw, 32px)",
-              paddingRight: "clamp(14px, 2vw, 32px)",
-              fontSize: "clamp(0.62rem, 0.76vw, 0.86rem)",
-              letterSpacing: "0.16em",
+              minWidth: "clamp(132px, 38vw, 190px)",
+              minHeight: "clamp(44px, 12vw, 62px)",
+              paddingLeft: "clamp(12px, 3vw, 32px)",
+              paddingRight: "clamp(12px, 3vw, 32px)",
+              fontSize: "clamp(0.52rem, 2vw, 0.86rem)",
+              letterSpacing: "clamp(0.09em, 0.45vw, 0.16em)",
               boxShadow:
                 "inset 0 1px 0 rgba(255,255,255,0.03), 0 0 0 rgba(156,229,0,0)",
               transitionTimingFunction:
                 "cubic-bezier(0.22, 1, 0.36, 1)",
             }}
           >
-            Join Founding Community
+            <span className="sm:hidden">Join Community</span>
+            <span className="hidden sm:inline">Join Founding Community</span>
           </a>
         </div>
       </div>
