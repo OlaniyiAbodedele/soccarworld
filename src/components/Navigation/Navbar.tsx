@@ -12,8 +12,9 @@ const navigationItems = [
 
 export default function Navbar() {
   function handleFounderJoinStarted() {
-    track("founder_join_started");
-  }
+  console.log("SoccaR test: Founder Join click handler fired");
+  track("founder_join_started");
+}
 
   return (
     <header
