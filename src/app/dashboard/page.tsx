@@ -136,6 +136,9 @@ export default async function DashboardPage() {
       username={
         founder.username
       }
+      footballIdentity={
+        founder.footballIdentity
+      }
       activeSection="dashboard"
       unreadUpdates={
         unreadUpdates

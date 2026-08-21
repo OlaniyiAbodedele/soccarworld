@@ -18,6 +18,17 @@ function formatFounderNumber(
   );
 }
 
+export type FootballIdentitySummary = {
+  status: string | null;
+  isCompleted: boolean;
+  footballWorld: string | null;
+  nationalTeam: string | null;
+  primaryClub: string | null;
+  primaryRole: string | null;
+  additionalRoles: string[];
+  footballBio: string | null;
+};
+
 export type FounderDashboardData = {
   memberId: string;
   firstName: string;
@@ -29,6 +40,7 @@ export type FounderDashboardData = {
   countryOfOrigin: string | null;
   cityOfResidence: string | null;
   username: string | null;
+  footballIdentity: FootballIdentitySummary | null;
 };
 
 export async function getFounderDashboardData(): Promise<FounderDashboardData> {
@@ -152,6 +164,194 @@ export async function getFounderDashboardData(): Promise<FounderDashboardData> {
     }
   }
 
+  /*
+   * 5. Retrieve the member's Football Identity.
+   */
+  const {
+    data: identity,
+    error: identityError,
+  } = await supabaseAdmin
+    .from("football_identities")
+    .select(`
+      identity_status,
+      current_step,
+      national_team_status,
+      national_team_id,
+      primary_club_status,
+      primary_club_id,
+      football_bio,
+      completed_at
+    `)
+    .eq("member_id", member.id)
+    .maybeSingle();
+
+  if (identityError) {
+    console.error(
+      "Unable to load Founder Football Identity:",
+      identityError
+    );
+
+    throw new Error(
+      "Could not load Football Identity."
+    );
+  }
+
+  let footballIdentity:
+    | FootballIdentitySummary
+    | null = null;
+
+  if (identity) {
+    let nationalTeam:
+      | string
+      | null = null;
+
+    let primaryClub:
+      | string
+      | null = null;
+
+    if (identity.national_team_id) {
+      const {
+        data: team,
+        error: teamError,
+      } = await supabaseAdmin
+        .from("national_teams")
+        .select("name")
+        .eq(
+          "id",
+          identity.national_team_id
+        )
+        .maybeSingle();
+
+      if (teamError) {
+        console.error(
+          "Unable to load Founder National Team:",
+          teamError
+        );
+      } else {
+        nationalTeam =
+          team?.name ?? null;
+      }
+    }
+
+    if (identity.primary_club_id) {
+      const {
+        data: club,
+        error: clubError,
+      } = await supabaseAdmin
+        .from("football_clubs")
+        .select("name, short_name")
+        .eq(
+          "id",
+          identity.primary_club_id
+        )
+        .maybeSingle();
+
+      if (clubError) {
+        console.error(
+          "Unable to load Founder Primary Club:",
+          clubError
+        );
+      } else {
+        primaryClub =
+          club?.short_name ||
+          club?.name ||
+          null;
+      }
+    }
+
+    const {
+      data: memberRoles,
+      error: memberRolesError,
+    } = await supabaseAdmin
+      .from("member_football_roles")
+      .select(`
+        role_type,
+        football_roles (
+          name
+        )
+      `)
+      .eq("member_id", member.id);
+
+    if (memberRolesError) {
+      console.error(
+        "Unable to load Founder Football Roles:",
+        memberRolesError
+      );
+
+      throw new Error(
+        "Could not load Football Roles."
+      );
+    }
+
+    let primaryRole:
+      | string
+      | null = null;
+
+    const additionalRoles:
+      string[] = [];
+
+    for (const row of memberRoles ?? []) {
+      const relatedRole = Array.isArray(
+        row.football_roles
+      )
+        ? row.football_roles[0]
+        : row.football_roles;
+
+      const roleName =
+        relatedRole?.name ?? null;
+
+      if (!roleName) {
+        continue;
+      }
+
+      if (
+        row.role_type === "PRIMARY"
+      ) {
+        primaryRole = roleName;
+      } else if (
+        row.role_type === "ADDITIONAL"
+      ) {
+        additionalRoles.push(
+          roleName
+        );
+      }
+    }
+
+    const footballWorld =
+      [
+        member.city_of_residence,
+        member.country_of_residence,
+      ]
+        .filter(Boolean)
+        .join(", ") || null;
+
+    footballIdentity = {
+      status:
+        identity.identity_status,
+      isCompleted:
+        identity.identity_status ===
+          "COMPLETED" &&
+        Boolean(
+          identity.completed_at
+        ),
+      footballWorld,
+      nationalTeam:
+        identity.national_team_status ===
+        "NO_AFFILIATION"
+          ? null
+          : nationalTeam,
+      primaryClub:
+        identity.primary_club_status ===
+        "NO_AFFILIATION"
+          ? null
+          : primaryClub,
+      primaryRole,
+      additionalRoles,
+      footballBio:
+        identity.football_bio ?? null,
+    };
+  }
+
   return {
     memberId: member.id,
     firstName: member.first_name,
@@ -167,5 +367,6 @@ export async function getFounderDashboardData(): Promise<FounderDashboardData> {
     cityOfResidence:
       member.city_of_residence,
     username: member.username,
+    footballIdentity,
   };
 }
